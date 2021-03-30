@@ -1,0 +1,7 @@
+README.md
+setup.py
+OpenRS.egg-info/PKG-INFO
+OpenRS.egg-info/SOURCES.txt
+OpenRS.egg-info/dependency_links.txt
+OpenRS.egg-info/requires.txt
+OpenRS.egg-info/top_level.txt
