@@ -21,8 +21,10 @@ setup(name = 'OpenRS',
         'Natural Language :: English',
         ],
 
-    install_requires=['numpy'],
+    install_requires=['numpy','vtk'],
     license = 'Creative Commons Attribution-Noncommercial-Share Alike license',
     python_requires='>=3.8',
-
+    packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples'],
+    package_data = {'OpenRS' : ['README.MD',], 'OpenRS.geometry' : ['*.*',], 'OpenRS.examples' : ['*.*',] },
+    include_package_data=True
     )
