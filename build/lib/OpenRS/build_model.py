@@ -1,10 +1,3 @@
-'''
-Abaqus Python script for generating a mesh based on elastically loaded EASI-STRESS U-bend samples.
-Run with 'abaqus noGUI=build_model.py STEPFILE MESHDENSITY
-STEPFILE prefix should end with 'imp_fid', otherwise script will look for explicit datum features (cylindrical bores) to create geometry-based sets, rather than specific nodes.
-(c) M. J. Roy 2021
-'''
-
 import numpy as np
 from abaqus import *
 from abaqusConstants import *

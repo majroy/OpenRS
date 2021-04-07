@@ -1,6 +1,5 @@
 '''
-Abaqus Python script for extracting stresses at nodes of a C3D8 mesh. Output: ascii based *.vtu or legacy *.vtk file depending on `outfile` extension. Both will consisting of deformed mesh and scalar fields at S11, S22, S33. Further extracts deformed positions of fiducial points specified to a text file, according to set labels U_* in the form of label, and associated node numbers & coordinates. Input odb and output directory are arguments.
-(c) M. J. Roy 2021
+Abaqus python script for extracting stresses at nodes of a C3D8 mesh. Output: ascii based text file consisting of Nx4 matrix with rows corresponding to NN, S11, S22, S33. Input odb and output directory are arguments.
 '''
 import sys
 import os.path
@@ -15,6 +14,7 @@ fiducial_file = sys.argv[3]
 if not os.path.isfile(odbname):
     sys.exit("Specified odb file to odb_access not valid.")
 
+# 'U_elastic_run.odb'
 
 odb = openOdb(odbname,readOnly=True)
 print "ODB opened"
@@ -26,6 +26,7 @@ instance = rootassembly.instances
 #access attribute information
 step = odb.steps
 
+
 allinstancestr = str(instance)
 autoins = allinstancestr.split("'")
 instancename = autoins[1]
@@ -34,6 +35,7 @@ element = instance[instancename].elements
 
 n_nodes = len(node)
 n_elements = len(element)
+
 
 allstepstr = str(step)
 autostep = allstepstr.split("'")
@@ -47,11 +49,10 @@ node_array = np.zeros([n_nodes,4])
 for n in node:
     node_array[n.label-1,:]=[n.label,n.coordinates[0],n.coordinates[1],n.coordinates[2]]
 
-#get displacements and add to base coordinates for deformed locations
 for value in Displacement.values:
     node_array[value.nodeLabel-1,1::] = node_array[value.nodeLabel-1,1::] + value.data
 
-#get element data
+
 element_array = np.zeros([n_elements,len(element[0].connectivity)+1])
 for e in element:
     con = np.asarray([i for i in e.connectivity])
@@ -60,6 +61,7 @@ for e in element:
     
 vtk_element_array = element_array
 vtk_element_array[:,0] = 8 #quads
+
 
 #access Stress components
 Stress = N_Frame.fieldOutputs['S']
@@ -79,6 +81,7 @@ stress_avg_array = np.zeros([n_nodes,3])
 for i in range(3):
     stress_avg_array[:,i] = stress_array[:,i+1]/stress_array[:,0]
     
+
 if outfile.endswith('.vtk'):
     fid=open(outfile,'w+')
     fid.write('# vtk DataFile Version 2.0\n')
@@ -105,8 +108,6 @@ if outfile.endswith('.vtk'):
         np.savetxt(fid,stress_avg_array[:,i])
     
     fid.close()
-
-#write a vtu file (preferred)
 elif outfile.endswith('.vtu'):
     fid=open(outfile,'w+')
     fid.write('<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">\n<UnstructuredGrid><Piece NumberOfPoints="%i" NumberOfCells="%i">\n'%(n_nodes,n_elements))
@@ -142,10 +143,12 @@ print('Wrote %s.'%outfile)
 #get deformed datum coodinates
 lld = instance[instancename].nodeSets['left_lower_datum'.upper()]
 lud = instance[instancename].nodeSets['left_upper_datum'.upper()]
-rud = instance[instancename].nodeSets['right_upper_datum'.upper()]
 rld = instance[instancename].nodeSets['right_lower_datum'.upper()]
+rud = instance[instancename].nodeSets['right_upper_datum'.upper()]
+l = instance[instancename].nodeSets['left'.upper()]
+r = instance[instancename].nodeSets['right'.upper()]
 Disp = N_Frame.fieldOutputs['U']
-datum_nodeSets = [lld, lud, rud, rld] #list of nodeSets
+datum_nodeSets = [lld, lud, rld, rud, l, r] #list of nodeSets
 
 
 def get_deformed_datum(nodeSet):
@@ -167,7 +170,7 @@ def get_deformed_datum(nodeSet):
 
 for nodeSet in datum_nodeSets:
     datum_values = get_deformed_datum(nodeSet)
-    with open(fiducial_file, "w") as f:
+    with open(fiducial_file, "a") as f:
         f.write('U_%s\n'%nodeSet.name) #'U_' required to identify as datum for main postprocessor
         np.savetxt(f,datum_values)
 

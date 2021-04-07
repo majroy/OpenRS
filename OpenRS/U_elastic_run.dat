@@ -1,0 +1,1563 @@
+1
+
+   Abaqus 3DEXPERIENCE R2018x                                  Date 07-Apr-2021   Time 17:44:24
+   For use by THE UNIVERSITY OF MANCHESTER under license from Dassault Systemes or its subsidiary.
+
+
+
+                         The Abaqus Software is a product of:
+
+                           Dassault Systemes SIMULIA Corp.
+                           1301 Atwood Avenue, Suite 101W
+                              Johnston, RI 02919, USA
+ 
+
+
+                   The Abaqus Software is available only under license
+                   from Dassault Systemes or its subsidiary and may be
+                   used or reproduced only in accordance with the terms
+                   of such license.
+ 
+                          On machine e-10lmepib49mr1 
+                          you are authorized to run
+                          Abaqus/Foundation until 30-Nov-2021
+
+                          Your site id is: SIT00004431 
+
+
+ 
+                    For assistance or any other information you may
+                    obtain contact information for your local office
+                    from the world wide web at:
+
+                      http://www.3ds.com/products/simulia/locations/
+
+ 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                *                                                         * 
+                *                   *****************                     * 
+                *                   *  N O T I C E  *                     * 
+                *                   *****************                     * 
+                *                                                         * 
+                *                                                         * 
+                *               Abaqus 3DEXPERIENCE R2018x                * 
+                *                                                         * 
+                *          BUILD ID: 2017_11_07-17.21.41 127140           * 
+                *                                                         * 
+                *                                                         * 
+                *  Please make sure you are using                         * 
+                *  release 3DEXPERIENCE R2018x manuals                    * 
+                *  plus the notes accompanying this release.              * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *   This program may not be used for commercial purposes  * 
+                *           without payment of a commercial fee.          * 
+                *                                                         * 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+
+ 
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *Heading
+  *Node
+  *Element, type=C3D8
+  *System
+  *Nset, nset=all, generate
+  *Elset, elset=all, generate
+  *Nset, nset=left
+  *Elset, elset=left
+  *Nset, nset=left_lower_datum
+  *Elset, elset=left_lower_datum
+  *Nset, nset=left_upper_datum
+  *Elset, elset=left_upper_datum
+  *Nset, nset=midplane_xy
+  *Elset, elset=midplane_xy, generate
+  *Nset, nset=right
+  *Elset, elset=right
+  *Nset, nset=right_lower_datum
+  *Elset, elset=right_lower_datum
+  *Nset, nset=right_upper_datum
+  *Elset, elset=right_upper_datum
+  *Elset, elset=_left_inner_S2
+  *Elset, elset=_left_inner_S6
+  *Elset, elset=_left_outer_S1
+  *Elset, elset=_left_outer_S4
+  *Elset, elset=_right_inner_S2
+  *Elset, elset=_right_inner_S6
+  *Elset, elset=_right_outer_S1
+  *Elset, elset=_right_outer_S4
+  *material, name=S355
+  *elastic, type=iso
+  *solid section, elset=all, material=S355
+  *solid section, elset=all, material=S355
+  *Surface, type=ELEMENT, name=left_inner
+  *Surface, type=ELEMENT, name=left_outer
+  *Surface, type=ELEMENT, name=right_inner
+  *Surface, type=ELEMENT, name=right_outer
+
+ ***WARNING: A BLANK LINE UNDER *SURFACE WILL BE IGNORED.
+ LINE IMAGE:                                                                    
+                                                                                
+                                                                                
+                                                                    
+  *Surface, type=ELEMENT, name=left_inner
+  *Surface, type=ELEMENT, name=left_outer
+  *Surface, type=ELEMENT, name=right_inner
+  *Surface, type=ELEMENT, name=right_outer
+  *boundary
+  *boundary
+  *Surface, type=ELEMENT, name=left_inner
+  *Surface, type=ELEMENT, name=left_outer
+  *Surface, type=ELEMENT, name=right_inner
+  *Surface, type=ELEMENT, name=right_outer
+  *output, field, frequency=1, variable=preselect
+  *output, field, frequency=1, variable=preselect
+  *output, field, frequency=1, variable=preselect
+  
+                               E L E M E N T   Q U A L I T Y  C H E C K S        
+  
+  
+ ***NOTES: DISTORTED ISOPARAMETRIC ELEMENTS: ANGLE BETWEEN ISOPARAMETRIC LINES 
+           IS LESS THAN 45 DEGREES OR GREATER THAN 135 DEGREES.
+  
+           TETRAHEDRAL QUALITY MEASURE: VOLUME OF TETRAHEDRON DIVIDED BY THE 
+           VOLUME OF EQUILATERAL TETRAHEDRON WITH SAME CIRCUMSPHERE RADIUS; 
+           0 FOR DEGENERATE TETRAHEDRON AND 1 FOR EQUILATERIAL TETRAHEDRON. IT 
+           IS RECOMMENDED THAT THE TETRAHEDRAL QUALITY MEASURE BE GREATER THAN 
+           0.02, THE MIN INTERIOR (DIHEDRAL) ANGLE BE GREATER THAN 10 DEGREES, 
+           AND THE MAX INTERIOR (DIHEDRAL) ANGLE BE LESS THAN 160 DEGREES. 
+  
+           MODIFIED TETRAHEDRAL QUALITY MEASURE: ANGLES BETWEEN THE TWO LINE 
+           SEGMENTS ON EACH EDGE; THE EDGES OF MODIFIED TETRAHEDRAL SHOULD BE 
+           AS STRAIGHT AS POSSIBLE. IT IS RECOMMENDED THAT THE ANGLE BETWEEN 
+           THE TWO LINE SEGMENTS ON EACH EDGE IS BETWEEN 160 AND 180 DEGREES. 
+  
+           TRIANGULAR QUALITY MEASURE: AREA OF TRIANGLE DIVIDED BY THE AREA OF 
+           EQUILATERAL TRIANGLE WITH SAME CIRCUMCIRCLE RADIUS; 0 FOR DEGENERATE 
+           TRIANGLE AND 1 FOR EQUILATERAL TRIANGLE. IT IS RECOMMENDED THAT THE
+           TRIANGULAR QUALITY MEASURE BE GREATER THAN 0.01, THE MIN INTERIOR 
+           ANGLE BE GREATER THAN 10 DEGREES, AND THE MAX INTERIOR ANGLE BE LESS 
+           THAN 160 DEGREES. 
+  
+           NODAL ADJUSTMENTS ARISING FROM CONTACT INTERACTIONS AND/OR TIE 
+           CONSTRAINTS CAN CAUSE SEVERE ELEMENT DISTORTION. IT MAY BE NECESSARY 
+           TO REMESH IN ORDER TO REDUCE THE AMOUNT OF ADJUSTMENT. 
+
+ ***WARNING: 12 elements are distorted. Either the isoparametric angles are out 
+             of the suggested limits or the triangular or tetrahedral quality 
+             measure is bad. The elements have been identified in element set 
+             WarnElemDistorted.
+  
+ --------------------------------------------------------------------------------
+ Distorted isoparametric elements
+  
+  Element   Min/max angle   Adjusted nodes 
+ --------- ---------------- -------------- 
+        85           24.088       NO       
+        86           24.088       NO       
+        87           24.088       NO       
+        89           24.088       NO       
+        93           24.088       NO       
+        94           24.088       NO       
+        97           24.088       NO       
+        99           24.088       NO       
+       106           24.088       NO       
+       108           24.088       NO       
+       115           24.088       NO       
+       116           24.088       NO       
+  
+  
+  *step, perturbation, name=DirectLoading
+  *output, field, frequency=1, variable=preselect
+  *step, perturbation, name=DirectLoading
+  *step, perturbation, name=DirectLoading
+  *static
+  *boundary
+  *output, field, frequency=1, variable=preselect
+  *el print, elset=all, freq=1
+  *node print, nset=all, freq=1
+  *end step
+  *step, perturbation, name=DirectLoading
+  *static
+  *boundary
+  *end step
+
+
+
+                            P R O B L E M   S I Z E
+
+
+          NUMBER OF ELEMENTS IS                                   116
+          NUMBER OF NODES IS                                      285
+          NUMBER OF NODES DEFINED BY THE USER                     285
+          TOTAL NUMBER OF VARIABLES IN THE MODEL                  855
+          (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
+           VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =  0.10000    
+       SYSTEM TIME (SEC)    =  0.10000    
+       TOTAL CPU TIME (SEC) =  0.20000    
+       WALLCLOCK TIME (SEC) =          0
+1
+
+   Abaqus 3DEXPERIENCE R2018x                                  Date 07-Apr-2021   Time 17:44:49
+   For use by THE UNIVERSITY OF MANCHESTER under license from Dassault Systemes or its subsidiary.
+
+                                                                                               STEP    1  INCREMENT    1
+                                                                                          TIME COMPLETED IN THIS STEP   0.00    
+
+
+                        S T E P       1     S T A T I C   A N A L Y S I S
+
+
+                                                                                          
+
+          FIXED TIME INCREMENTS
+          TIME INCREMENT IS                                    2.220E-16
+          TIME PERIOD IS                                       2.220E-16
+
+     LINEAR EQUATION SOLVER TYPE         DIRECT SPARSE
+
+     THIS IS A LINEAR PERTURBATION STEP.
+     ALL LOADS ARE DEFINED AS CHANGE IN LOAD TO THE REFERENCE STATE
+  
+                   M E M O R Y   E S T I M A T E
+  
+ PROCESS      FLOATING PT       MINIMUM MEMORY        MEMORY TO
+              OPERATIONS           REQUIRED          MINIMIZE I/O
+             PER ITERATION           (MB)               (MB)
+  
+     1          2.27E+06               17                 24
+  
+ NOTE:
+      (1) SINCE ABAQUS DOES NOT PRE-ALLOCATE MEMORY AND ONLY ALLOCATES MEMORY AS NEEDED DURING THE ANALYSIS,
+          THE MEMORY REQUIREMENT PRINTED HERE CAN ONLY BE VIEWED AS A GENERAL GUIDELINE BASED ON THE BEST
+          KNOWLEDGE AVAILABLE AT THE BEGINNING OF A STEP BEFORE THE SOLUTION PROCESS HAS BEGUN.
+      (2) THE ESTIMATE IS NORMALLY UPDATED AT THE BEGINNING OF EVERY STEP. IT IS THE MAXIMUM VALUE OF THE
+          ESTIMATE FROM THE CURRENT STEP TO THE LAST STEP OF THE ANALYSIS, WITH UNSYMMETRIC SOLUTION TAKEN
+          INTO ACCOUNT IF APPLICABLE. 
+      (3) SINCE THE ESTIMATE IS BASED ON THE ACTIVE DEGREES OF FREEDOM IN THE FIRST ITERATION OF THE 
+          CURRENT STEP, THE MEMORY ESTIMATE MIGHT BE SIGNIFICANTLY DIFFERENT THAN ACTUAL USAGE FOR 
+          PROBLEMS WITH SUBSTANTIAL CHANGES IN ACTIVE DEGREES OF FREEDOM BETWEEN STEPS (OR EVEN WITHIN
+          THE SAME STEP). EXAMPLES ARE: PROBLEMS WITH SIGNIFICANT CONTACT CHANGES, PROBLEMS WITH MODEL
+          CHANGE, PROBLEMS WITH BOTH STATIC STEP AND STEADY STATE DYNAMIC PROCEDURES WHERE ACOUSTIC 
+          ELEMENTS WILL ONLY BE ACTIVATED IN THE STEADY STATE DYNAMIC STEPS.
+      (4) FOR MULTI-PROCESS EXECUTION, THE ESTIMATED VALUE OF FLOATING POINT OPERATIONS FOR EACH PROCESS
+          IS BASED ON AN INITIAL SCHEDULING OF OPERATIONS AND MIGHT NOT REFLECT THE ACTUAL FLOATING 
+          POINT OPERATIONS COMPLETED ON EACH PROCESS. OPERATIONS ARE DYNAMICALLY BALANCED DURING EXECUTION, 
+          SO THE ACTUAL BALANCE OF OPERATIONS BETWEEN PROCESSES IS EXPECTED TO BE BETTER THAN THE ESTIMATE
+          PRINTED HERE.
+      (5) THE UPPER LIMIT OF MEMORY THAT CAN BE ALLOCATED BY ABAQUS WILL IN GENERAL DEPEND ON THE VALUE OF
+          THE "MEMORY" PARAMETER AND THE AMOUNT OF PHYSICAL MEMORY AVAILABLE ON THE MACHINE. PLEASE SEE
+          THE "ABAQUS ANALYSIS USER'S MANUAL" FOR MORE DETAILS. THE ACTUAL USAGE OF MEMORY AND OF DISK
+          SPACE FOR SCRATCH DATA WILL DEPEND ON THIS UPPER LIMIT AS WELL AS THE MEMORY REQUIRED TO MINIMIZE
+          I/O. IF THE MEMORY UPPER LIMIT IS GREATER THAN THE MEMORY REQUIRED TO MINIMIZE I/O, THEN THE ACTUAL
+          MEMORY USAGE WILL BE CLOSE TO THE ESTIMATED "MEMORY TO MINIMIZE I/O" VALUE, AND THE SCRATCH DISK
+          USAGE WILL BE CLOSE-TO-ZERO; OTHERWISE, THE ACTUAL MEMORY USED WILL BE CLOSE TO THE PREVIOUSLY
+          MENTIONED MEMORY LIMIT, AND THE SCRATCH DISK USAGE WILL BE ROUGHLY PROPORTIONAL TO THE DIFFERENCE
+          BETWEEN THE ESTIMATED "MEMORY TO MINIMIZE I/O" AND THE MEMORY UPPER LIMIT. HOWEVER ACCURATE
+          ESTIMATE OF THE SCRATCH DISK SPACE IS NOT POSSIBLE.
+      (6) USING "*RESTART, WRITE" CAN GENERATE A LARGE AMOUNT OF DATA WRITTEN IN THE WORK DIRECTORY.
+
+
+                                INCREMENT     1 SUMMARY
+
+
+ TIME INCREMENT COMPLETED  2.220E-16,  FRACTION OF STEP COMPLETED   1.00    
+ STEP TIME COMPLETED       2.220E-16,  TOTAL TIME COMPLETED         0.00    
+
+
+
+                                                  E L E M E N T   O U T P U T
+
+
+
+
+
+   THE FOLLOWING TABLE IS PRINTED AT THE INTEGRATION POINTS FOR ELEMENT TYPE C3D8 AND ELEMENT SET 
+   ALL
+
+    ELEMENT  PT FOOT-       COORD1      COORD2      COORD3      S11         S22         S33         S12         S13         S23         
+                NOTE 
+
+           1   1          21.07       21.22      -7.887       3.867      -31.26     -0.7534       4.702       2.300      -5.569
+           1   2          23.98       21.22      -7.887      -3.434      -16.28      -8.431       5.455       2.548      -1.739
+           1   3          21.09       24.57      -7.887       4.505      -32.50     -0.1487       17.18       1.786      -3.581
+           1   4          24.07       24.57      -7.887      -2.160      -17.41      -8.572       17.91       2.200      -1.319
+           1   5          21.09       21.10      -2.113       1.686      -26.07      -3.761       4.013       1.772      -3.836
+           1   6          24.07       21.10      -2.113      -4.178      -13.93      -10.04       5.121       2.023      -1.220
+           1   7          21.19       24.11      -2.113       2.599      -27.74      -3.000       12.33     -0.3681      -1.601
+           1   8          24.43       24.11      -2.113      -2.325      -16.12      -9.697       13.34      3.9454E-02 -0.6542
+           2   1          26.09       21.22      -7.887       4.309       18.57       10.25       5.167       2.468       1.227
+           2   2          28.95       21.22      -7.887      -2.823       32.88       3.079       4.364       3.036       5.422
+           2   3          26.19       24.57      -7.887       3.555       19.00       10.58       18.03       3.334      0.6265
+           2   4          28.98       24.57      -7.887      -3.296       34.13       2.300       17.21       2.973       3.705
+           2   5          26.19       21.10      -2.113       5.794       18.04       9.306       4.402       2.215      0.7350
+           2   6          28.98       21.10      -2.113      0.7740       28.19       4.172       2.010       2.764       3.306
+           2   7          26.55       24.11      -2.113       2.932       18.71       11.49       13.77       1.013      0.1481
+           2   8          29.07       24.11      -2.113      -2.031       30.50       4.664       11.13      0.4782       1.419
+           3   1          21.10       27.09      -7.887       6.162      -50.12       1.263     -0.9514     -0.5543      -3.329
+           3   2          24.11       27.09      -7.887      -5.104      -24.53      -13.06      0.2720     -0.1919      -1.334
+           3   3          21.10       30.63      -7.887       7.349      -51.82       1.774       20.76       1.970      -2.257
+           3   4          24.11       30.63      -7.887      -3.256      -25.57      -13.87       21.99       1.929     -0.9023
+           3   5          21.22       26.59      -2.113       5.051      -47.43     -0.3149      -1.852      -3.341      -1.334
+           3   6          24.57       26.59      -2.113      -6.876      -20.62      -15.20      -1.119      -3.047     -0.5022
+           3   7          21.22       30.36      -2.113       5.438      -48.69      0.5616       19.98      -2.457     -0.3558
+           3   8          24.57       30.36      -2.113      -5.924      -21.32      -15.45       20.72      -2.511     -0.2062
+           4   1          26.22       27.09      -7.887       6.590       31.15       14.65      0.4568       1.682      0.2440
+           4   2          28.99       27.09      -7.887      -3.683       54.25       1.825     -0.8397       1.028       2.619
+           4   3          26.22       30.63      -7.887       4.755       32.64       15.00       21.86       4.411      0.1468
+           4   4          28.99       30.63      -7.887      -4.996       56.27       1.125       20.56       4.058       1.630
+           4   5          26.68       26.59      -2.113       3.103       35.12       14.17     -0.6987      -1.541     -1.8948E-02
+           4   6          29.11       26.59      -2.113      -4.786       54.08       3.098      -1.386      -2.218      0.5795
+           4   7          26.68       30.36      -2.113       1.959       36.11       14.33       20.11     -0.5881     -0.1631
+           4   8          29.11       30.36      -2.113      -5.379       55.62       2.152       19.42     -0.9523     -0.3656
+           5   1          21.10       33.23      -7.887       7.605      -72.40       1.586      -4.871       1.620      -1.688
+           5   2          24.11       33.23      -7.887      -7.383      -36.08      -19.74      -3.875       1.380     -0.6118
+           5   3          21.10       36.77      -7.887       8.597      -73.75       1.950       25.35       2.205      -1.701
+           5   4          24.11       36.77      -7.887      -5.893      -36.94      -20.37       26.35       1.846     -0.4354
+           5   5          21.22       33.12      -2.113       6.273      -70.92       1.436      -7.202      -3.909     -0.2819
+           5   6          24.57       33.12      -2.113      -10.89      -30.85      -21.47      -6.284      -4.125     -0.1055
+           5   7          21.22       36.88      -2.113       7.096      -72.16       1.858       25.06      -4.484     -0.3750
+           5   8          24.57       36.88      -2.113      -9.642      -31.67      -21.90       25.97      -4.808     -0.2405
+           6   1          26.22       33.23      -7.887       9.496       45.65       21.29      -4.048       4.255      0.1722
+           6   2          28.99       33.23      -7.887      -4.630       79.05       2.011      -5.172       4.025       1.203
+           6   3          26.22       36.77      -7.887       7.842       46.87       21.72       26.43       5.187      0.4311
+           6   4          28.99       36.77      -7.887      -5.891       80.67       1.653       25.30       4.976       1.566
+           6   5          26.68       33.12      -2.113       5.796       51.10       19.54      -7.071      -1.907     -2.5389E-02
+           6   6          29.11       33.12      -2.113      -6.388       81.37       1.449      -8.038      -2.163     -0.1927
+           6   7          26.68       36.88      -2.113       3.986       52.29       20.16       25.82      -2.200     -0.1143
+           6   8          29.11       36.88      -2.113      -7.782       82.97       1.240       24.86      -2.447      5.9862E-02
+           7   1          21.10       39.37      -7.887       11.02      -95.94       3.554      -9.405       3.294      -1.483
+           7   2          24.11       39.37      -7.887      -9.030      -46.93      -25.40      -7.902       2.800     -0.2367
+           7   3          21.10       42.91      -7.887       12.75      -97.75       3.637       31.28      0.1542      -1.522
+           7   4          24.11       42.91      -7.887      -6.823      -48.27      -26.27       32.79     -0.5433      0.5324
+           7   5          21.22       39.64      -2.113       9.150      -93.83       3.323      -13.13      -3.963     -0.1110
+           7   6          24.57       39.64      -2.113      -14.45      -38.70      -28.21      -11.79      -4.408     -0.2503
+           7   7          21.22       43.41      -2.113       10.57      -95.46       3.529       31.25      -7.999     -0.2769
+           7   8          24.57       43.41      -2.113      -12.63      -39.92      -28.82       32.59      -8.627     -7.1545E-03
+           8   1          26.22       39.37      -7.887       11.04       59.71       27.16      -8.284       6.637      0.5755
+           8   2          28.99       39.37      -7.887      -7.011       103.1       1.870      -10.10       6.500       1.475
+           8   3          26.22       42.91      -7.887       8.151       61.47       28.29       31.08       4.176       1.609
+           8   4          28.99       42.91      -7.887      -9.471       105.2       2.141       29.27       4.160       2.061
+           8   5          26.68       39.64      -2.113       5.655       68.06       24.19      -12.91      -1.434     -0.1634
+           8   6          29.11       39.64      -2.113      -9.329       106.1       1.101      -14.33      -1.620     -8.6112E-02
+           8   7          26.68       43.41      -2.113       2.850       69.66       25.40       28.20      -5.040      0.4883
+           8   8          29.11       43.41      -2.113      -11.68       108.2       1.402       26.78      -5.113      0.3796
+           9   1          21.09       45.43      -7.887       12.40      -123.5       2.091      -12.90       6.265      -1.255
+           9   2          24.07       45.43      -7.887      -12.13      -63.43      -33.45      -11.19       5.514     -0.1376
+           9   3          21.07       48.78      -7.887       14.05      -125.0       1.950       35.66       5.341      -2.341
+           9   4          23.98       48.78      -7.887      -11.11      -63.52      -34.38       37.41       4.786     -0.9412
+           9   5          21.19       45.89      -2.113       11.92      -124.8       3.852      -12.11      -2.943      0.5115
+           9   6          24.43       45.89      -2.113      -14.38      -62.20      -32.44      -10.07      -3.670      0.2510
+           9   7          21.09       48.90      -2.113       13.00      -124.9       2.927       32.79      -5.307     -0.5990
+           9   8          24.07       48.90      -2.113      -15.62      -56.83      -36.56       35.00      -5.860     -0.2831
+          10   1          26.19       45.43      -7.887       15.66       73.83       36.85      -13.31       9.741      0.4735
+          10   2          28.98       45.43      -7.887      -6.876       128.4       4.810      -12.22       9.508      0.2790
+          10   3          26.09       48.78      -7.887       15.97       74.20       36.17       31.77       6.740      4.2678E-02
+          10   4          28.95       48.78      -7.887      -5.288       128.1       3.480       32.83       6.523      0.8218
+          10   5          26.55       45.89      -2.113       13.94       75.28       37.12      -15.21     -0.4360      0.2687
+          10   6          29.07       45.89      -2.113      -8.546       130.6       4.282      -14.09     -0.6868     -0.6313
+          10   7          26.19       48.90      -2.113       12.00       80.95       33.39       26.88      -4.898      5.6089E-02
+          10   8          28.98       48.90      -2.113      -7.598       131.8       2.112       27.89      -5.119      4.2888E-02
+          11   1         -21.07       21.22      -7.887       4.226      -31.87     -0.2258      -4.385      -2.385      -6.954
+          11   2         -23.98       21.22      -7.887      -3.555      -16.32      -7.997      -5.246      -3.119      -2.182
+          11   3         -21.09       21.10      -2.113       2.416      -25.55      -4.737      -4.435      -2.204      -5.191
+          11   4         -24.07       21.10      -2.113      -3.463      -13.75      -10.66      -4.747      -2.910      -1.782
+          11   5         -21.09       24.57      -7.887       5.022      -33.21      0.3135      -17.45      -1.601      -4.265
+          11   6         -24.07       24.57      -7.887      -2.082      -17.53      -8.263      -18.29      -2.067      -1.381
+          11   7         -21.19       24.11      -2.113       2.337      -26.73      -3.477      -12.62      0.3797      -2.184
+          11   8         -24.43       24.11      -2.113      -2.570      -15.39      -9.911      -12.91     -1.0127E-02 -0.8182
+          12   1         -26.09       21.22      -7.887       4.641       18.21       9.453      -4.416      -3.304       1.649
+          12   2         -28.95       21.22      -7.887      -3.074       33.65       1.731      -3.340      -2.638       7.294
+          12   3         -26.19       21.10      -2.113       3.126       18.60       10.58      -5.782      -3.113      0.9363
+          12   4         -28.98       21.10      -2.113      -1.114       27.16       6.264      -4.551      -2.427       4.978
+          12   5         -26.19       24.57      -7.887       3.516       18.87       9.925      -18.32      -3.299      0.8863
+          12   6         -28.98       24.57      -7.887      -3.936       35.15       1.091      -17.21      -2.552       4.245
+          12   7         -26.55       24.11      -2.113       2.048       18.64       11.62      -13.57      -1.004      0.1850
+          12   8         -29.07       24.11      -2.113      -2.057       28.66       5.709      -12.21     -0.1676       1.618
+          13   1         -21.10       27.09      -7.887       6.070      -50.10       1.007      0.8546      0.8096      -3.905
+          13   2         -24.11       27.09      -7.887      -5.291      -24.56      -13.17     -0.4294      0.5298      -1.294
+          13   3         -21.22       26.59      -2.113       4.684      -47.18     -0.5214       1.644       3.470      -1.749
+          13   4         -24.57       26.59      -2.113      -7.166      -20.73      -15.12      0.7150       3.238     -0.4219
+          13   5         -21.10       30.63      -7.887       7.287      -51.91       1.600      -20.89      -1.905      -2.770
+          13   6         -24.11       30.63      -7.887      -3.364      -25.66      -14.00      -22.17      -1.866     -0.9578
+          13   7         -21.22       30.36      -2.113       5.304      -48.66      0.3321      -19.95       2.488     -0.7046
+          13   8         -24.57       30.36      -2.113      -5.938      -21.60      -15.48      -20.87       2.534     -0.1949
+          14   1         -26.22       27.09      -7.887       6.864       31.15       14.68     -0.7210      -1.397      0.5760
+          14   2         -28.99       27.09      -7.887      -3.408       54.15       1.952      0.7055     -0.6849       3.166
+          14   3         -26.68       26.59      -2.113       3.361       34.94       14.40      0.7054       1.769      0.3365
+          14   4         -29.11       26.59      -2.113      -4.597       53.95       3.348       1.471       2.505       1.068
+          14   5         -26.22       30.63      -7.887       4.813       32.76       15.13      -22.06      -4.403      0.3581
+          14   6         -28.99       30.63      -7.887      -4.914       56.31       1.306      -20.63      -4.017       2.123
+          14   7         -26.68       30.36      -2.113       2.060       36.01       14.63      -20.19      0.5939      6.6826E-02
+          14   8         -29.11       30.36      -2.113      -5.324       55.59       2.429      -19.42      0.9923      6.8603E-02
+          15   1         -21.10       33.23      -7.887       7.685      -72.44       1.619       4.641      -1.628      -1.951
+          15   2         -24.11       33.23      -7.887      -7.298      -36.15      -19.69       3.684      -1.408     -0.6508
+          15   3         -21.22       33.12      -2.113       6.437      -71.05       1.481       7.160       3.902     -0.5509
+          15   4         -24.57       33.12      -2.113      -10.77      -30.91      -21.45       6.326       4.100     -0.1614
+          15   5         -21.10       36.77      -7.887       8.619      -73.76       2.008      -25.57      -2.213      -2.000
+          15   6         -24.11       36.77      -7.887      -5.855      -36.96      -20.32      -26.53      -1.847     -0.4626
+          15   7         -21.22       36.88      -2.113       7.139      -72.23       1.959      -25.16       4.480     -0.6785
+          15   8         -24.57       36.88      -2.113      -9.631      -31.66      -21.84      -26.00       4.808     -0.2914
+          16   1         -26.22       33.23      -7.887       9.425       45.58       21.35       3.857      -4.324      0.2766
+          16   2         -28.99       33.23      -7.887      -4.690       78.97       2.078       4.948      -4.083       1.476
+          16   3         -26.68       33.12      -2.113       5.648       51.13       19.58       7.120       1.856      5.5454E-02
+          16   4         -29.11       33.12      -2.113      -6.558       81.46       1.458       8.025       2.124      4.8713E-02
+          16   5         -26.22       36.77      -7.887       7.842       46.80       21.72      -26.60      -5.187      0.5765
+          16   6         -28.99       36.77      -7.887      -5.881       80.58       1.660      -25.51      -4.986       1.913
+          16   7         -26.68       36.88      -2.113       3.982       52.27       20.11      -25.84       2.199     -9.5858E-04
+          16   8         -29.11       36.88      -2.113      -7.810       83.01       1.155      -24.93       2.434      0.3691
+          17   1         -21.10       39.37      -7.887       11.01      -96.05       3.601       9.242      -3.295      -1.847
+          17   2         -24.11       39.37      -7.887      -9.051      -46.99      -25.39       7.718      -2.786     -0.3177
+          17   3         -21.22       39.64      -2.113       9.068      -93.84       3.343       13.10       3.957     -0.4619
+          17   4         -24.57       39.64      -2.113      -14.52      -38.70      -28.21       11.72       4.416     -0.3107
+          17   5         -21.10       42.91      -7.887       12.77      -97.88       3.681      -31.48     -0.1315      -1.847
+          17   6         -24.11       42.91      -7.887      -6.819      -48.35      -26.26      -33.00      0.5704      0.4694
+          17   7         -21.22       43.41      -2.113       10.54      -95.50       3.532      -31.27       7.992     -0.5899
+          17   8         -24.57       43.41      -2.113      -12.65      -39.95      -28.83      -32.66       8.625     -4.7937E-02
+          18   1         -26.22       39.37      -7.887       11.05       59.68       27.15       8.097      -6.612      0.6878
+          18   2         -28.99       39.37      -7.887      -7.008       103.1       1.829       9.924      -6.490       1.833
+          18   3         -26.68       39.64      -2.113       5.708       68.03       24.15       12.85       1.450     -3.6022E-02
+          18   4         -29.11       39.64      -2.113      -9.267       106.1       1.051       14.30       1.619      0.2622
+          18   5         -26.22       42.91      -7.887       8.137       61.45       28.30      -31.30      -4.154       1.725
+          18   6         -28.99       42.91      -7.887      -9.487       105.3       2.101      -29.47      -4.140       2.405
+          18   7         -26.68       43.41      -2.113       2.829       69.66       25.40      -28.26       5.053      0.6224
+          18   8         -29.11       43.41      -2.113      -11.68       108.2       1.377      -26.80       5.123      0.7155
+          19   1         -21.09       45.43      -7.887       12.40      -123.7       2.045       12.73      -6.248      -1.532
+          19   2         -24.07       45.43      -7.887      -12.16      -63.55      -33.51       11.02      -5.495     -0.1970
+          19   3         -21.19       45.89      -2.113       11.89      -124.9       3.799       12.04       2.909      8.4504E-02
+          19   4         -24.43       45.89      -2.113      -14.42      -62.30      -32.50       10.02       3.637      0.1477
+          19   5         -21.07       48.78      -7.887       14.11      -125.1       1.800      -35.87      -5.355      -2.601
+          19   6         -23.98       48.78      -7.887      -11.12      -63.63      -34.47      -37.61      -4.791     -0.9987
+          19   7         -21.09       48.90      -2.113       13.01      -125.0       2.768      -32.87       5.163     -0.9981
+          19   8         -24.07       48.90      -2.113      -15.66      -56.91      -36.65      -35.07       5.725     -0.3511
+          20   1         -26.19       45.43      -7.887       15.68       73.87       36.93       13.14      -9.733      0.5602
+          20   2         -28.98       45.43      -7.887      -6.871       128.5       4.875       12.06      -9.497      0.5459
+          20   3         -26.55       45.89      -2.113       13.96       75.33       37.19       15.17      0.3925      0.3978
+          20   4         -29.07       45.89      -2.113      -8.532       130.7       4.339       14.04      0.6472     -0.1971
+          20   5         -26.09       48.78      -7.887       15.98       74.23       36.27      -31.96      -6.739      0.1246
+          20   6         -28.95       48.78      -7.887      -5.344       128.2       3.662      -33.02      -6.528       1.082
+          20   7         -26.19       48.90      -2.113       12.03       80.97       33.48      -26.94       4.748      0.2137
+          20   8         -28.98       48.90      -2.113      -7.626       131.8       2.285      -27.97       4.962      0.4791
+          21   1          20.84       51.38      -2.113       5.074      -147.4       3.851      -4.811      -6.035     -0.8314
+          21   2          23.70       51.56      -2.113      -25.79      -73.14      -39.54      -16.59      -6.505      6.6308E-02
+          21   3          20.84       51.38      -7.887       5.049      -145.5       2.023      -6.011       5.496     -0.4973
+          21   4          23.70       51.56      -7.887      -26.37      -70.17      -41.92      -17.84       4.983       1.053
+          21   5          20.24       55.13      -2.113      -20.45      -123.0       5.007       72.63      -5.749      -2.122
+          21   6          23.02       55.84      -2.113      -48.07      -51.56      -38.84       51.52      -6.274      -2.044
+          21   7          20.24       55.13      -7.887      -20.60      -120.9       3.044       72.68       6.758      -1.633
+          21   8          23.02       55.84      -7.887      -48.77      -48.35      -41.34       51.37       6.072     -0.9211
+          22   1          25.79       51.70      -2.113       4.918       68.78       33.67      -37.99      -6.411      0.4559
+          22   2          28.64       51.89      -2.113      -14.35       120.6       1.150      -46.18      -6.733      0.4625
+          22   3          25.79       51.70      -7.887       3.683       72.46       31.23      -37.50       6.098       2.042
+          22   4          28.64       51.89      -7.887      -15.38       123.8      -1.059      -45.46       5.740       2.595
+          22   5          25.05       56.35      -2.113      -16.18       89.29       34.26       25.27      -6.212      -1.930
+          22   6          27.83       57.05      -2.113      -33.06       139.3       1.105       10.77      -6.777      -1.890
+          22   7          25.05       56.35      -7.887      -16.84       92.59       31.62       25.20       7.286     -0.1873
+          22   8          27.83       57.05      -7.887      -33.57       142.2      -1.271       10.98       6.585      0.3836
+          23   1          19.39       57.75      -2.113      -2.746      -171.2       4.698       46.83      -5.815      -2.031
+          23   2          22.05       58.81      -2.113      -20.22      -101.0      -48.00      -3.174      -6.459      -2.163
+          23   3          19.39       57.75      -7.887      -3.869      -166.8       1.425       46.40       6.322       2.462
+          23   4          22.05       58.81      -7.887      -21.19      -97.10      -50.97      -3.262       5.318       3.229
+          23   5          17.67       61.14      -2.113      -84.66      -90.62       6.016       105.9      -5.076      -4.199
+          23   6          20.09       62.66      -2.113      -91.95      -29.85      -47.46       48.75      -5.896      -4.384
+          23   7          17.67       61.14      -7.887      -85.23      -86.78       2.746       105.0       8.363      0.9586
+          23   8          20.09       62.66      -7.887      -92.43      -26.40      -50.43       48.30       7.027       1.591
+          24   1          24.00       59.59      -2.113       42.92       49.05       40.55      -55.21      -6.473      -1.945
+          24   2          26.66       60.65      -2.113       35.57       93.31       3.638      -87.70      -7.173      -1.874
+          24   3          24.00       59.59      -7.887       42.37       52.38       37.77      -55.57       6.371       4.707
+          24   4          26.66       60.65      -7.887       35.08       96.50      0.9321      -88.00       5.371       5.529
+          24   5          21.86       63.78      -2.113      -21.61       111.3       42.88      -13.69      -5.889      -4.207
+          24   6          24.28       65.31      -2.113      -22.03       149.8       4.743      -50.32      -6.633      -4.335
+          24   7          21.86       63.78      -7.887      -22.08       114.4       40.15      -14.23       8.272       3.115
+          24   8          24.28       65.31      -7.887      -22.44       152.9       2.086      -50.78       7.096       3.672
+          25   1          16.05       63.36      -2.113      -50.10      -149.6       5.244       99.74      -5.342      -4.263
+          25   2          18.25       65.19      -2.113      -27.03      -112.6      -54.78       24.44      -6.147      -4.606
+          25   3          16.05       63.36      -7.887      -49.67      -146.5       1.695       98.01       6.009       5.315
+          25   4          18.25       65.19      -7.887      -26.55      -109.7      -58.18       22.93       4.757       5.509
+          25   5          13.36       66.05      -2.113      -164.9      -35.88       6.285       99.83      -3.971      -6.177
+          25   6          15.19       68.25      -2.113      -127.7      -12.43      -54.28       24.52      -4.718      -6.677
+          25   7          13.36       66.05      -7.887      -164.1      -33.16       2.846       97.94       8.126       4.147
+          25   8          15.19       68.25      -7.887      -127.0      -9.862      -57.58       22.86       6.842       4.094
+          26   1          19.86       66.53      -2.113       86.13       13.03       45.77      -54.18      -6.194      -4.363
+          26   2          22.06       68.37      -2.113       103.8       37.57       3.614      -100.9      -6.877      -4.700
+          26   3          19.86       66.53      -7.887       86.54       15.78       42.61      -55.75       5.788       7.436
+          26   4          22.06       68.37      -7.887       104.2       40.17      0.5845      -102.3       4.780       7.489
+          26   5          16.53       69.86      -2.113     -5.5238E-02   98.08       46.91      -55.67      -4.712      -6.517
+          26   6          18.37       72.06      -2.113       26.45       114.4       4.052      -102.3      -5.363      -6.981
+          26   7          16.53       69.86      -7.887      0.6696       100.4       43.82      -57.35       7.926       5.937
+          26   8          18.37       72.06      -7.887       27.16       116.7       1.092      -103.8       6.884       5.798
+          27   1          11.14       67.67      -2.113      -127.2      -91.25       5.734       121.7      -4.290      -6.197
+          27   2          12.66       70.09      -2.113      -52.85      -100.5      -59.34       51.27      -4.917      -6.848
+          27   3          11.14       67.67      -7.887      -124.9      -89.75       1.926       119.5       3.797       7.855
+          27   4          12.66       70.09      -7.887      -50.71      -99.03      -62.99       49.32       2.740       7.475
+          27   5          7.747       69.39      -2.113      -227.7       8.564       6.380       49.06      -2.123      -7.543
+          27   6          8.809       72.05      -2.113      -141.0      -12.60      -59.09      -12.58      -2.634      -8.337
+          27   7          7.747       69.39      -7.887      -225.0       9.714       2.609       47.05       6.313       7.194
+          27   8          8.809       72.05      -7.887      -138.6      -11.40      -62.71      -14.38       5.330       6.587
+          28   1          13.78       71.86      -2.113       122.3      -15.07       50.39      -21.70      -5.009      -6.633
+          28   2          15.31       74.28      -2.113       172.1      -18.89       4.416      -65.28      -5.571      -7.219
+          28   3          13.78       71.86      -7.887       124.4      -13.76       46.97      -23.65       3.308       9.686
+          28   4          15.31       74.28      -7.887       174.1      -17.57       1.108      -67.06       2.422       9.305
+          28   5          9.587       74.00      -2.113       47.05       59.26       51.29      -77.70      -2.628      -8.196
+          28   6          10.65       76.66      -2.113       104.6       48.25       4.767      -115.7      -3.078      -8.913
+          28   7          9.587       74.00      -7.887       49.42       60.27       47.90      -79.50       6.007       8.748
+          28   8          10.65       76.66      -7.887       106.8       49.31       1.485      -117.3       5.201       8.173
+          29   1          5.132       70.24      -2.113      -203.2      -25.26       6.196       95.00      -2.440      -7.548
+          29   2          5.835       73.02      -2.113      -90.66      -69.75      -61.82       61.33      -2.724      -8.452
+          29   3          5.132       70.24      -7.887      -199.4      -25.11       2.238       93.92      0.5135       9.352
+          29   4          5.835       73.02      -7.887      -87.17      -69.45      -65.61       60.37      7.7419E-02   8.486
+          29   5          1.375       70.84      -2.113      -243.1       14.47       6.447      -27.71      0.1516      -8.045
+          29   6          1.564       73.70      -2.113      -125.8      -34.76      -61.69      -46.59      3.2685E-02  -8.994
+          29   7          1.375       70.84      -7.887      -239.2       14.46       2.510      -28.43       3.142       9.089
+          29   8          1.564       73.70      -7.887      -122.2      -34.61      -65.46      -47.23       2.867       8.150
+          30   1          6.350       75.05      -2.113       127.6      -17.04       52.69       26.14      -2.797      -8.294
+          30   2          7.054       77.83      -2.113       200.6      -42.00       4.625       5.346      -3.056      -9.104
+          30   3          6.350       75.05      -7.887       131.0      -16.92       49.14       25.20      0.2481       10.82
+          30   4          7.054       77.83      -7.887       203.8      -41.77       1.197       4.490     -0.1261       10.03
+          30   5          1.702       75.79      -2.113       97.79       12.50       52.96      -66.40      7.8624E-02  -8.857
+          30   6          1.890       78.64      -2.113       173.8      -15.34       4.731      -77.97     -2.3398E-02  -9.708
+          30   7          1.702       75.79      -7.887       101.3       12.48       49.43      -67.03       3.158       10.47
+          30   8          1.890       78.64      -7.887       177.2      -15.24       1.319      -78.55       2.937       9.625
+          31   1         -1.375       70.84      -2.113      -243.1       14.47       6.447       27.71     -0.1498      -8.046
+          31   2         -1.564       73.70      -2.113      -125.8      -34.76      -61.69       46.59     -3.2512E-02  -8.995
+          31   3         -1.375       70.84      -7.887      -239.2       14.46       2.511       28.43      -3.139       9.089
+          31   4         -1.564       73.70      -7.887      -122.2      -34.61      -65.46       47.23      -2.866       8.150
+          31   5         -5.132       70.24      -2.113      -203.2      -25.26       6.197      -95.00       2.442      -7.551
+          31   6         -5.835       73.02      -2.113      -90.66      -69.75      -61.82      -61.33       2.724      -8.455
+          31   7         -5.132       70.24      -7.887      -199.4      -25.11       2.240      -93.92     -0.5105       9.351
+          31   8         -5.835       73.02      -7.887      -87.17      -69.45      -65.61      -60.37     -7.7109E-02   8.485
+          32   1         -1.702       75.79      -2.113       97.79       12.49       52.96       66.40     -7.9642E-02  -8.858
+          32   2         -1.890       78.64      -2.113       173.8      -15.34       4.730       77.97      2.0801E-02  -9.709
+          32   3         -1.702       75.79      -7.887       101.3       12.48       49.43       67.03      -3.160       10.47
+          32   4         -1.890       78.64      -7.887       177.2      -15.24       1.318       78.54      -2.941       9.624
+          32   5         -6.350       75.05      -2.113       127.6      -17.04       52.69      -26.14       2.796      -8.297
+          32   6         -7.054       77.83      -2.113       200.6      -42.00       4.622      -5.347       3.053      -9.108
+          32   7         -6.350       75.05      -7.887       131.0      -16.92       49.14      -25.20     -0.2497       10.81
+          32   8         -7.054       77.83      -7.887       203.8      -41.77       1.194      -4.492      0.1224       10.03
+          33   1         -7.747       69.39      -2.113      -227.7       8.561       6.383      -49.06       2.125      -7.547
+          33   2         -8.809       72.05      -2.113      -141.0      -12.60      -59.09       12.58       2.634      -8.342
+          33   3         -7.747       69.39      -7.887      -225.0       9.711       2.613      -47.05      -6.311       7.192
+          33   4         -8.809       72.05      -7.887      -138.6      -11.40      -62.70       14.38      -5.330       6.585
+          33   5         -11.14       67.67      -2.113      -127.2      -91.25       5.737      -121.7       4.291      -6.205
+          33   6         -12.66       70.09      -2.113      -52.85      -100.5      -59.34      -51.27       4.918      -6.856
+          33   7         -11.14       67.67      -7.887      -124.9      -89.76       1.931      -119.5      -3.797       7.851
+          33   8         -12.66       70.09      -7.887      -50.70      -99.04      -62.99      -49.33      -2.740       7.470
+          34   1         -9.587       74.00      -2.113       47.04       59.25       51.29       77.70       2.628      -8.201
+          34   2         -10.65       76.66      -2.113       104.6       48.25       4.760       115.7       3.076      -8.919
+          34   3         -9.587       74.00      -7.887       49.42       60.27       47.90       79.50      -6.010       8.745
+          34   4         -10.65       76.66      -7.887       106.8       49.31       1.478       117.3      -5.206       8.169
+          34   5         -13.78       71.86      -2.113       122.3      -15.07       50.39       21.70       5.010      -6.642
+          34   6         -15.31       74.28      -2.113       172.1      -18.89       4.407       65.28       5.571      -7.228
+          34   7         -13.78       71.86      -7.887       124.4      -13.76       46.96       23.65      -3.310       9.682
+          34   8         -15.31       74.28      -7.887       174.1      -17.57       1.099       67.06      -2.426       9.300
+          35   1         -13.36       66.05      -2.113      -164.9      -35.90       6.275      -99.84       3.967      -6.190
+          35   2         -15.19       68.25      -2.113      -127.8      -12.45      -54.29      -24.53       4.718      -6.689
+          35   3         -13.36       66.05      -7.887      -164.2      -33.19       2.845      -97.96      -8.134       4.133
+          35   4         -15.19       68.25      -7.887      -127.0      -9.886      -57.59      -22.87      -6.844       4.084
+          35   5         -16.05       63.36      -2.113      -50.11      -149.6       5.232      -99.75       5.332      -4.285
+          35   6         -18.25       65.19      -2.113      -27.04      -112.7      -54.80      -24.45       6.144      -4.622
+          35   7         -16.05       63.36      -7.887      -49.67      -146.5       1.692      -98.04      -6.020       5.290
+          35   8         -18.25       65.19      -7.887      -26.55      -109.8      -58.19      -22.94      -4.759       5.491
+          36   1         -16.53       69.86      -2.113     -5.2668E-02   98.09       46.91       55.67       4.713      -6.527
+          36   2         -18.37       72.06      -2.113       26.46       114.4       4.048       102.3       5.366      -6.989
+          36   3         -16.53       69.86      -7.887      0.6747       100.4       43.82       57.35      -7.927       5.931
+          36   4         -18.37       72.06      -7.887       27.17       116.7       1.084       103.8      -6.883       5.795
+          36   5         -19.86       66.53      -2.113       86.14       13.03       45.77       54.18       6.195      -4.374
+          36   6         -22.06       68.37      -2.113       103.8       37.57       3.613       100.9       6.884      -4.705
+          36   7         -19.86       66.53      -7.887       86.57       15.76       42.62       55.74      -5.787       7.427
+          36   8         -22.06       68.37      -7.887       104.2       40.15      0.5803       102.3      -4.773       7.487
+          37   1         -17.67       61.14      -2.113      -84.70      -90.67       5.974      -105.9       5.049      -4.234
+          37   2         -20.09       62.66      -2.113      -91.99      -29.90      -47.51      -48.76       5.883      -4.403
+          37   3         -17.67       61.14      -7.887      -85.27      -86.86       2.729      -105.1      -8.390      0.9048
+          37   4         -20.09       62.66      -7.887      -92.47      -26.46      -50.47      -48.33      -7.033       1.565
+          37   5         -19.39       57.75      -2.113      -2.760      -171.3       4.636      -46.85       5.757      -2.083
+          37   6         -22.05       58.81      -2.113      -20.24      -101.1      -48.05       3.171       6.424      -2.184
+          37   7         -19.39       57.75      -7.887      -3.835      -166.9       1.381      -46.45      -6.363       2.383
+          37   8         -22.05       58.81      -7.887      -21.17      -97.21      -51.02       3.252      -5.332       3.193
+          38   1         -21.86       63.78      -2.113      -21.61       111.3       42.89       13.69       5.883      -4.215
+          38   2         -24.28       65.31      -2.113      -22.03       149.8       4.754       50.32       6.634      -4.327
+          38   3         -21.86       63.78      -7.887      -22.09       114.5       40.17       14.22      -8.271       3.109
+          38   4         -24.28       65.31      -7.887      -22.46       152.9       2.091       50.80      -7.085       3.687
+          38   5         -24.00       59.59      -2.113       42.92       49.05       40.56       55.22       6.445      -1.942
+          38   6         -26.66       60.65      -2.113       35.56       93.31       3.666       87.71       7.151      -1.841
+          38   7         -24.00       59.59      -7.887       42.37       52.37       37.80       55.60      -6.381       4.705
+          38   8         -26.66       60.65      -7.887       35.07       96.51      0.9599       88.04      -5.372       5.564
+          39   1         -20.24       55.13      -2.113      -20.51      -123.1       4.856      -72.66       5.649      -2.203
+          39   2         -23.02       55.84      -2.113      -48.17      -51.67      -38.95      -51.55       6.200      -2.067
+          39   3         -20.24       55.13      -7.887      -20.64      -121.1       2.912      -72.81      -6.815      -1.796
+          39   4         -23.02       55.84      -7.887      -48.85      -48.48      -41.45      -51.47      -6.088     -0.9663
+          39   5         -20.84       51.38      -2.113       5.039      -147.5       3.636       4.791       5.865     -0.9325
+          39   6         -23.70       51.56      -2.113      -25.87      -73.25      -39.66       16.57       6.351      3.7248E-02
+          39   7         -20.84       51.38      -7.887       5.064      -145.7       1.822       5.929      -5.531     -0.6942
+          39   8         -23.70       51.56      -7.887      -26.42      -70.31      -42.05       17.77      -4.998      0.9892
+          40   1         -25.05       56.35      -2.113      -16.13       89.36       34.35      -25.29       6.149      -1.911
+          40   2         -27.83       57.05      -2.113      -33.04       139.4       1.236      -10.78       6.720      -1.816
+          40   3         -25.05       56.35      -7.887      -16.84       92.67       31.74      -25.27      -7.286     -0.1526
+          40   4         -27.83       57.05      -7.887      -33.60       142.3      -1.128      -11.05      -6.568      0.5199
+          40   5         -25.79       51.70      -2.113       4.962       68.82       33.79       37.97       6.263      0.4785
+          40   6         -28.64       51.89      -2.113      -14.36       120.6       1.364       46.17       6.580      0.5560
+          40   7         -25.79       51.70      -7.887       3.699       72.51       31.37       37.46      -6.097       2.067
+          40   8         -28.64       51.89      -7.887      -15.43       123.8     -0.8354       45.43      -5.742       2.739
+          41   1          25.79       51.70       2.113       4.983       68.87       33.91      -37.97       6.115     -0.5008
+          41   2          25.05       56.35       2.113      -16.09       89.41       34.44       25.31       6.085       1.893
+          41   3          25.79       51.70       7.887       3.693       72.56       31.51      -37.42      -6.100      -2.092
+          41   4          25.05       56.35       7.887      -16.84       92.75       31.85       25.35      -7.285      0.1188
+          41   5          28.64       51.89       2.113      -14.39       120.6       1.575      -46.16       6.426     -0.6485
+          41   6          27.83       57.05       2.113      -33.02       139.4       1.359       10.80       6.662       1.742
+          41   7          28.64       51.89       7.887      -15.49       123.9     -0.6150      -45.39      -5.747      -2.879
+          41   8          27.83       57.05       7.887      -33.63       142.4     -0.9934       11.12      -6.552     -0.6532
+          42   1          24.00       59.59       2.113       42.94       49.05       40.59      -55.23       6.417       1.939
+          42   2          21.86       63.78       2.113      -21.60       111.3       42.90      -13.69       5.876       4.222
+          42   3          24.00       59.59       7.887       42.39       52.36       37.83      -55.63      -6.389      -4.702
+          42   4          21.86       63.78       7.887      -22.09       114.5       40.19      -14.22      -8.271      -3.103
+          42   5          26.66       60.65       2.113       35.57       93.31       3.696      -87.72       7.129       1.807
+          42   6          24.28       65.31       2.113      -22.03       149.8       4.768      -50.33       6.635       4.319
+          42   7          26.66       60.65       7.887       35.07       96.52      0.9897      -88.08      -5.371      -5.600
+          42   8          24.28       65.31       7.887      -22.48       153.0       2.100      -50.81      -7.072      -3.703
+          43   1          19.86       66.53       2.113       86.14       13.02       45.78      -54.18       6.196       4.386
+          43   2          16.53       69.86       2.113     -5.0735E-02   98.08       46.90      -55.66       4.714       6.537
+          43   3          19.86       66.53       7.887       86.58       15.74       42.62      -55.75      -5.787      -7.417
+          43   4          16.53       69.86       7.887      0.6795       100.4       43.82      -57.35      -7.928      -5.925
+          43   5          22.06       68.37       2.113       103.8       37.56       3.611      -101.0       6.890       4.711
+          43   6          18.37       72.06       2.113       26.46       114.4       4.043      -102.3       5.368       6.998
+          43   7          22.06       68.37       7.887       104.2       40.14      0.5754      -102.3      -4.767      -7.485
+          43   8          18.37       72.06       7.887       27.18       116.7       1.075      -103.8      -6.882      -5.791
+          44   1          13.78       71.86       2.113       122.3      -15.08       50.38      -21.70       5.011       6.650
+          44   2          9.587       74.00       2.113       47.04       59.25       51.28      -77.70       2.627       8.206
+          44   3          13.78       71.86       7.887       124.4      -13.77       46.96      -23.64      -3.312      -9.678
+          44   4          9.587       74.00       7.887       49.42       60.26       47.89      -79.49      -6.012      -8.743
+          44   5          15.31       74.28       2.113       172.1      -18.89       4.399      -65.27       5.571       7.237
+          44   6          10.65       76.66       2.113       104.6       48.25       4.753      -115.7       3.074       8.925
+          44   7          15.31       74.28       7.887       174.1      -17.58       1.090      -67.06      -2.429      -9.295
+          44   8          10.65       76.66       7.887       106.8       49.30       1.470      -117.3      -5.211      -8.166
+          45   1          6.350       75.05       2.113       127.6      -17.04       52.68       26.14       2.796       8.300
+          45   2          1.702       75.79       2.113       97.78       12.49       52.96      -66.40     -7.9884E-02   8.860
+          45   3          6.350       75.05       7.887       131.0      -16.92       49.13       25.20     -0.2507      -10.81
+          45   4          1.702       75.79       7.887       101.3       12.48       49.42      -67.03      -3.160      -10.47
+          45   5          7.054       77.83       2.113       200.6      -42.00       4.618       5.347       3.052       9.112
+          45   6          1.890       78.64       2.113       173.8      -15.34       4.726      -77.96      2.0256E-02   9.711
+          45   7          7.054       77.83       7.887       203.8      -41.77       1.190       4.493      0.1202      -10.03
+          45   8          1.890       78.64       7.887       177.2      -15.24       1.314      -78.54      -2.942      -9.623
+          46   1         -1.702       75.79       2.113       97.78       12.49       52.96       66.40      7.8866E-02   8.859
+          46   2         -6.350       75.05       2.113       127.6      -17.04       52.68      -26.14      -2.797       8.297
+          46   3         -1.702       75.79       7.887       101.3       12.48       49.43       67.03       3.159      -10.47
+          46   4         -6.350       75.05       7.887       131.0      -16.92       49.13      -25.20      0.2491      -10.81
+          46   5         -1.890       78.64       2.113       173.8      -15.34       4.728       77.97     -2.2859E-02   9.710
+          46   6         -7.054       77.83       2.113       200.6      -42.00       4.621      -5.347      -3.055       9.108
+          46   7         -1.890       78.64       7.887       177.2      -15.24       1.316       78.54       2.938      -9.624
+          46   8         -7.054       77.83       7.887       203.8      -41.77       1.193      -4.492     -0.1240      -10.03
+          47   1         -9.587       74.00       2.113       47.04       59.25       51.29       77.70      -2.628       8.201
+          47   2         -13.78       71.86       2.113       122.3      -15.07       50.39       21.70      -5.010       6.642
+          47   3         -9.587       74.00       7.887       49.42       60.27       47.90       79.50       6.010      -8.745
+          47   4         -13.78       71.86       7.887       124.4      -13.76       46.96       23.65       3.310      -9.682
+          47   5         -10.65       76.66       2.113       104.6       48.25       4.759       115.7      -3.076       8.919
+          47   6         -15.31       74.28       2.113       172.1      -18.89       4.407       65.28      -5.571       7.228
+          47   7         -10.65       76.66       7.887       106.8       49.31       1.477       117.3       5.206      -8.170
+          47   8         -15.31       74.28       7.887       174.1      -17.57       1.099       67.06       2.426      -9.300
+          48   1         -16.53       69.86       2.113     -5.2655E-02   98.09       46.91       55.67      -4.713       6.527
+          48   2         -19.86       66.53       2.113       86.14       13.03       45.77       54.18      -6.195       4.374
+          48   3         -16.53       69.86       7.887      0.6748       100.4       43.82       57.35       7.927      -5.931
+          48   4         -19.86       66.53       7.887       86.57       15.76       42.62       55.74       5.787      -7.427
+          48   5         -18.37       72.06       2.113       26.46       114.4       4.048       102.3      -5.366       6.989
+          48   6         -22.06       68.37       2.113       103.8       37.57       3.613       100.9      -6.883       4.705
+          48   7         -18.37       72.06       7.887       27.17       116.7       1.085       103.8       6.883      -5.795
+          48   8         -22.06       68.37       7.887       104.2       40.15      0.5804       102.3       4.773      -7.487
+          49   1         -21.86       63.78       2.113      -21.61       111.3       42.89       13.69      -5.883       4.215
+          49   2         -24.00       59.59       2.113       42.92       49.05       40.56       55.22      -6.445       1.942
+          49   3         -21.86       63.78       7.887      -22.09       114.5       40.17       14.22       8.271      -3.109
+          49   4         -24.00       59.59       7.887       42.37       52.37       37.80       55.60       6.381      -4.705
+          49   5         -24.28       65.31       2.113      -22.03       149.8       4.754       50.32      -6.634       4.327
+          49   6         -26.66       60.65       2.113       35.56       93.31       3.666       87.71      -7.151       1.841
+          49   7         -24.28       65.31       7.887      -22.46       152.9       2.091       50.80       7.085      -3.687
+          49   8         -26.66       60.65       7.887       35.07       96.51      0.9600       88.04       5.372      -5.564
+          50   1         -25.05       56.35       2.113      -16.13       89.36       34.35      -25.29      -6.149       1.911
+          50   2         -25.79       51.70       2.113       4.962       68.82       33.79       37.97      -6.263     -0.4785
+          50   3         -25.05       56.35       7.887      -16.84       92.67       31.74      -25.27       7.286      0.1526
+          50   4         -25.79       51.70       7.887       3.699       72.51       31.37       37.46       6.097      -2.067
+          50   5         -27.83       57.05       2.113      -33.04       139.4       1.236      -10.78      -6.720       1.816
+          50   6         -28.64       51.89       2.113      -14.36       120.6       1.364       46.17      -6.580     -0.5560
+          50   7         -27.83       57.05       7.887      -33.60       142.3      -1.128      -11.05       6.568     -0.5199
+          50   8         -28.64       51.89       7.887      -15.43       123.8     -0.8354       45.43       5.742      -2.739
+          51   1          20.84       51.38       2.113       5.023      -147.5       3.425      -4.766       5.695       1.034
+          51   2          20.24       55.13       2.113      -20.58      -123.2       4.713       72.70       5.548       2.284
+          51   3          20.84       51.38       7.887       5.099      -145.8       1.624      -5.843      -5.569      0.8890
+          51   4          20.24       55.13       7.887      -20.67      -121.2       2.790       72.93      -6.871       1.956
+          51   5          23.70       51.56       2.113      -25.94      -73.35      -39.79      -16.55       6.197     -8.1288E-03
+          51   6          23.02       55.84       2.113      -48.25      -51.77      -39.06       51.57       6.127       2.090
+          51   7          23.70       51.56       7.887      -26.45      -70.45      -42.18      -17.70      -5.016     -0.9259
+          51   8          23.02       55.84       7.887      -48.92      -48.61      -41.56       51.58      -6.103       1.011
+          52   1          19.39       57.75       2.113      -2.781      -171.3       4.572       46.86       5.698       2.135
+          52   2          17.67       61.14       2.113      -84.75      -90.72       5.927       105.9       5.023       4.269
+          52   3          19.39       57.75       7.887      -3.808      -167.1       1.336       46.50      -6.403      -2.301
+          52   4          17.67       61.14       7.887      -85.31      -86.95       2.708       105.2      -8.419     -0.8500
+          52   5          22.05       58.81       2.113      -20.28      -101.2      -48.11      -3.168       6.388       2.204
+          52   6          20.09       62.66       2.113      -92.04      -29.95      -47.56       48.77       5.871       4.423
+          52   7          22.05       58.81       7.887      -21.16      -97.31      -51.07      -3.241      -5.344      -3.156
+          52   8          20.09       62.66       7.887      -92.51      -26.52      -50.51       48.36      -7.040      -1.539
+          53   1          16.05       63.36       2.113      -50.12      -149.6       5.221       99.76       5.323       4.307
+          53   2          13.36       66.05       2.113      -164.9      -35.92       6.267       99.85       3.964       6.204
+          53   3          16.05       63.36       7.887      -49.66      -146.6       1.689       98.06      -6.031      -5.265
+          53   4          13.36       66.05       7.887      -164.2      -33.21       2.846       97.99      -8.142      -4.120
+          53   5          18.25       65.19       2.113      -27.05      -112.7      -54.81       24.45       6.142       4.639
+          53   6          15.19       68.25       2.113      -127.8      -12.46      -54.30       24.53       4.718       6.700
+          53   7          18.25       65.19       7.887      -26.54      -109.8      -58.20       22.95      -4.762      -5.474
+          53   8          15.19       68.25       7.887      -127.0      -9.909      -57.60       22.89      -6.847      -4.074
+          54   1          11.14       67.67       2.113      -127.2      -91.25       5.740       121.7       4.291       6.213
+          54   2          7.747       69.39       2.113      -227.7       8.559       6.385       49.06       2.126       7.552
+          54   3          11.14       67.67       7.887      -124.9      -89.77       1.936       119.5      -3.797      -7.847
+          54   4          7.747       69.39       7.887      -225.1       9.706       2.618       47.06      -6.310      -7.190
+          54   5          12.66       70.09       2.113      -52.85      -100.5      -59.34       51.28       4.919       6.865
+          54   6          8.809       72.05       2.113      -141.0      -12.60      -59.09      -12.58       2.634       8.347
+          54   7          12.66       70.09       7.887      -50.70      -99.04      -62.99       49.33      -2.741      -7.465
+          54   8          8.809       72.05       7.887      -138.6      -11.41      -62.70      -14.37      -5.331      -6.583
+          55   1          5.132       70.24       2.113      -203.2      -25.26       6.201       95.00       2.443       7.554
+          55   2          1.375       70.84       2.113      -243.1       14.47       6.450      -27.71     -0.1494       8.048
+          55   3          5.132       70.24       7.887      -199.4      -25.11       2.244       93.92     -0.5091      -9.350
+          55   4          1.375       70.84       7.887      -239.2       14.46       2.513      -28.43      -3.138      -9.088
+          55   5          5.835       73.02       2.113      -90.66      -69.75      -61.82       61.33       2.724       8.458
+          55   6          1.564       73.70       2.113      -125.8      -34.76      -61.69      -46.59     -3.2498E-02   8.997
+          55   7          5.835       73.02       7.887      -87.17      -69.45      -65.60       60.37     -7.7178E-02  -8.484
+          55   8          1.564       73.70       7.887      -122.2      -34.61      -65.46      -47.23      -2.866      -8.150
+          56   1         -1.375       70.84       2.113      -243.1       14.47       6.449       27.71      0.1512       8.047
+          56   2         -5.132       70.24       2.113      -203.2      -25.26       6.199      -95.00      -2.441       7.551
+          56   3         -1.375       70.84       7.887      -239.2       14.46       2.512       28.43       3.141      -9.088
+          56   4         -5.132       70.24       7.887      -199.4      -25.11       2.241      -93.92      0.5122      -9.351
+          56   5         -1.564       73.70       2.113      -125.8      -34.76      -61.69       46.59      3.2674E-02   8.996
+          56   6         -5.835       73.02       2.113      -90.66      -69.75      -61.82      -61.33      -2.724       8.455
+          56   7         -1.564       73.70       7.887      -122.2      -34.61      -65.46       47.23       2.867      -8.150
+          56   8         -5.835       73.02       7.887      -87.17      -69.45      -65.60      -60.37      7.7480E-02  -8.485
+          57   1         -7.747       69.39       2.113      -227.7       8.561       6.383      -49.06      -2.124       7.547
+          57   2         -11.14       67.67       2.113      -127.2      -91.25       5.737      -121.7      -4.290       6.205
+          57   3         -7.747       69.39       7.887      -225.0       9.710       2.613      -47.05       6.312      -7.192
+          57   4         -11.14       67.67       7.887      -124.9      -89.76       1.931      -119.5       3.797      -7.851
+          57   5         -8.809       72.05       2.113      -141.0      -12.60      -59.09       12.58      -2.634       8.342
+          57   6         -12.66       70.09       2.113      -52.85      -100.5      -59.34      -51.27      -4.918       6.856
+          57   7         -8.809       72.05       7.887      -138.6      -11.40      -62.70       14.38       5.331      -6.585
+          57   8         -12.66       70.09       7.887      -50.70      -99.04      -62.99      -49.33       2.740      -7.470
+          58   1         -13.36       66.05       2.113      -164.9      -35.90       6.275      -99.84      -3.967       6.190
+          58   2         -16.05       63.36       2.113      -50.11      -149.6       5.232      -99.75      -5.332       4.285
+          58   3         -13.36       66.05       7.887      -164.2      -33.19       2.845      -97.96       8.134      -4.133
+          58   4         -16.05       63.36       7.887      -49.67      -146.5       1.692      -98.04       6.020      -5.290
+          58   5         -15.19       68.25       2.113      -127.8      -12.45      -54.29      -24.53      -4.718       6.688
+          58   6         -18.25       65.19       2.113      -27.04      -112.7      -54.80      -24.45      -6.144       4.622
+          58   7         -15.19       68.25       7.887      -127.0      -9.886      -57.59      -22.87       6.844      -4.084
+          58   8         -18.25       65.19       7.887      -26.55      -109.8      -58.19      -22.94       4.759      -5.491
+          59   1         -17.67       61.14       2.113      -84.70      -90.67       5.974      -105.9      -5.049       4.234
+          59   2         -19.39       57.75       2.113      -2.760      -171.3       4.636      -46.85      -5.757       2.083
+          59   3         -17.67       61.14       7.887      -85.27      -86.86       2.729      -105.1       8.390     -0.9049
+          59   4         -19.39       57.75       7.887      -3.835      -166.9       1.381      -46.45       6.363      -2.383
+          59   5         -20.09       62.66       2.113      -91.99      -29.90      -47.51      -48.76      -5.883       4.403
+          59   6         -22.05       58.81       2.113      -20.24      -101.1      -48.05       3.171      -6.424       2.184
+          59   7         -20.09       62.66       7.887      -92.47      -26.46      -50.47      -48.33       7.033      -1.565
+          59   8         -22.05       58.81       7.887      -21.17      -97.21      -51.02       3.252       5.332      -3.193
+          60   1         -20.24       55.13       2.113      -20.51      -123.1       4.856      -72.66      -5.649       2.203
+          60   2         -20.84       51.38       2.113       5.039      -147.5       3.636       4.791      -5.865      0.9325
+          60   3         -20.24       55.13       7.887      -20.64      -121.1       2.912      -72.81       6.815       1.796
+          60   4         -20.84       51.38       7.887       5.064      -145.7       1.822       5.929       5.531      0.6942
+          60   5         -23.02       55.84       2.113      -48.17      -51.67      -38.95      -51.55      -6.200       2.067
+          60   6         -23.70       51.56       2.113      -25.87      -73.25      -39.66       16.57      -6.351     -3.7263E-02
+          60   7         -23.02       55.84       7.887      -48.85      -48.48      -41.45      -51.47       6.088      0.9663
+          60   8         -23.70       51.56       7.887      -26.42      -70.31      -42.05       17.77       4.998     -0.9892
+          61   1          28.98       48.90       2.113      -7.622       131.8       2.491       28.01       4.803     -0.9184
+          61   2          26.19       48.90       2.113       12.08       81.02       33.60       27.01       4.597     -0.3719
+          61   3          29.07       45.89       2.113      -8.430       130.7       4.405      -14.00      0.6041     -0.2401
+          61   4          26.55       45.89       2.113       14.07       75.38       37.26      -15.10      0.3554     -0.5256
+          61   5          28.95       48.78       7.887      -5.371       128.2       3.878       33.20      -6.535      -1.354
+          61   6          26.09       48.78       7.887       16.01       74.28       36.41       32.17      -6.738     -0.2095
+          61   7          28.98       45.43       7.887      -6.795       128.5       4.957      -11.90      -9.483     -0.8241
+          61   8          26.19       45.43       7.887       15.77       73.92       37.02      -12.96      -9.713     -0.6483
+          62   1          24.07       48.90       2.113      -15.72      -57.01      -36.76       35.14       5.590      0.4203
+          62   2          21.09       48.90       2.113       12.98      -125.1       2.582       32.92       5.017       1.400
+          62   3          24.43       45.89       2.113      -14.53      -62.40      -32.56      -9.948       3.602     -4.1786E-02
+          62   4          21.19       45.89       2.113       11.78      -125.0       3.738      -11.99       2.868      0.3462
+          62   5          23.98       48.78       7.887      -11.14      -63.76      -34.58       37.83      -4.796       1.058
+          62   6          21.07       48.78       7.887       14.14      -125.2       1.621       36.05      -5.372       2.867
+          62   7          24.07       45.43       7.887      -12.24      -63.68      -33.57      -10.84      -5.474      0.2598
+          62   8          21.09       45.43       7.887       12.34      -123.8       1.988      -12.57      -6.235       1.816
+          63   1          29.11       43.41       2.113      -11.74       108.2       1.270       26.87       5.138      -1.039
+          63   2          26.68       43.41       2.113       2.774       69.58       25.33       28.28       5.068     -0.7566
+          63   3          29.11       39.64       2.113      -9.413       106.1      0.9869      -14.26       1.627     -0.5925
+          63   4          26.68       39.64       2.113       5.563       68.00       24.12      -12.85       1.460     -9.9635E-02
+          63   5          28.99       42.91       7.887      -9.559       105.3       1.992       29.71      -4.115      -2.719
+          63   6          26.22       42.91       7.887       8.073       61.38       28.24       31.49      -4.131      -1.840
+          63   7          28.99       39.37       7.887      -7.171       103.1       1.763      -9.725      -6.493      -2.154
+          63   8          26.22       39.37       7.887       10.90       59.66       27.13      -7.953      -6.614     -0.8051
+          64   1          24.57       43.41       2.113      -12.61      -39.94      -28.77       32.70       8.623      8.1370E-02
+          64   2          21.22       43.41       2.113       10.57      -95.53       3.628       31.36       7.989      0.8882
+          64   3          24.57       39.64       2.113      -14.42      -38.73      -28.18      -11.70       4.436      0.3503
+          64   4          21.22       39.64       2.113       9.173      -93.90       3.406      -13.04       3.965      0.7790
+          64   5          24.11       42.91       7.887      -6.763      -48.37      -26.19       33.19      0.5978     -0.4210
+          64   6          21.10       42.91       7.887       12.84      -97.95       3.790       31.72     -0.1053       2.143
+          64   7          24.11       39.37       7.887      -8.901      -47.05      -25.37      -7.577      -2.767      0.3710
+          64   8          21.10       39.37       7.887       11.17      -96.17       3.666      -9.042      -3.288       2.163
+          65   1          29.11       36.88       2.113      -7.664       83.07       1.365       24.90       2.448     -0.7302
+          65   2          26.68       36.88       2.113       4.100       52.38       20.29       25.90       2.206     -0.1362
+          65   3          29.11       33.12       2.113      -6.249       81.37       1.650      -7.995       2.169     -0.4485
+          65   4          26.68       33.12       2.113       5.956       51.12       19.69      -6.990       1.853     -0.1963
+          65   5          28.99       36.77       7.887      -5.750       80.71       1.810       25.59      -4.967      -2.372
+          65   6          26.22       36.77       7.887       7.978       46.91       21.88       26.86      -5.173     -0.7372
+          65   7          28.99       33.23       7.887      -4.298       78.90       2.166      -4.889      -3.967      -1.978
+          65   8          26.22       33.23       7.887       9.849       45.52       21.40      -3.619      -4.253     -0.4476
+          66   1          24.57       36.88       2.113      -9.762      -31.82      -22.00       26.09       4.822      0.3445
+          66   2          21.22       36.88       2.113       6.965      -72.31       1.761       25.13       4.490       1.018
+          66   3          24.57       33.12       2.113      -11.07      -30.98      -21.53      -6.161       4.069      0.2340
+          66   4          21.22       33.12       2.113       6.122      -71.00       1.293      -7.116       3.917      0.9358
+          66   5          24.11       36.77       7.887      -5.970      -37.16      -20.46       26.78      -1.821      0.5434
+          66   6          21.10       36.77       7.887       8.493      -73.94       1.859       25.64      -2.191       2.440
+          66   7          24.11       33.23       7.887      -7.704      -36.19      -19.69      -3.408      -1.367      0.7478
+          66   8          21.10       33.23       7.887       7.305      -72.43       1.535      -4.555      -1.534       2.438
+          67   1          29.11       30.36       2.113      -5.771       55.20       1.833       19.56      0.9393     -0.4980
+          67   2          26.68       30.36       2.113       1.569       35.73       13.96       20.14      0.5631     -0.2315
+          67   3          29.11       26.59       2.113      -5.264       53.90       2.624      -1.207       2.157      -1.440
+          67   4          26.68       26.59       2.113       2.589       34.95       13.72     -0.6245       1.651     -0.4156
+          67   5          28.99       30.63       7.887      -5.328       55.82      0.7653       21.22      -4.081      -2.161
+          67   6          26.22       30.63       7.887       4.374       32.35       14.54       22.10      -4.429     -0.2838
+          67   7          28.99       27.09       7.887      -4.586       54.31       1.536     -5.3342E-02  -1.289      -3.145
+          67   8          26.22       27.09       7.887       5.602       31.32       14.34      0.8253      -1.765     -0.4165
+          68   1          24.57       30.36       2.113      -5.800      -21.15      -15.31       20.76       2.487      0.2230
+          68   2          21.22       30.36       2.113       5.623      -48.57      0.6870       20.14       2.442       1.025
+          68   3          24.57       26.59       2.113      -6.538      -20.49      -15.24      -1.133       3.175      0.4902
+          68   4          21.22       26.59       2.113       5.371      -47.42     -0.2129      -1.756       3.272       2.076
+          68   5          24.11       30.63       7.887      -3.191      -25.32      -13.75       22.14      -1.948       1.065
+          68   6          21.10       30.63       7.887       7.574      -51.84       2.002       21.36      -1.993       2.868
+          68   7          24.11       27.09       7.887      -4.289      -24.56      -13.41      0.1806      7.7461E-02   1.451
+          68   8          21.10       27.09       7.887       7.043      -50.51       1.204     -0.6081      0.1935       4.012
+          69   1          29.07       24.11       2.113     -0.7231       31.59       5.699       10.88     -0.5356      -1.243
+          69   2          26.55       24.11       2.113       4.300       19.56       12.70       14.03      -1.134      8.4849E-02
+          69   3          28.98       21.10       2.113       2.433       28.55       5.578       1.583      -2.853      -2.993
+          69   4          26.19       21.10       2.113       7.569       18.25       10.75       4.430      -3.049     -0.1250
+          69   5          28.98       24.57       7.887      -1.823       34.84       3.552       16.37      -3.113      -4.470
+          69   6          26.19       24.57       7.887       5.359       18.96       12.24       18.89      -3.628      -1.156
+          69   7          28.95       21.22       7.887      0.9521       31.94       3.674       2.883      -3.031      -6.067
+          69   8          26.09       21.22       7.887       8.461       16.96       11.14       5.338      -3.216      -1.424
+          70   1          24.43       24.11       2.113      -2.233      -16.46      -9.698       13.73     -0.1204      0.9601
+          70   2          21.19       24.11       2.113       2.373      -27.63      -3.134       12.38      0.2306       2.066
+          70   3          24.07       21.10       2.113      -4.728      -14.34      -9.323       5.931      -2.727       1.772
+          70   4          21.09       21.10       2.113      0.9207      -25.86      -3.453       4.467      -2.073       4.004
+          70   5          24.07       24.57       7.887      -1.604      -18.43      -8.357       19.14      -2.546       1.043
+          70   6          21.09       24.57       7.887       4.134      -31.82     -0.7094       17.30      -2.134       3.725
+          70   7          23.98       21.22       7.887      -4.768      -16.73      -6.898       8.232      -3.101       1.710
+          70   8          21.07       21.22       7.887       1.705      -29.84     -0.2585       6.341      -2.423       5.452
+          71   1          22.30       16.06       8.720      -4.939      -15.75      0.5514       5.234      -2.345       2.809
+          71   2          24.28       16.06       8.720      -9.654      -6.547      -3.940       7.404      -2.596      2.6995E-03
+          71   3          22.30       16.06       5.223      -3.948      -16.84      0.6518       7.450      -2.543       2.968
+          71   4          24.28       16.06       5.223      -8.043      -8.878      -3.219       10.23      -2.794      8.1553E-02
+          71   5          21.39       18.94       8.110      -3.449      -13.63      -3.063       14.24      -2.440       3.452
+          71   6          24.03       18.94       8.110      -6.978      -6.934      -6.228       15.76      -3.091      0.9344
+          71   7          21.39       18.94       2.947      -1.776      -14.43      -3.933       17.43      -2.796       3.489
+          71   8          24.03       18.94       2.947      -4.672      -9.004      -6.465       19.14      -3.447      0.9690
+          72   1          25.72       16.06       8.720      -17.38       12.44       5.889       10.32      -3.708      -1.071
+          72   2          27.70       16.06       8.720      -20.94       19.88       2.015       19.05      -1.370      -1.199
+          72   3          25.72       16.06       5.223      -22.33       14.07       9.212       12.88      -3.437      -1.316
+          72   4          27.70       16.06       5.223      -27.75       25.22       3.480       25.81      -1.099      -2.247
+          72   5          25.97       18.94       8.110      -5.178       5.775      0.3539       15.69      -3.287     -0.7116
+          72   6          28.61       18.94       8.110      -7.819       10.54      -1.766       21.95      -2.769      -2.691
+          72   7          25.97       18.94       2.947      -5.916       5.228       1.639       21.32      -3.796     -0.8186
+          72   8          28.61       18.94       2.947      -9.190       11.25      -1.114       30.02      -3.278      -3.182
+          73   1         -28.98       21.10       2.113      -1.114       27.16       6.264      -4.551       2.427      -4.978
+          73   2         -26.19       21.10       2.113       3.126       18.60       10.58      -5.782       3.113     -0.9363
+          73   3         -29.07       24.11       2.113      -2.057       28.66       5.709      -12.21      0.1676      -1.618
+          73   4         -26.55       24.11       2.113       2.048       18.64       11.62      -13.57       1.004     -0.1850
+          73   5         -28.95       21.22       7.887      -3.074       33.65       1.731      -3.340       2.638      -7.294
+          73   6         -26.09       21.22       7.887       4.641       18.21       9.453      -4.416       3.304      -1.649
+          73   7         -28.98       24.57       7.887      -3.936       35.15       1.091      -17.21       2.552      -4.245
+          73   8         -26.19       24.57       7.887       3.516       18.87       9.925      -18.32       3.299     -0.8863
+          74   1         -24.07       21.10       2.113      -3.463      -13.75      -10.66      -4.747       2.910       1.782
+          74   2         -21.09       21.10       2.113       2.416      -25.55      -4.737      -4.435       2.204       5.191
+          74   3         -24.43       24.11       2.113      -2.570      -15.39      -9.911      -12.91      1.0127E-02  0.8182
+          74   4         -21.19       24.11       2.113       2.337      -26.73      -3.477      -12.62     -0.3797       2.184
+          74   5         -23.98       21.22       7.887      -3.555      -16.32      -7.997      -5.246       3.119       2.182
+          74   6         -21.07       21.22       7.887       4.226      -31.87     -0.2258      -4.385       2.385       6.954
+          74   7         -24.07       24.57       7.887      -2.082      -17.53      -8.263      -18.29       2.067       1.381
+          74   8         -21.09       24.57       7.887       5.022      -33.21      0.3135      -17.45       1.601       4.265
+          75   1         -29.11       26.59       2.113      -4.597       53.95       3.348       1.471      -2.505      -1.068
+          75   2         -26.68       26.59       2.113       3.361       34.94       14.40      0.7054      -1.769     -0.3365
+          75   3         -29.11       30.36       2.113      -5.324       55.59       2.429      -19.42     -0.9923     -6.8605E-02
+          75   4         -26.68       30.36       2.113       2.060       36.01       14.63      -20.19     -0.5939     -6.6827E-02
+          75   5         -28.99       27.09       7.887      -3.408       54.15       1.952      0.7055      0.6849      -3.166
+          75   6         -26.22       27.09       7.887       6.864       31.15       14.68     -0.7210       1.397     -0.5760
+          75   7         -28.99       30.63       7.887      -4.914       56.31       1.306      -20.63       4.017      -2.123
+          75   8         -26.22       30.63       7.887       4.813       32.76       15.13      -22.06       4.403     -0.3581
+          76   1         -24.57       26.59       2.113      -7.166      -20.73      -15.12      0.7150      -3.238      0.4219
+          76   2         -21.22       26.59       2.113       4.684      -47.18     -0.5214       1.644      -3.470       1.749
+          76   3         -24.57       30.36       2.113      -5.938      -21.60      -15.48      -20.87      -2.534      0.1949
+          76   4         -21.22       30.36       2.113       5.304      -48.66      0.3321      -19.95      -2.488      0.7046
+          76   5         -24.11       27.09       7.887      -5.291      -24.56      -13.17     -0.4294     -0.5298       1.294
+          76   6         -21.10       27.09       7.887       6.070      -50.10       1.007      0.8546     -0.8096       3.905
+          76   7         -24.11       30.63       7.887      -3.364      -25.66      -14.00      -22.17       1.866      0.9578
+          76   8         -21.10       30.63       7.887       7.287      -51.91       1.600      -20.89       1.905       2.770
+          77   1         -29.11       33.12       2.113      -6.558       81.46       1.458       8.025      -2.124     -4.8713E-02
+          77   2         -26.68       33.12       2.113       5.648       51.13       19.58       7.120      -1.856     -5.5454E-02
+          77   3         -29.11       36.88       2.113      -7.810       83.01       1.155      -24.93      -2.434     -0.3691
+          77   4         -26.68       36.88       2.113       3.982       52.27       20.11      -25.84      -2.199      9.5768E-04
+          77   5         -28.99       33.23       7.887      -4.690       78.97       2.078       4.948       4.083      -1.476
+          77   6         -26.22       33.23       7.887       9.425       45.58       21.35       3.857       4.324     -0.2766
+          77   7         -28.99       36.77       7.887      -5.881       80.58       1.660      -25.51       4.986      -1.913
+          77   8         -26.22       36.77       7.887       7.842       46.80       21.72      -26.60       5.187     -0.5765
+          78   1         -24.57       33.12       2.113      -10.77      -30.91      -21.45       6.326      -4.100      0.1614
+          78   2         -21.22       33.12       2.113       6.437      -71.05       1.481       7.160      -3.902      0.5509
+          78   3         -24.57       36.88       2.113      -9.631      -31.66      -21.84      -26.00      -4.808      0.2914
+          78   4         -21.22       36.88       2.113       7.139      -72.23       1.959      -25.16      -4.480      0.6785
+          78   5         -24.11       33.23       7.887      -7.298      -36.15      -19.69       3.684       1.408      0.6508
+          78   6         -21.10       33.23       7.887       7.685      -72.44       1.619       4.641       1.628       1.951
+          78   7         -24.11       36.77       7.887      -5.855      -36.96      -20.32      -26.53       1.847      0.4626
+          78   8         -21.10       36.77       7.887       8.619      -73.76       2.008      -25.57       2.213       2.000
+          79   1         -29.11       39.64       2.113      -9.267       106.1       1.051       14.30      -1.619     -0.2622
+          79   2         -26.68       39.64       2.113       5.708       68.03       24.15       12.85      -1.450      3.6022E-02
+          79   3         -29.11       43.41       2.113      -11.68       108.2       1.377      -26.80      -5.123     -0.7155
+          79   4         -26.68       43.41       2.113       2.829       69.66       25.40      -28.26      -5.053     -0.6224
+          79   5         -28.99       39.37       7.887      -7.008       103.1       1.829       9.924       6.490      -1.833
+          79   6         -26.22       39.37       7.887       11.05       59.68       27.15       8.097       6.612     -0.6878
+          79   7         -28.99       42.91       7.887      -9.487       105.3       2.101      -29.47       4.140      -2.405
+          79   8         -26.22       42.91       7.887       8.137       61.45       28.30      -31.30       4.154      -1.725
+          80   1         -24.57       39.64       2.113      -14.52      -38.70      -28.21       11.72      -4.416      0.3107
+          80   2         -21.22       39.64       2.113       9.068      -93.84       3.343       13.10      -3.957      0.4619
+          80   3         -24.57       43.41       2.113      -12.65      -39.95      -28.83      -32.66      -8.625      4.7936E-02
+          80   4         -21.22       43.41       2.113       10.54      -95.50       3.532      -31.27      -7.992      0.5899
+          80   5         -24.11       39.37       7.887      -9.051      -46.99      -25.39       7.718       2.786      0.3177
+          80   6         -21.10       39.37       7.887       11.01      -96.05       3.601       9.242       3.295       1.847
+          80   7         -24.11       42.91       7.887      -6.819      -48.35      -26.26      -33.00     -0.5704     -0.4694
+          80   8         -21.10       42.91       7.887       12.77      -97.88       3.681      -31.48      0.1315       1.847
+          81   1         -29.07       45.89       2.113      -8.532       130.7       4.339       14.04     -0.6472      0.1971
+          81   2         -26.55       45.89       2.113       13.96       75.33       37.19       15.17     -0.3925     -0.3978
+          81   3         -28.98       48.90       2.113      -7.626       131.8       2.285      -27.97      -4.962     -0.4791
+          81   4         -26.19       48.90       2.113       12.03       80.97       33.48      -26.94      -4.748     -0.2137
+          81   5         -28.98       45.43       7.887      -6.871       128.5       4.875       12.06       9.497     -0.5459
+          81   6         -26.19       45.43       7.887       15.68       73.87       36.93       13.14       9.733     -0.5602
+          81   7         -28.95       48.78       7.887      -5.344       128.2       3.662      -33.02       6.528      -1.082
+          81   8         -26.09       48.78       7.887       15.98       74.23       36.27      -31.96       6.739     -0.1246
+          82   1         -24.43       45.89       2.113      -14.42      -62.30      -32.50       10.02      -3.637     -0.1477
+          82   2         -21.19       45.89       2.113       11.89      -124.9       3.799       12.04      -2.909     -8.4506E-02
+          82   3         -24.07       48.90       2.113      -15.66      -56.91      -36.65      -35.07      -5.725      0.3511
+          82   4         -21.09       48.90       2.113       13.01      -125.0       2.768      -32.87      -5.163      0.9981
+          82   5         -24.07       45.43       7.887      -12.16      -63.55      -33.51       11.02       5.495      0.1970
+          82   6         -21.09       45.43       7.887       12.40      -123.7       2.045       12.73       6.248       1.532
+          82   7         -23.98       48.78       7.887      -11.12      -63.63      -34.47      -37.61       4.791      0.9987
+          82   8         -21.07       48.78       7.887       14.11      -125.1       1.800      -35.87       5.355       2.601
+          83   1         -22.41       15.71       5.802      -5.037      -24.77       2.301      -14.99       2.929       2.097
+          83   2         -24.31       15.71       5.802      -12.51      -10.15      -4.838      -17.36       2.536      0.6692
+          83   3         -22.45       15.58       8.875      -8.716      -16.43      -2.361      -10.64       2.711       2.192
+          83   4         -24.32       15.58       8.875      -13.95      -6.273      -7.283      -12.23       2.346      0.2617
+          83   5         -21.80       17.65       5.106      -5.292      -20.28      -1.931      -24.79       3.991       5.356
+          83   6         -24.14       17.65       5.106      -10.79      -9.391      -7.329      -26.62       3.901       2.106
+          83   7         -21.95       17.15       8.689      -8.620      -14.08      -4.808      -16.43       4.083       6.033
+          83   8         -24.18       17.15       8.689      -12.73      -5.880      -8.891      -17.73       4.076       2.019
+          84   1         -25.69       15.71       5.802      -29.15       16.64       7.745      -23.31       3.002     -0.2400
+          84   2         -27.59       15.71       5.802      -34.25       27.73       1.760      -41.43       1.334      -1.296
+          84   3         -25.68       15.58       8.875      -27.00       15.26       6.974      -17.68       3.870     -0.5166
+          84   4         -27.55       15.58       8.875      -28.07       18.20       5.106      -35.24       2.211     -0.7125
+          84   5         -25.86       17.65       5.106      -9.239       6.138      -1.665      -28.74       3.908     -0.5768
+          84   6         -28.20       17.65       5.106      -12.81       13.25      -5.214      -43.46       2.342      -4.657
+          84   7         -25.82       17.15       8.689      -10.40       6.966      -1.331      -18.02       4.315     -0.9246
+          84   8         -28.05       17.15       8.689      -11.30       8.493      -1.962      -32.72       2.778      -4.953
+          85   1         -21.46       18.71       4.273      -6.221      -17.99      -5.949      -5.629       6.706       8.197
+          85   2         -24.05       18.71       4.273      -6.613      -17.15      -6.399      -13.24       6.214       2.776
+          85   3         -21.62       18.21       8.465      -3.693      -23.72      -2.751      -11.52       4.916       4.864
+          85   4         -24.09       18.21       8.465      -7.261      -16.74      -6.159      -14.89       4.947      0.6633
+          85   5         -21.17       19.65       2.692      -2.554      -19.25      -8.359      -14.58       3.720       6.207
+          85   6         -23.97       19.65       2.692      -3.491      -17.76      -8.907      -19.86       4.307       1.960
+          85   7         -21.21       19.52       8.042      -1.844      -23.34      -4.977      -15.74       3.099       4.334
+          85   8         -23.98       19.52       8.042      -5.111      -17.22      -7.826      -18.55       3.755      0.6180
+          86   1         -25.95       18.71       4.273       11.38       9.921       12.62      -9.136       6.943     -0.7887
+          86   2         -28.54       18.71       4.273       4.272       23.83       5.820      0.8168       8.524      -5.105
+          86   3         -25.91       18.21       8.465       9.179       13.38       11.36      -10.01       5.462      -2.320
+          86   4         -28.38       18.21       8.465      0.8805       29.56       3.478      -7.732       6.145      -6.268
+          86   5         -26.03       19.65       2.692       8.343       11.90       13.67      -19.58       4.476      -1.137
+          86   6         -28.83       19.65       2.692       2.208       23.63       8.079      -13.29       4.210      -5.354
+          86   7         -26.02       19.52       8.042       8.365       13.54       12.01      -17.01       3.804      -2.220
+          86   8         -28.79       19.52       8.042       1.027       27.66       5.228      -15.31       3.418      -6.256
+          87   1          26.02       19.52      -8.042       6.617       13.22       11.37       17.85       2.564       2.068
+          87   2          26.03       19.65      -2.692       9.744       10.34       11.13       15.96       3.217      0.9689
+          87   3          25.91       18.21      -8.465       7.889       12.77       10.56       11.48       3.987       2.193
+          87   4          25.95       18.71      -4.273       10.93       9.151       11.13       6.877       5.531      0.6311
+          87   5          28.79       19.52      -8.042     -0.2410       26.45       5.005       15.10       3.530       4.802
+          87   6          28.83       19.65      -2.692       4.315       20.74       6.163       11.51       4.215       4.251
+          87   7          28.38       18.21      -8.465      0.2845       27.77       3.156       8.346       5.246       5.212
+          87   8          28.54       18.71      -4.273       5.374       20.29       5.545       1.347       7.037       4.770
+          88   1          25.82       17.15      -8.689      -9.005       6.492      -1.271       19.30       2.898      0.3702
+          88   2          25.86       17.65      -5.106      -7.626       5.709      -1.866       26.33       2.738      0.7811
+          88   3          25.68       15.58      -8.875      -21.88       13.32       4.772       19.14       2.620      0.1589
+          88   4          25.69       15.71      -5.802      -23.14       14.19       5.171       22.53       2.005      0.7003
+          88   5          28.05       17.15      -8.689      -9.543       7.518      -1.758       30.94       1.878       3.985
+          88   6          28.20       17.65      -5.106      -10.01       10.59      -4.363       37.94       1.692       4.406
+          88   7          27.55       15.58      -8.875      -22.54       15.32       3.435       33.03       1.486       1.170
+          88   8          27.59       15.71      -5.802      -26.60       21.84      0.9790       36.83      0.8619       2.303
+          89   1          21.21       19.52      -8.042      -1.060      -22.42      -4.386       15.61       2.777      -3.632
+          89   2          21.17       19.65      -2.692      -3.099      -17.67      -7.105       13.17       3.043      -5.372
+          89   3          21.62       18.21      -8.465      -3.115      -22.55      -2.206       11.57       4.114      -4.363
+          89   4          21.46       18.71      -4.273      -6.058      -16.17      -5.642       5.388       5.685      -7.424
+          89   5          23.98       19.52      -8.042      -4.185      -16.21      -7.478       18.85       2.897     -0.1919
+          89   6          23.97       19.65      -2.692      -4.122      -15.64      -8.109       17.26       3.139      -1.610
+          89   7          24.09       18.21      -8.465      -6.554      -15.58      -5.742       15.27       4.023     -0.3727
+          89   8          24.05       18.71      -4.273      -6.511      -15.06      -6.302       10.45       5.416      -2.637
+          90   1          21.95       17.15      -8.689      -8.262      -12.48      -4.318       16.66       3.138      -5.934
+          90   2          21.80       17.65      -5.106      -4.844      -18.06      -2.154       22.91       3.136      -4.911
+          90   3          22.45       15.58      -8.875      -8.920      -13.99      -2.146       11.24       2.018      -2.761
+          90   4          22.41       15.71      -5.802      -4.826      -21.70       1.465       13.84       1.936      -2.268
+          90   5          24.18       17.15      -8.689      -11.93      -5.022      -8.112       18.46       3.277      -2.288
+          90   6          24.14       17.65      -5.106      -9.825      -7.964      -7.271       24.73       3.254      -1.715
+          90   7          24.32       15.58      -8.875      -13.50      -4.687      -6.877       13.41       2.065     -0.8943
+          90   8          24.31       15.71      -5.802      -11.52      -8.162      -5.382       16.13       1.976     -0.5247
+          91   1          21.39       11.06      -8.110      -2.339       1.076      4.1926E-02   2.255     -0.2157     -0.3801
+          91   2          24.03       11.06      -8.110      -2.944       1.738     -1.3808E-02   1.188      2.9998E-02 -6.2482E-02
+          91   3          22.30       13.94      -8.720      -4.410       1.564       1.625       3.835      0.8233     -0.7582
+          91   4          24.28       13.94      -8.720      -4.979       2.585       1.174       2.360      0.9247     -0.6435
+          91   5          21.39       11.06      -2.947      -1.279     -8.3054E-02  0.1416       3.750      0.3215     -0.3164
+          91   6          24.03       11.06      -2.947      -1.817      0.4436      0.1532       2.619      0.5672     -0.1362
+          91   7          22.30       13.94      -5.223      -3.667      0.4370       2.009       5.659      0.9277     -0.4468
+          91   8          24.28       13.94      -5.223      -4.052       1.090       1.742       3.967       1.029     -0.6941
+          92   1          25.97       11.06      -8.110      -7.388      -3.142      -4.929      0.9170      1.1066E-02  0.2833
+          92   2          28.61       11.06      -8.110      -7.649      -3.323      -4.488      -6.607     -0.1818      0.9103
+          92   3          25.72       13.94      -8.720      -21.70       4.192       2.045      0.2116       1.574     -0.2552
+          92   4          27.70       13.94      -8.720      -21.66       4.441       1.758      -9.964      0.7822      0.6911
+          92   5          25.97       11.06      -2.947      -7.425      -3.824      -4.212       1.342      0.6968     -1.0456E-02
+          92   6          28.61       11.06      -2.947      -7.810      -3.755      -3.895      -6.995      0.5039      0.1528
+          92   7          25.72       13.94      -5.223      -22.91       3.805       3.640       1.259       1.286     -0.7989
+          92   8          27.70       13.94      -5.223      -23.13       4.572       3.094      -10.31      0.4944     -0.8378
+          93   1         -28.83       19.65      -2.692       2.208       23.63       8.079      -13.29      -4.210       5.354
+          93   2         -26.03       19.65      -2.692       8.343       11.90       13.67      -19.58      -4.476       1.137
+          93   3         -28.54       18.71      -4.273       4.272       23.83       5.820      0.8168      -8.524       5.105
+          93   4         -25.95       18.71      -4.273       11.38       9.921       12.62      -9.136      -6.943      0.7887
+          93   5         -28.79       19.52      -8.042       1.027       27.66       5.228      -15.31      -3.418       6.256
+          93   6         -26.02       19.52      -8.042       8.365       13.54       12.01      -17.01      -3.804       2.220
+          93   7         -28.38       18.21      -8.465      0.8805       29.56       3.478      -7.732      -6.145       6.268
+          93   8         -25.91       18.21      -8.465       9.179       13.38       11.36      -10.01      -5.462       2.320
+          94   1         -23.97       19.65      -2.692      -3.491      -17.76      -8.907      -19.86      -4.307      -1.960
+          94   2         -21.17       19.65      -2.692      -2.554      -19.25      -8.359      -14.58      -3.720      -6.207
+          94   3         -24.05       18.71      -4.273      -6.613      -17.15      -6.399      -13.24      -6.214      -2.776
+          94   4         -21.46       18.71      -4.273      -6.221      -17.99      -5.949      -5.629      -6.706      -8.197
+          94   5         -23.98       19.52      -8.042      -5.111      -17.22      -7.826      -18.55      -3.755     -0.6180
+          94   6         -21.21       19.52      -8.042      -1.844      -23.34      -4.977      -15.74      -3.099      -4.334
+          94   7         -24.09       18.21      -8.465      -7.261      -16.74      -6.159      -14.89      -4.947     -0.6633
+          94   8         -21.62       18.21      -8.465      -3.693      -23.72      -2.751      -11.52      -4.916      -4.864
+          95   1         -28.20       17.65      -5.106      -12.81       13.25      -5.214      -43.46      -2.342       4.657
+          95   2         -25.86       17.65      -5.106      -9.239       6.138      -1.665      -28.74      -3.908      0.5768
+          95   3         -27.59       15.71      -5.802      -34.25       27.73       1.760      -41.43      -1.334       1.296
+          95   4         -25.69       15.71      -5.802      -29.15       16.64       7.745      -23.31      -3.002      0.2400
+          95   5         -28.05       17.15      -8.689      -11.30       8.493      -1.962      -32.72      -2.778       4.953
+          95   6         -25.82       17.15      -8.689      -10.40       6.966      -1.331      -18.02      -4.315      0.9246
+          95   7         -27.55       15.58      -8.875      -28.07       18.20       5.106      -35.24      -2.211      0.7125
+          95   8         -25.68       15.58      -8.875      -27.00       15.26       6.974      -17.68      -3.870      0.5166
+          96   1         -24.14       17.65      -5.106      -10.79      -9.391      -7.329      -26.62      -3.901      -2.106
+          96   2         -21.80       17.65      -5.106      -5.292      -20.28      -1.931      -24.79      -3.991      -5.356
+          96   3         -24.31       15.71      -5.802      -12.51      -10.15      -4.838      -17.36      -2.536     -0.6692
+          96   4         -22.41       15.71      -5.802      -5.037      -24.77       2.301      -14.99      -2.929      -2.097
+          96   5         -24.18       17.15      -8.689      -12.73      -5.880      -8.891      -17.73      -4.076      -2.019
+          96   6         -21.95       17.15      -8.689      -8.620      -14.08      -4.808      -16.43      -4.083      -6.033
+          96   7         -24.32       15.58      -8.875      -13.95      -6.273      -7.283      -12.23      -2.346     -0.2617
+          96   8         -22.45       15.58      -8.875      -8.716      -16.43      -2.361      -10.64      -2.711      -2.192
+          97   1         -23.98       10.48       8.042      0.3150      -2.859      0.9993       1.990     -0.1072      0.8713
+          97   2         -23.97       10.35       2.692      0.6365      -3.374       1.193       2.372      6.3777E-02 -0.1162
+          97   3         -24.09       11.79       8.465      -1.714      -1.947       2.116       3.655     -0.8199      0.8185
+          97   4         -24.05       11.29       4.273      -1.099      -2.966       2.520       4.234     -0.3605     -0.6684
+          97   5         -21.21       10.48       8.042      -1.793       1.504      -1.255     -0.5597     -9.0265E-02 -5.9834E-02
+          97   6         -21.17       10.35       2.692      -1.968       2.017      -1.594     -0.8142      9.7224E-02 -0.3059
+          97   7         -21.62       11.79       8.465      -4.021       3.137     -0.6599      0.7475     -0.6554     -0.3764
+          97   8         -21.46       11.29       4.273      -4.111       3.797      -1.231      0.3572     -7.2396E-02 -0.7512
+          98   1         -24.18       12.85       8.689      -7.183       3.699      -1.429      -2.765      0.2079     -4.5752E-02
+          98   2         -24.14       12.35       5.106      -6.187       1.954     -0.6801      -5.461       1.207     -0.4712
+          98   3         -24.32       14.42       8.875      -7.741       3.288     -0.4587      -5.615       1.150      0.5486
+          98   4         -24.31       14.29       5.802      -7.586       1.901      0.7728      -8.567       1.736     -6.8053E-02
+          98   5         -21.95       12.85       8.689      -4.727     -0.3698      0.1846      -3.203      0.1297      0.5183
+          98   6         -21.80       12.35       5.106      -4.023      -1.594      0.7052      -6.539       1.225     -5.0786E-02
+          98   7         -22.45       14.42       8.875      -4.993      -1.643       1.725      -6.190       1.488      0.6900
+          98   8         -22.41       14.29       5.802      -5.164      -2.401       2.653      -10.03       2.108     -9.7505E-02
+          99   1         -28.79       10.48       8.042       1.681       2.510       1.695     -0.8181      6.8131E-02   1.988
+          99   2         -28.83       10.35       2.692       1.995       2.258       1.632      -2.616      0.3909     -0.4916
+          99   3         -28.38       11.79       8.465       1.753       2.413       1.719      -2.637      0.3572       1.853
+          99   4         -28.54       11.29       4.273       2.580       1.523       1.782      -5.697       1.356      -2.125
+          99   5         -26.02       10.48       8.042       3.587      -1.040       3.339      0.2916     -9.0047E-02   1.420
+          99   6         -26.03       10.35       2.692       4.195      -1.838       3.529      0.8862      0.1742     -0.1659
+          99   7         -25.91       11.79       8.465       4.035      -1.522       3.372      -1.228     -0.3245       1.416
+          99   8         -25.95       11.29       4.273       5.419      -3.218       3.685     -0.4151      0.2351      -1.036
+         100   1         -28.05       12.85       8.689      -15.36      -4.795      -7.248       12.99      -1.313      -1.246
+         100   2         -28.20       12.35       5.106      -14.04      -5.829      -7.528       11.60     -0.6322     -0.1660
+         100   3         -27.55       14.42       8.875      -32.04       3.908      0.7316       17.98      0.9469      -1.323
+         100   4         -27.59       14.29       5.802      -33.70       4.372       1.929       16.57      0.4482      0.1765
+         100   5         -25.82       12.85       8.689      -15.90      -2.784      -8.717      -2.632      0.4529     -0.5184
+         100   6         -25.86       12.35       5.106      -14.33      -4.683      -8.389      -3.813       1.126     -0.5021
+         100   7         -25.68       14.42       8.875      -33.21       5.655      0.1554     -0.6463       2.676      9.2618E-03
+         100   8         -25.69       14.29       5.802      -34.41       5.074       1.937      -2.336       2.175      5.3656E-03
+         101   1         -21.06       2.113       2.113     -1.1709E-02  0.2858     -0.1044      2.2865E-03  3.2096E-02 -0.1542
+         101   2         -23.94       2.113       2.113      8.6294E-02  6.9969E-02  1.3442E-02 -0.1512      3.4460E-02 -0.1149
+         101   3         -21.06       2.113       7.887     -3.1572E-02  0.3161     -0.1148      3.4446E-02  1.2269E-02  3.1821E-02
+         101   4         -23.94       2.113       7.887      0.1513     -6.9494E-02  8.7901E-02 -0.1056      1.4633E-02  8.7417E-02
+         101   5         -21.06       7.887       2.113      0.2737     -4.2898E-02 -6.1088E-02  0.3161      0.1190     -0.1338
+         101   6         -23.94       7.887       2.113      0.3608     -0.2696      7.8483E-02  0.1626      0.1348     -0.2218
+         101   7         -21.06       7.887       7.887      0.2180      5.2870E-03 -5.3580E-02  0.6029      6.6520E-02  5.2160E-02
+         101   8         -23.94       7.887       7.887      0.3900     -0.3911      0.1709      0.4628      8.2320E-02 -1.9544E-02
+         102   1         -26.06       2.113       2.113      0.1026      0.1143      0.1095      5.3426E-02  1.7057E-02 -9.4620E-02
+         102   2         -28.94       2.113       2.113     -3.0441E-03  0.2634      6.6048E-02 -9.0888E-02  9.5758E-03 -7.8534E-02
+         102   3         -26.06       2.113       7.887      0.1829     -1.6287E-02  0.1598      0.1752     -4.5200E-02  0.1278
+         102   4         -28.94       2.113       7.887     -3.7632E-02  0.3625      1.5364E-03  5.4265E-02 -5.2681E-02  0.1825
+         102   5         -26.06       7.887       2.113      0.3392     -0.2264      0.2136     -0.2014      0.1145     -0.1851
+         102   6         -28.94       7.887       2.113      0.2078     -0.1030      0.2217     -0.3457      0.1303      3.2721E-03
+         102   7         -26.06       7.887       7.887      0.3572     -0.3259      0.2951     -0.4241     -2.5081E-02  3.7308E-02
+         102   8         -28.94       7.887       7.887      0.1109      2.7203E-02  0.1883     -0.5451     -9.2236E-03  0.2643
+         103   1          28.94       2.113       2.113     -0.4432      0.6918      0.2949      0.4240     -1.9586E-02  0.1916
+         103   2          26.06       2.113       2.113     -0.1130      0.1795      0.4771     -0.2822     -0.1661     -0.1449
+         103   3          28.94       2.113       7.887      3.3737E-02  0.3239      0.1859     -0.1989      0.1284      0.4451
+         103   4          26.06       2.113       7.887      0.2245      9.0400E-02  0.2287     -0.1977     -1.8079E-02  7.1273E-02
+         103   5          28.94       7.887       2.113       1.271     -0.4187     -0.3086       1.267     -0.4564      6.2118E-02
+         103   6          26.06       7.887       2.113       1.626     -0.9062     -0.1762      0.5603      0.1044     -6.5242E-02
+         103   7          28.94       7.887       7.887     -0.1384      0.1564      0.5255      0.2253     -0.2338      0.3156
+         103   8          26.06       7.887       7.887      7.7258E-02 -5.2175E-02  0.5185      0.2265      0.3271      0.1509
+         104   1          23.94       2.113       2.113      0.3508     -0.2376     -7.9893E-02  0.2922     -0.2403     -0.2636
+         104   2          21.06       2.113       2.113      6.9633E-02  0.4414     -0.4777      0.2142     -0.1489     -0.2512
+         104   3          23.94       2.113       7.887      7.0030E-02 -4.1789E-02  5.0476E-03  5.1684E-02 -0.1236     -2.8556E-02
+         104   4          21.06       2.113       7.887     -2.7520E-02  0.2700     -0.2092     -0.1104     -3.2214E-02  7.2558E-02
+         104   5          23.94       7.887       2.113      0.4021     -0.4983      0.1294     -0.6679      0.1136     -0.2081
+         104   6          21.06       7.887       2.113      6.1836E-02  0.1215     -0.1501     -0.7459      0.1209     -0.4711
+         104   7          23.94       7.887       7.887      0.3457     -0.4146      0.1022     -0.3577      5.2758E-02  2.6872E-02
+         104   8          21.06       7.887       7.887      0.1890     -0.1620      6.3322E-03 -0.5198      6.0076E-02 -0.1474
+         105   1          24.32       14.42       8.875      -8.936       3.296      -1.570       3.100      -1.652     -9.7914E-02
+         105   2          24.31       14.29       5.802      -7.856       1.296     -0.6502       11.15      -2.222      0.1191
+         105   3          24.18       12.85       8.689      -7.464       2.744      -2.491      0.5420      1.0403E-02 -0.6731
+         105   4          24.14       12.35       5.106      -6.406       1.050      -1.854       6.168      -1.387     -0.3354
+         105   5          22.45       14.42       8.875      -6.761     -0.8232      0.3744       4.899      -1.684     -0.4205
+         105   6          22.41       14.29       5.802      -4.208      -5.787       2.785       12.84      -2.251     -0.2594
+         105   7          21.95       12.85       8.689      -5.608     -0.5162      -1.086       2.053     -7.3694E-02  -1.560
+         105   8          21.80       12.35       5.106      -3.485      -4.392      0.6668       7.549      -1.459      -1.038
+         106   1          24.09       11.79       8.465     -0.9538      -1.843       1.915      -3.101      0.8808      0.9072
+         106   2          24.05       11.29       4.273     -0.4417      -2.973       2.532      -2.306      0.2285     -0.5052
+         106   3          23.98       10.48       8.042      0.5842      -2.481       1.015      -1.804      0.3051      0.9385
+         106   4          23.97       10.35       2.692      0.8226      -3.035       1.330      -1.617      0.2580     -2.5714E-02
+         106   5          21.62       11.79       8.465      -2.940       2.467     -0.4090     -0.9240      0.7022     -0.9326
+         106   6          21.46       11.29       4.273      -3.047       2.885     -0.7206      0.7105     -5.3928E-02  -1.048
+         106   7          21.21       10.48       8.042      -1.273       1.202     -0.8112      0.1026      0.2500     -0.6474
+         106   8          21.17       10.35       2.692      -1.530       1.679      -1.032      0.8443      0.1891     -0.7978
+         107   1          27.55       14.42       8.875      -24.79       3.063     -0.6879      -14.87      0.1700      8.9496E-02
+         107   2          27.59       14.29       5.802      -29.02       4.318       2.292      -14.46      0.4256       1.708
+         107   3          28.05       12.85       8.689      -12.95      -3.295      -6.168      -11.03       1.381     -0.3954
+         107   4          28.20       12.35       5.106      -11.89      -4.396      -6.127      -9.270      0.7286      0.9037
+         107   5          25.68       14.42       8.875      -25.87       4.823      -1.369      -1.163      -2.693      3.8729E-02
+         107   6          25.69       14.29       5.802      -30.26       6.318       1.532       2.846      -2.558      0.6462
+         107   7          25.82       12.85       8.689      -13.54      -1.511      -7.363      0.3191      9.9097E-03 -0.3610
+         107   8          25.86       12.35       5.106      -12.63      -2.526      -7.250       4.474     -0.9879      0.1848
+         108   1          28.38       11.79       8.465       1.121       2.371       2.092       1.872     -0.3193       1.799
+         108   2          28.54       11.29       4.273       2.359       1.958       1.267       4.308      -1.075      -1.505
+         108   3          28.79       10.48       8.042       1.182       2.380       2.023      0.4843     -0.3432       1.925
+         108   4          28.83       10.35       2.692       2.972       1.868      0.7434       2.470     -0.6891     -0.1325
+         108   5          25.91       11.79       8.465       3.050     -0.9595       3.494      0.7602      0.6762       1.639
+         108   6          25.95       11.29       4.273       5.158      -2.930       3.356       1.889      3.8395E-02 -0.6275
+         108   7          26.02       10.48       8.042       2.818     -0.5867       3.353     -0.4958      0.5123       1.628
+         108   8          26.03       10.35       2.692       5.164      -2.185       2.605      0.4995      0.1820      0.1525
+         109   1          21.06       7.887      -2.113     -0.2335      0.2800     -0.1241     -0.9978      0.1376      0.2696
+         109   2          23.94       7.887      -2.113      7.7711E-02 -0.7208      0.5655      -1.032      0.3334      0.5006
+         109   3          21.06       2.113      -2.113      4.5872E-02  0.4208     -0.5443      0.3142     -2.7847E-02  0.2926
+         109   4          23.94       2.113      -2.113      0.6004     -0.3367     -0.3413      0.2796     -5.5716E-02  0.3182
+         109   5          21.06       7.887      -7.887     -0.7710      0.5718      0.1217      -1.460     -0.2408     -1.0857E-02
+         109   6          23.94       7.887      -7.887     -0.3229     -0.7029      0.9482      -1.718     -4.4934E-02 -0.1449
+         109   7          21.06       2.113      -7.887      0.1048      0.4143     -0.5968      0.2629      0.3238      1.2160E-02
+         109   8          23.94       2.113      -7.887      0.7963     -0.6170     -0.2569      4.5591E-03  0.2959     -0.3273
+         110   1          26.06       7.887      -2.113       2.456      -1.116      0.6262      0.6450      0.3975      0.5654
+         110   2          28.94       7.887      -2.113       1.873     -0.6012      0.6951       1.664      0.3911      0.5117
+         110   3          26.06       2.113      -2.113      0.3517      0.8544      0.7608     -0.4529     -6.2117E-02  0.3590
+         110   4          28.94       2.113      -2.113      2.0868E-02   1.622      0.3246      0.5658      7.7989E-02  0.4451
+         110   5          26.06       7.887      -7.887       2.611      -1.399      0.7552      0.5425     -0.2548     -0.3523
+         110   6          28.94       7.887      -7.887       1.935     -0.6985      0.7309       1.708     -0.2613     -0.7849
+         110   7          26.06       2.113      -7.887      0.1157      0.7661       1.085     -0.8351      4.3283E-02 -0.5587
+         110   8          28.94       2.113      -7.887     -0.3084       1.720      0.5558      0.3302      0.1834     -0.8515
+         111   1         -28.94       2.113      -7.887     -3.7632E-02  0.3625      1.5364E-03  5.4265E-02  5.2680E-02 -0.1825
+         111   2         -26.06       2.113      -7.887      0.1829     -1.6288E-02  0.1598      0.1752      4.5199E-02 -0.1278
+         111   3         -28.94       7.887      -7.887      0.1109      2.7203E-02  0.1883     -0.5451      9.2236E-03 -0.2643
+         111   4         -26.06       7.887      -7.887      0.3572     -0.3259      0.2951     -0.4241      2.5081E-02 -3.7308E-02
+         111   5         -28.94       2.113      -2.113     -3.0442E-03  0.2634      6.6048E-02 -9.0888E-02 -9.5760E-03  7.8534E-02
+         111   6         -26.06       2.113      -2.113      0.1026      0.1143      0.1095      5.3426E-02 -1.7057E-02  9.4620E-02
+         111   7         -28.94       7.887      -2.113      0.2078     -0.1030      0.2217     -0.3457     -0.1303     -3.2716E-03
+         111   8         -26.06       7.887      -2.113      0.3392     -0.2264      0.2136     -0.2014     -0.1145      0.1851
+         112   1         -23.94       2.113      -7.887      0.1513     -6.9493E-02  8.7901E-02 -0.1056     -1.4633E-02 -8.7417E-02
+         112   2         -21.06       2.113      -7.887     -3.1572E-02  0.3161     -0.1148      3.4446E-02 -1.2269E-02 -3.1821E-02
+         112   3         -23.94       7.887      -7.887      0.3900     -0.3911      0.1709      0.4628     -8.2320E-02  1.9544E-02
+         112   4         -21.06       7.887      -7.887      0.2180      5.2877E-03 -5.3580E-02  0.6029     -6.6520E-02 -5.2160E-02
+         112   5         -23.94       2.113      -2.113      8.6294E-02  6.9969E-02  1.3442E-02 -0.1512     -3.4460E-02  0.1149
+         112   6         -21.06       2.113      -2.113     -1.1709E-02  0.2858     -0.1044      2.2865E-03 -3.2096E-02  0.1542
+         112   7         -23.94       7.887      -2.113      0.3608     -0.2696      7.8484E-02  0.1626     -0.1348      0.2218
+         112   8         -21.06       7.887      -2.113      0.2737     -4.2898E-02 -6.1088E-02  0.3161     -0.1190      0.1338
+         113   1         -27.59       14.29      -5.802      -33.70       4.372       1.929       16.57     -0.4482     -0.1765
+         113   2         -25.69       14.29      -5.802      -34.41       5.074       1.937      -2.336      -2.175     -5.3658E-03
+         113   3         -28.20       12.35      -5.106      -14.04      -5.829      -7.528       11.60      0.6322      0.1660
+         113   4         -25.86       12.35      -5.106      -14.33      -4.683      -8.389      -3.813      -1.126      0.5021
+         113   5         -27.55       14.42      -8.875      -32.04       3.908      0.7316       17.98     -0.9469       1.323
+         113   6         -25.68       14.42      -8.875      -33.21       5.655      0.1554     -0.6463      -2.676     -9.2610E-03
+         113   7         -28.05       12.85      -8.689      -15.36      -4.795      -7.248       12.99       1.313       1.246
+         113   8         -25.82       12.85      -8.689      -15.90      -2.784      -8.717      -2.632     -0.4529      0.5184
+         114   1         -24.31       14.29      -5.802      -7.586       1.901      0.7728      -8.567      -1.736      6.8052E-02
+         114   2         -22.41       14.29      -5.802      -5.164      -2.401       2.653      -10.03      -2.108      9.7504E-02
+         114   3         -24.14       12.35      -5.106      -6.187       1.954     -0.6801      -5.461      -1.207      0.4712
+         114   4         -21.80       12.35      -5.106      -4.023      -1.594      0.7052      -6.539      -1.225      5.0785E-02
+         114   5         -24.32       14.42      -8.875      -7.741       3.288     -0.4587      -5.615      -1.150     -0.5486
+         114   6         -22.45       14.42      -8.875      -4.993      -1.643       1.725      -6.190      -1.488     -0.6900
+         114   7         -24.18       12.85      -8.689      -7.183       3.699      -1.429      -2.765     -0.2079      4.5752E-02
+         114   8         -21.95       12.85      -8.689      -4.727     -0.3698      0.1846      -3.203     -0.1297     -0.5183
+         115   1         -28.54       11.29      -4.273       2.580       1.523       1.782      -5.697      -1.356       2.125
+         115   2         -25.95       11.29      -4.273       5.419      -3.218       3.685     -0.4151     -0.2351       1.036
+         115   3         -28.83       10.35      -2.692       1.995       2.258       1.632      -2.616     -0.3909      0.4916
+         115   4         -26.03       10.35      -2.692       4.195      -1.838       3.529      0.8862     -0.1742      0.1659
+         115   5         -28.38       11.79      -8.465       1.753       2.413       1.719      -2.637     -0.3572      -1.853
+         115   6         -25.91       11.79      -8.465       4.035      -1.522       3.372      -1.228      0.3245      -1.416
+         115   7         -28.79       10.48      -8.042       1.681       2.510       1.695     -0.8181     -6.8131E-02  -1.988
+         115   8         -26.02       10.48      -8.042       3.587      -1.040       3.339      0.2916      9.0047E-02  -1.420
+         116   1         -24.05       11.29      -4.273      -1.099      -2.966       2.520       4.234      0.3605      0.6684
+         116   2         -21.46       11.29      -4.273      -4.111       3.797      -1.231      0.3572      7.2396E-02  0.7512
+         116   3         -23.97       10.35      -2.692      0.6365      -3.374       1.193       2.372     -6.3777E-02  0.1162
+         116   4         -21.17       10.35      -2.692      -1.968       2.017      -1.594     -0.8142     -9.7224E-02  0.3059
+         116   5         -24.09       11.79      -8.465      -1.714      -1.947       2.116       3.655      0.8199     -0.8185
+         116   6         -21.62       11.79      -8.465      -4.021       3.137     -0.6599      0.7475      0.6554      0.3764
+         116   7         -23.98       10.48      -8.042      0.3150      -2.859      0.9993       1.990      0.1072     -0.8713
+         116   8         -21.21       10.48      -8.042      -1.793       1.504      -1.255     -0.5597      9.0265E-02  5.9834E-02
+
+ MAXIMUM                                                     203.8       153.0       52.96       121.7       9.741       10.82    
+ ELEMENT                                                        30          42          30          54          10          30 
+
+ MINIMUM                                                    -243.1      -171.3      -65.61      -121.7      -9.733      -10.81    
+ ELEMENT                                                        29          52          29          33          20          46 
+  
+  
+  
+  
+                                       N O D E   O U T P U T
+  
+  
+  
+  
+   THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ALL
+  
+       NODE FOOT-  U1             U2             U3           
+            NOTE
+  
+         1     -5.3149019E-01  1.0622639E-01 -9.8801278E-05 
+         2     -5.3132585E-01 -2.5682153E-02  9.1801390E-05 
+         3     -4.6519431E-01  2.7249210E-02  3.3408966E-05 
+         4     -4.6552061E-01 -2.4855965E-02  1.1617061E-04 
+         5     -4.6554631E-01  1.0546291E-01 -9.1772095E-05 
+         6     -2.2056896E-01  2.9590333E-02  6.1987546E-06 
+         7     -2.2132437E-01  9.4579799E-02 -3.1587592E-05 
+         8     -2.2128855E-01 -1.4046336E-02  3.2956136E-05 
+         9     -1.6878899E-01 -9.5421978E-03  0.0000000E+00 
+        10     -1.6887780E-01  8.9845453E-02  0.0000000E+00 
+        11     -5.3167587E-01 -2.6140579E-02  2.7479745E-05 
+        12     -1.6736228E-01 -9.6038107E-03  1.2449156E-03 
+        13     -1.6760127E-01  8.9948261E-02 -1.3166348E-03 
+        14     -5.3160638E-01  1.0686916E-01 -9.4079342E-05 
+        15      5.3141696E-01  1.0711108E-01  3.2854559E-05 
+        16      5.3141082E-01 -2.6185907E-02 -8.5185344E-05 
+        17      5.3099533E-01 -2.5314068E-02 -1.8223218E-09 
+        18      5.3103598E-01  1.0623439E-01 -1.7112679E-09 
+        19      1.6734481E-01  9.0066312E-02 -1.2994505E-03 
+        20      1.6710542E-01 -9.4573525E-03  1.2239923E-03 
+        21      1.6849942E-01 -9.3823540E-03  0.0000000E+00 
+        22      1.6858829E-01  8.9951901E-02  0.0000000E+00 
+        23      4.6511608E-01  1.0555522E-01 -1.5335229E-09 
+        24      2.2100959E-01  9.4686593E-02 -4.2029324E-10 
+        25      4.6511336E-01 -2.4696810E-02 -1.6831529E-09 
+        26      2.2097377E-01 -1.3886925E-02 -6.8053346E-10 
+        27      4.6478957E-01  2.7407078E-02 -1.6185245E-09 
+        28      2.2025236E-01  2.9728848E-02 -5.5893685E-10 
+        29     -9.1392168E-05  1.4404707E-01  0.0000000E+00 
+        30     -6.4772825E-05  1.4458927E-01  0.0000000E+00 
+        31      1.6710542E-01 -9.4573534E-03 -1.2239930E-03 
+        32     -1.6742762E-01 -9.6305078E-03 -1.2034216E-03 
+        33      1.6734481E-01  9.0066310E-02  1.2994501E-03 
+        34     -1.6766742E-01  8.9971656E-02  1.2825035E-03 
+        35     -5.3203915E-01  1.0682995E-01 -7.0988252E-05 
+        36     -5.3201206E-01 -2.6155368E-02  2.4041664E-04 
+        37     -5.9932981E-01  8.0677323E-02  3.8968737E-06 
+        38     -6.0000000E-01  0.0000000E+00  1.7340817E-04 
+        39     -6.0000000E-01  0.0000000E+00  1.8111440E-04 
+        40     -5.9894104E-01  8.0486545E-02 -2.7788049E-05 
+        41      5.3141082E-01 -2.6185908E-02  8.5181801E-05 
+        42      5.3141696E-01  1.0711108E-01 -3.2857919E-05 
+        43      5.9887663E-01  8.0832484E-02 -9.7386511E-06 
+        44      6.0000000E-01  0.0000000E+00  3.5513000E-05 
+        45      6.0000000E-01  0.0000000E+00  5.1906289E-05 
+        46      5.9912237E-01  8.0874490E-02  5.2515964E-05 
+        47     -6.0000000E-01  0.0000000E+00 -5.5089851E-05 
+        48     -6.0000000E-01  0.0000000E+00 -3.0927251E-05 
+        49     -5.9910101E-01  8.0632294E-02 -1.7755253E-05 
+        50     -5.9923032E-01  8.0649518E-02 -5.7432510E-05 
+        51     -6.6667865E-01  1.0758850E-01  3.0738199E-05 
+        52     -6.6652765E-01 -2.6913633E-02  7.0250264E-05 
+        53     -6.6658540E-01 -2.6982102E-02 -1.1750056E-04 
+        54     -6.6668860E-01  1.0754145E-01  1.6011428E-05 
+        55      5.9912237E-01  8.0874490E-02 -5.2519549E-05 
+        56      6.0000000E-01  0.0000000E+00 -5.1909964E-05 
+        57      5.9887663E-01  8.0832484E-02  9.7350433E-06 
+        58      6.0000000E-01  0.0000000E+00 -3.5516717E-05 
+        59      6.6679497E-01  1.0786394E-01  1.5437827E-05 
+        60      6.6677382E-01  1.0788208E-01 -1.8384112E-09 
+        61      6.6673111E-01 -2.7067948E-02 -1.9407083E-09 
+        62      6.6676217E-01 -2.7064839E-02  4.0943228E-05 
+        63      8.0171697E-01 -2.7071474E-02 -2.0854210E-09 
+        64      8.0171341E-01 -2.7100189E-02 -1.9513208E-05 
+        65      8.0169182E-01  1.0783561E-01 -2.4110490E-05 
+        66      8.0169129E-01  1.0786845E-01 -1.9716864E-09 
+        67     -6.6667831E-01  1.0750642E-01  6.2504678E-05 
+        68     -6.6670224E-01 -2.6983098E-02  1.1565831E-04 
+        69     -8.0113898E-01  1.0752029E-01  5.2050984E-05 
+        70     -8.0112858E-01  1.0750867E-01  5.5598783E-06 
+        71     -8.0113775E-01 -2.6987810E-02 -4.3221971E-06 
+        72     -8.0121036E-01 -2.6963609E-02  8.9636594E-06 
+        73     -8.0123855E-01 -2.7028690E-02  1.3651528E-04 
+        74     -8.0114871E-01  1.0745167E-01  6.9592393E-05 
+        75      8.0169182E-01  1.0783561E-01  2.4106548E-05 
+        76      6.6679497E-01  1.0786394E-01 -1.5441498E-05 
+        77      6.6676217E-01 -2.7064838E-02 -4.0947113E-05 
+        78      8.0171341E-01 -2.7100189E-02  1.9509032E-05 
+        79     -5.3131555E-01  4.0287423E-02  8.2520674E-07 
+        80     -3.7908068E-01  2.7769754E-02  1.8179019E-05 
+        81     -2.9696896E-01  2.8480356E-02  1.2667128E-05 
+        82     -2.9753442E-01  9.9474034E-02 -5.3041822E-05 
+        83     -3.7951571E-01  1.0310047E-01 -7.0093903E-05 
+        84     -3.7947762E-01 -2.2530059E-02  7.7001280E-05 
+        85     -2.9749987E-01 -1.8835839E-02  5.6188004E-05 
+        86     -1.6802163E-01  4.0510898E-02  0.0000000E+00 
+        87     -5.3146984E-01  4.0372010E-02 -1.7174298E-06 
+        88     -2.3129319E-01 -1.4780104E-02  1.1476217E-03 
+        89     -3.0071628E-01 -1.9005150E-02  9.2674571E-04 
+        90     -3.7463964E-01 -2.2248764E-02  7.0168576E-04 
+        91     -4.5188361E-01 -2.4608356E-02  4.0460758E-04 
+        92     -1.6664626E-01  4.0403641E-02 -8.9320531E-05 
+        93     -4.5186212E-01  1.0530129E-01 -3.6042176E-04 
+        94     -3.7460232E-01  1.0291092E-01 -6.3774373E-04 
+        95     -3.0065819E-01  9.9663851E-02 -8.5189397E-04 
+        96     -2.3118177E-01  9.5326912E-02 -1.0774666E-03 
+        97      5.3132741E-01  4.0514621E-02 -2.0331706E-05 
+        98      5.3076718E-01  4.0398295E-02 -1.7603694E-09 
+        99      1.6638762E-01  4.0536362E-02 -9.0541239E-05 
+       100      1.6773256E-01  4.0644030E-02  0.0000000E+00 
+       101      2.9718008E-01  9.9578563E-02 -8.0854320E-10 
+       102      3.7913549E-01  1.0321485E-01 -1.2167547E-09 
+       103      4.5163713E-01  1.0543634E-01 -2.4878903E-04 
+       104      3.7437060E-01  1.0304109E-01 -5.7077766E-04 
+       105      3.0041273E-01  9.9795659E-02 -8.0027387E-04 
+       106      2.3092676E-01  9.5451160E-02 -1.0469802E-03 
+       107      3.7909369E-01 -2.2378998E-02 -1.4502332E-09 
+       108      2.9714569E-01 -1.8674678E-02 -1.1224987E-09 
+       109      2.3103765E-01 -1.4635919E-02  1.1152518E-03 
+       110      3.0047125E-01 -1.8863567E-02  8.7080999E-04 
+       111      3.7440815E-01 -2.2098909E-02  6.2214321E-04 
+       112      4.5163984E-01 -2.4457209E-02  2.7856028E-04 
+       113      2.9661900E-01  2.8618236E-02 -9.9414097E-10 
+       114      3.7869049E-01  2.7905808E-02 -1.3525692E-09 
+       115      1.0879232E-01  9.2455803E-02 -1.5550598E-03 
+       116      6.2456742E-02  1.0686391E-01 -1.8232777E-03 
+       117      3.0681331E-02  1.2534397E-01 -2.0381221E-03 
+       118      1.1620297E-02  1.4021389E-01 -2.1819559E-03 
+       119     -9.1503770E-05  1.4584500E-01 -2.2287075E-03 
+       120     -1.1808619E-02  1.4018047E-01 -2.1817293E-03 
+       121     -3.0884532E-02  1.2528001E-01 -2.0376455E-03 
+       122     -6.2681594E-02  1.0677447E-01 -1.8234802E-03 
+       123     -1.0903745E-01  9.2347244E-02 -1.5584529E-03 
+       124     -1.1032873E-01  9.2013791E-02  0.0000000E+00 
+       125     -6.3905749E-02  1.0591365E-01  0.0000000E+00 
+       126     -3.1874610E-02  1.2394873E-01  0.0000000E+00 
+       127     -1.2361399E-02  1.3850769E-01  0.0000000E+00 
+       128      1.2173392E-02  1.3854060E-01  0.0000000E+00 
+       129      3.1671507E-02  1.2401131E-01  0.0000000E+00 
+       130      6.3679012E-02  1.0599979E-01  0.0000000E+00 
+       131      1.1007247E-01  9.2115102E-02  0.0000000E+00 
+       132     -8.2377498E-02  1.2586218E-02  1.3127105E-03 
+       133     -2.3284749E-02  5.3781545E-02  1.5513169E-03 
+       134      6.4329248E-03  9.9228662E-02  1.6619082E-03 
+       135      1.0565703E-02  1.3388095E-01  1.7653582E-03 
+       136     -6.4596956E-05  1.4678948E-01  1.7938308E-03 
+       137     -1.0702788E-02  1.3393105E-01  1.7656282E-03 
+       138     -6.5932212E-03  9.9324090E-02  1.6625927E-03 
+       139      2.3088102E-02  5.3911148E-02  1.5512811E-03 
+       140      8.2142564E-02  1.2731031E-02  1.3098821E-03 
+       141      9.8891563E-03  1.3183159E-01  0.0000000E+00 
+       142      5.2217864E-03  9.7605384E-02  0.0000000E+00 
+       143     -2.4785532E-02  5.2715062E-02  0.0000000E+00 
+       144     -8.3902062E-02  1.2122812E-02  0.0000000E+00 
+       145      8.3662274E-02  1.2274662E-02  0.0000000E+00 
+       146      2.4590109E-02  5.2844316E-02  0.0000000E+00 
+       147     -5.3818295E-03  9.7699256E-02  0.0000000E+00 
+       148     -1.0026520E-02  1.3188095E-01  0.0000000E+00 
+       149     -7.8084449E-05  1.4562939E-01  0.0000000E+00 
+       150      8.2142566E-02  1.2731031E-02 -1.3098810E-03 
+       151      2.3088113E-02  5.3911144E-02 -1.5512751E-03 
+       152     -6.5932105E-03  9.9324064E-02 -1.6625829E-03 
+       153     -1.0702866E-02  1.3393103E-01 -1.7656365E-03 
+       154     -6.4947542E-05  1.4678975E-01 -1.7939950E-03 
+       155      1.0565219E-02  1.3388241E-01 -1.7659159E-03 
+       156      6.4334236E-03  9.9231727E-02 -1.6632346E-03 
+       157     -2.3282299E-02  5.3782285E-02 -1.5513335E-03 
+       158     -8.2387300E-02  1.2572069E-02 -1.3068246E-03 
+       159     -1.0905972E-01  9.2361766E-02  1.5515264E-03 
+       160     -6.2685355E-02  1.0678103E-01  1.8231159E-03 
+       161     -3.0884367E-02  1.2528274E-01  2.0385718E-03 
+       162     -1.1808060E-02  1.4018153E-01  2.1822032E-03 
+       163     -9.1281975E-05  1.4584528E-01  2.2288576E-03 
+       164      1.1620372E-02  1.4021393E-01  2.1819696E-03 
+       165      3.0681353E-02  1.2534395E-01  2.0381154E-03 
+       166      6.2456748E-02  1.0686390E-01  1.8232725E-03 
+       167      1.0879232E-01  9.2455797E-02  1.5550586E-03 
+       168     -1.6670713E-01  4.0402840E-02  9.1785282E-05 
+       169      1.6638762E-01  4.0536360E-02  9.0540795E-05 
+       170     -2.3131311E-01  9.5361952E-02  1.0160695E-03 
+       171     -3.0087719E-01  9.9713516E-02  7.5070787E-04 
+       172     -3.7489576E-01  1.0296184E-01  4.8884850E-04 
+       173     -4.5228627E-01  1.0537564E-01  1.9130919E-04 
+       174     -5.3202686E-01  4.0469522E-02  7.2047078E-05 
+       175     -4.5230463E-01 -2.4634234E-02 -2.1268386E-04 
+       176     -3.7493282E-01 -2.2278846E-02 -5.3293309E-04 
+       177     -3.0093454E-01 -1.9041506E-02 -8.1705117E-04 
+       178     -2.3142340E-01 -1.4810417E-02 -1.0818345E-03 
+       179     -5.9946881E-01  4.0312168E-02  1.4838571E-04 
+       180     -5.9908109E-01  4.0345251E-02  1.0947702E-04 
+       181      5.3132741E-01  4.0514621E-02  2.0328258E-05 
+       182      4.5163713E-01  1.0543634E-01  2.4878610E-04 
+       183      3.7437060E-01  1.0304109E-01  5.7077533E-04 
+       184      3.0041273E-01  9.9795658E-02  8.0027226E-04 
+       185      2.3092676E-01  9.5451158E-02  1.0469795E-03 
+       186      2.3103765E-01 -1.4635921E-02 -1.1152532E-03 
+       187      3.0047125E-01 -1.8863568E-02 -8.7081223E-04 
+       188      3.7440815E-01 -2.2098910E-02 -6.2214602E-04 
+       189      4.5163984E-01 -2.4457209E-02 -2.7856352E-04 
+       190      5.9902513E-01  4.0427524E-02  3.1907873E-05 
+       191      5.9921330E-01  4.0426404E-02  1.1833272E-04 
+       192      5.6518295E-01  9.4175380E-02  3.4477320E-05 
+       193      5.4982276E-01  9.9221898E-02 -3.5931027E-05 
+       194      5.6526226E-01 -1.3364698E-02  1.0677395E-04 
+       195      5.4974347E-01 -1.8415418E-02  2.3204466E-05 
+       196     -5.5011035E-01 -1.8595600E-02  3.3531277E-05 
+       197     -5.6541530E-01 -1.3323504E-02 -4.7499896E-05 
+       198     -5.5019718E-01  9.9120009E-02 -4.8943678E-05 
+       199     -5.6531980E-01  9.3940059E-02 -1.0088030E-04 
+       200     -5.9936216E-01  4.0295563E-02 -7.6174169E-05 
+       201     -5.9923209E-01  4.0272770E-02 -4.5536705E-05 
+       202     -6.6666249E-01  4.0277727E-02  4.6873349E-05 
+       203     -6.6673344E-01  4.0172507E-02 -3.8761653E-05 
+       204      5.6518295E-01  9.4175381E-02 -3.4480829E-05 
+       205      5.9921330E-01  4.0426404E-02 -1.1833635E-04 
+       206      5.6526226E-01 -1.3364698E-02 -1.0677755E-04 
+       207      5.4982276E-01  9.9221899E-02  3.5927555E-05 
+       208      5.9902513E-01  4.0427524E-02 -3.1911551E-05 
+       209      5.4974347E-01 -1.8415417E-02 -2.3208128E-05 
+       210      6.4781785E-01  1.0037165E-01  2.7848976E-06 
+       211      6.3298071E-01  9.4435927E-02  1.2335432E-05 
+       212      6.4775361E-01 -1.9468847E-02 -1.5161322E-05 
+       213      6.3305193E-01 -1.3529333E-02  1.2618235E-04 
+       214      6.6677667E-01  4.0352134E-02  2.2508744E-05 
+       215      6.6675097E-01  4.0401154E-02 -1.8874135E-09 
+       216      8.0170324E-01  4.0411759E-02 -2.0294774E-09 
+       217      8.0170321E-01  4.0396471E-02 -2.3243953E-05 
+       218     -6.6665700E-01  4.0244281E-02  6.4822518E-05 
+       219     -8.0113320E-01  4.0337109E-02  2.9763229E-05 
+       220     -8.0114964E-01  4.0269345E-02  3.2250816E-06 
+       221     -6.4776632E-01  1.0006575E-01  3.7685260E-05 
+       222     -6.3301198E-01  9.4114312E-02  4.7738912E-05 
+       223     -6.4770152E-01 -1.9362198E-02  7.4478261E-05 
+       224     -6.3308782E-01 -1.3502530E-02  2.0391607E-04 
+       225     -8.0111882E-01  4.0288467E-02  1.1527414E-04 
+       226      8.0170321E-01  4.0396471E-02  2.3239894E-05 
+       227      6.6677667E-01  4.0352134E-02 -2.2512523E-05 
+       228      6.3298071E-01  9.4435927E-02 -1.2339045E-05 
+       229      6.3305193E-01 -1.3529333E-02 -1.2618615E-04 
+       230      6.4781785E-01  1.0037165E-01 -2.7885529E-06 
+       231      6.4775361E-01 -1.9468846E-02  1.5157489E-05 
+       232     -4.5164278E-01  4.0347992E-02 -4.1193869E-06 
+       233     -3.7419596E-01  4.0337041E-02 -4.0485779E-06 
+       234     -3.0011634E-01  4.0315233E-02 -5.3442556E-06 
+       235     -2.3043369E-01  4.0275407E-02 -3.1888458E-05 
+       236      4.5141622E-01  4.0476517E-02 -1.7767087E-05 
+       237      3.7396182E-01  4.0476649E-02 -1.1935622E-05 
+       238      2.9987137E-01  4.0450975E-02 -6.8198641E-06 
+       239      2.3017737E-01  4.0408986E-02 -3.3446737E-05 
+       240     -9.6265675E-02  5.2349882E-02  0.0000000E+00 
+       241     -4.3457700E-02  7.9972977E-02  0.0000000E+00 
+       242     -1.2642213E-02  1.1176473E-01  0.0000000E+00 
+       243     -8.4403601E-04  1.3639784E-01  0.0000000E+00 
+       244      6.8135910E-04  1.3643897E-01  0.0000000E+00 
+       245      1.2460611E-02  1.1184297E-01  0.0000000E+00 
+       246      4.3246701E-02  8.0080667E-02  0.0000000E+00 
+       247      9.6017458E-02  5.2476455E-02  0.0000000E+00 
+       248     -9.4871141E-02  5.2782414E-02 -1.9614075E-04 
+       249     -4.2085418E-02  8.0942393E-02 -2.3836306E-04 
+       250     -1.1538294E-02  1.1325168E-01 -2.9741841E-04 
+       251     -2.2767774E-04  1.3826953E-01 -3.2553553E-04 
+       252     -7.8056305E-05  1.4763944E-01 -3.3737803E-04 
+       253      6.5018763E-05  1.3831121E-01 -3.2552849E-04 
+       254      1.1356378E-02  1.1333138E-01 -2.9740016E-04 
+       255      4.1874549E-02  8.1051978E-02 -2.3842745E-04 
+       256      9.4628763E-02  5.2909374E-02 -1.9634003E-04 
+       257     -9.4882877E-02  5.2783174E-02  1.9654969E-04 
+       258     -4.2085678E-02  8.0946194E-02  2.3847624E-04 
+       259     -1.1537680E-02  1.1325458E-01  2.9738675E-04 
+       260     -2.2771469E-04  1.3827063E-01  3.2552039E-04 
+       261     -7.8111882E-05  1.4763968E-01  3.3737004E-04 
+       262      6.5017749E-05  1.3831120E-01  3.2552807E-04 
+       263      1.1356394E-02  1.1333136E-01  2.9740057E-04 
+       264      4.1874557E-02  8.1051970E-02  2.3842778E-04 
+       265      9.4628764E-02  5.2909372E-02  1.9634015E-04 
+       266     -2.3056471E-01  4.0276447E-02  3.5071663E-05 
+       267     -3.0032845E-01  4.0319779E-02  9.2753377E-06 
+       268     -3.7450816E-01  4.0347759E-02  1.6391260E-05 
+       269     -4.5201134E-01  4.0345858E-02  8.4277262E-06 
+       270      4.5141622E-01  4.0476517E-02  1.7764011E-05 
+       271      3.7396182E-01  4.0476648E-02  1.1933067E-05 
+       272      2.9987136E-01  4.0450974E-02  6.8179496E-06 
+       273      2.3017737E-01  4.0408984E-02  3.3445655E-05 
+       274      5.4983201E-01  4.0512830E-02  6.7372158E-06 
+       275      5.6523162E-01  4.0597341E-02  7.9701648E-05 
+       276     -5.6537130E-01  4.0449617E-02 -6.5308756E-05 
+       277     -5.5018794E-01  4.0375104E-02  1.9215266E-06 
+       278      5.6523162E-01  4.0597341E-02 -7.9705185E-05 
+       279      5.4983201E-01  4.0512830E-02 -6.7407927E-06 
+       280      6.3309263E-01  4.0264917E-02  8.1347358E-05 
+       281      6.4790225E-01  4.0317818E-02  4.2783075E-06 
+       282     -6.3308850E-01  4.0168708E-02  1.2938932E-04 
+       283     -6.4783061E-01  4.0203992E-02  5.2628289E-05 
+       284      6.3309263E-01  4.0264918E-02 -8.1351077E-05 
+       285      6.4790225E-01  4.0317818E-02 -4.2820383E-06 
+
+ MAXIMUM         0.8017      0.1476      2.2289E-03
+ AT NODE                63         261         163
+
+ MINIMUM        -0.8012     -2.7100E-02 -2.2287E-03
+ AT NODE                73          64         119
+
+
+          THE ANALYSIS HAS BEEN COMPLETED
+
+
+
+                              ANALYSIS COMPLETE
+                              WITH      2 WARNING MESSAGES ON THE DAT FILE
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =  0.10000    
+       SYSTEM TIME (SEC)    =   0.0000    
+       TOTAL CPU TIME (SEC) =  0.10000    
+       WALLCLOCK TIME (SEC) =          1
