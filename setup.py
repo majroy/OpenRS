@@ -21,7 +21,7 @@ setup(name = 'OpenRS',
         'Natural Language :: English',
         ],
 
-    install_requires=['numpy','vtk'],
+    install_requires=['numpy','vtk', 'matplotlib', 'PyQt5>=5.13'],
     license = 'Creative Commons Attribution-Noncommercial-Share Alike license',
     python_requires='>=3.8',
     packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples'],

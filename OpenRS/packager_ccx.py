@@ -33,9 +33,9 @@ left, 2,2,
 right, 1,1,%f
 right, 2,2,
 midplane_xy, 3,3,
-*node file, nset=all
+*node file
 U
-*el file, elset=all
+*el file
 S
 *node print, nset=left_lower_datum
 U
