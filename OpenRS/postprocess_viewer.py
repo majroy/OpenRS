@@ -20,7 +20,7 @@ def launch(*args, **kwargs):
         app = QtWidgets.QApplication(sys.argv)
     app.processEvents()
     
-    window = interactor(None)
+    window = interactor(None) #otherwise specify parent widget
     window.active_vtu = vtuname1
     window.show()
     window.iren.Initialize()
@@ -59,7 +59,14 @@ class main_window(object):
         
         self.vtkWidget.setMinimumSize(QtCore.QSize(800, 600))
         
+        #set fonts
+        head_font=QtGui.QFont("Helvetica [Cronyx]",weight=QtGui.QFont.Bold)
+        io_font = QtGui.QFont("Helvetica", italic=True)
         #buttons
+        self.load_button = QtWidgets.QPushButton('Load')
+        self.load_label = QtWidgets.QLabel("Nothing loaded.")
+        self.load_label.setWordWrap(True)
+        self.load_label.setFont(io_font)
         self.display_button11 = QtWidgets.QPushButton('S11/Sxx')
         self.display_button22 = QtWidgets.QPushButton('S22/Syy')
         self.display_button33 = QtWidgets.QPushButton('S33/Szz')
@@ -67,6 +74,7 @@ class main_window(object):
         # line extraction from surface
         extractBox = QtWidgets.QGridLayout()
         extract_data_label = QtWidgets.QLabel("Extract")
+        extract_data_label.setFont(head_font)
         # x, y, z of first point
         point1_x_label = QtWidgets.QLabel("x0:")
         self.point1_x_coord = QtWidgets.QDoubleSpinBox()
@@ -90,7 +98,7 @@ class main_window(object):
         self.point2_y_coord = QtWidgets.QDoubleSpinBox()
         self.point2_y_coord.setMinimum(-100000)
         self.point2_y_coord.setMaximum(100000)
-        point2_z_label = QtWidgets.QLabel("z0:")
+        point2_z_label = QtWidgets.QLabel("z1:")
         self.point2_z_coord = QtWidgets.QDoubleSpinBox()
         self.point2_z_coord.setMinimum(-100000)
         self.point2_z_coord.setMaximum(100000)
@@ -105,11 +113,12 @@ class main_window(object):
         self.export_button = QtWidgets.QPushButton('Export')
         self.export_button.setEnabled(False)
         
-        
-        main_ui_box.addWidget(self.display_button11,0,0,1,1)
-        main_ui_box.addWidget(self.display_button22,0,1,1,1)
-        main_ui_box.addWidget(self.display_button33,0,2,1,1)
-        main_ui_box.addLayout(extractBox,1,0,1,3)
+        main_ui_box.addWidget(self.load_button,0,0,1,1)
+        main_ui_box.addWidget(self.load_label,0,1,1,2)
+        main_ui_box.addWidget(self.display_button11,1,0,1,1)
+        main_ui_box.addWidget(self.display_button22,1,1,1,1)
+        main_ui_box.addWidget(self.display_button33,1,2,1,1)
+        main_ui_box.addLayout(extractBox,2,0,1,3)
         
         extractBox.addWidget(extract_data_label,0,0,1,6)
         extractBox.addWidget(point1_x_label,1,0,1,1)
@@ -162,6 +171,7 @@ class interactor(QtWidgets.QWidget):
         style=vtk.vtkInteractorStyleTrackballCamera()
         self.iren.SetInteractorStyle(style)
         self.ren.GetActiveCamera().ParallelProjectionOn()
+        self.ui.load_button.clicked.connect(lambda: self.load_vtu())
         self.ui.display_button11.clicked.connect(lambda: self.draw_model("S11"))
         self.ui.display_button22.clicked.connect(lambda: self.draw_model("S22"))
         self.ui.display_button33.clicked.connect(lambda: self.draw_model("S33"))
@@ -173,14 +183,21 @@ class interactor(QtWidgets.QWidget):
         #clear all actors
         self.ren.RemoveAllViewProps()
         
-        result, self.output, mesh_lut, r = generate_model_data(self.active_vtu, component, None, None)
+        result, self.output, mesh_lut, r = read_model_data(self.active_vtu, component, None, None)
+        self.component = component #update active component
         
         #create scale bar
         scalar_bar_widget = vtk.vtkScalarBarWidget()
+        scalarBarRep = scalar_bar_widget.GetRepresentation()
+        scalarBarRep.GetPositionCoordinate().SetValue(0.01,0.01)
+        scalarBarRep.GetPosition2Coordinate().SetValue(0.09,0.9)
         sb_actor=scalar_bar_widget.GetScalarBarActor()
+        sb_actor.SetNumberOfLabels(13)
+
         sb_actor.SetLookupTable(mesh_lut)
         sb_actor.SetTitle('MPa')
-        
+
+
         #attempt to change scalebar properties [ineffective]
         propT = vtk.vtkTextProperty()
         propL = vtk.vtkTextProperty()
@@ -192,8 +209,8 @@ class interactor(QtWidgets.QWidget):
         propL.BoldOff()
         propL.SetFontSize(1)
         propT.SetFontSize(1)
-        sb_actor.SetTitleTextProperty(propT);
-        sb_actor.SetLabelTextProperty(propL);
+        sb_actor.GetLabelTextProperty().SetColor(0,0,0)
+        sb_actor.GetTitleTextProperty().SetColor(0,0,0)
         sb_actor.GetLabelTextProperty().SetFontSize(1)
         sb_actor.GetTitleTextProperty().SetFontSize(1)
         sb_actor.SetLabelFormat("%.1f")
@@ -215,12 +232,13 @@ class interactor(QtWidgets.QWidget):
         '''
         p1 = [self.ui.point1_x_coord.value(), self.ui.point1_y_coord.value(), self.ui.point1_z_coord.value()]
         p2 = [self.ui.point2_x_coord.value(), self.ui.point2_y_coord.value(), self.ui.point2_z_coord.value()]
-        self.q = line_query(self.output,p1,p2,self.ui.extract_interval.value())
+        self.q = line_query(self.output,p1,p2,self.ui.extract_interval.value(),self.component)
         self.x = range(len(self.q))
         self.ui.figure.clear()
+        QtWidgets.QApplication.processEvents()
         ax = self.ui.figure.add_subplot(111)
         ax.scatter(self.x,self.q)
-        ax.set_ylabel("MPa")
+        ax.set_ylabel("%s MPa"%self.component)
         ax.set_xlabel("Point number")
         ax.grid(b=True, which='major', color='#666666', linestyle='-')
         ax.minorticks_on()
@@ -228,8 +246,43 @@ class interactor(QtWidgets.QWidget):
         self.ui.figure.tight_layout()
         self.ui.canvas.draw()
         
+        #remove any line actor currently present
+        if hasattr(self,'line_actor'):
+            self.ren.RemoveActor(self.line_actor)
+        self.ui.vtkWidget.update()
+        
+        #draw a line on the interactor
+        line = vtk.vtkLineSource()
+        line.SetResolution(self.ui.extract_interval.value())
+        line.SetPoint1(p1)
+        line.SetPoint2(p2)
+        line.Update()
+        
+        sphere1 = vtk.vtkSphereSource()
+        sphere1.SetCenter(p1)
+        sphere1.Update()
+        
+        sphere2 = vtk.vtkSphereSource()
+        sphere2.SetCenter(p2)
+        sphere2.Update()
+        
+        appendFilter = vtk.vtkAppendPolyData()
+        appendFilter.AddInputData(sphere1.GetOutput())
+        appendFilter.AddInputData(line.GetOutput())
+        appendFilter.AddInputData(sphere2.GetOutput())
+        appendFilter.Update()
+        
+        mapper = vtk.vtkPolyDataMapper()
+        mapper.SetInputData(appendFilter.GetOutput())
+        self.line_actor = vtk.vtkActor()
+        self.line_actor.SetMapper(mapper)
+        colors = vtk.vtkNamedColors()
+        self.line_actor.GetProperty().SetColor(colors.GetColor3d("Violet"))
+        self.ren.AddActor(self.line_actor)
         self.ui.export_button.setEnabled(True)
-
+        
+        self.ui.vtkWidget.update()
+        
     def export(self):
         """
         Collects data from ui, gets a valid file to write to.
@@ -243,9 +296,25 @@ class interactor(QtWidgets.QWidget):
             np.savetxt(fileo,
             np.column_stack((self.x,self.q)), 
             delimiter=',',
-            header = "Point number, Stress (MPa)")
+            header = "%s\nPoint number, %s (MPa)"%(self.active_vtu,self.component))
 
-def generate_model_data(vtuname, component, lut, range):
+    def load_vtu(self):
+        """
+        Gets a valid temperature vtu file
+        """
+        
+        filep,startdir=get_file('*.vtu')
+        if filep is None:
+            return
+        if not(os.path.isfile(filep)):
+            print('Data file invalid.')
+            return
+        
+        if filep != None: #because filediag can be cancelled
+            self.active_vtu = filep
+            self.ui.load_label.setText(filep)
+
+def read_model_data(vtuname, component, lut, range):
     '''
     Read an unstructured grid from an XML formated vtu file, setting the output to be 'component'. If not specified, generate a lookup table and range based on the specified component, otherwise, use the lookup table specified with the given range.
     '''
@@ -275,8 +344,8 @@ def generate_model_data(vtuname, component, lut, range):
     actor.SetMapper(mesh_mapper)
     actor.GetProperty().EdgeVisibilityOn()
     actor.GetProperty().SetLineWidth(0)
+    # actor.GetProperty().SetOpacity(0.75) #set transparency
 
-    
     return actor, output, lut, range
 
 def generate_axis_actor(output,ren):
@@ -306,11 +375,10 @@ def generate_axis_actor(output,ren):
     ax3D.SetCamera(ren.GetActiveCamera())
     return ax3D
 
-def line_query(output,q1,q2,numPoints):
+def line_query(output,q1,q2,numPoints,component):
     """
     Interpolate the data from output over q1 to q2 (list of x,y,z)
     """
-    # query_point = [[0,80,0],[0,70.2,0]]
     query_point = [q1,q2]
     line = vtk.vtkLineSource()
     line.SetResolution(numPoints)
@@ -325,7 +393,7 @@ def line_query(output,q1,q2,numPoints):
     probe.Update()
 
     # get the data from the VTK-object (probe) to an numpy array
-    q = v2n(probe.GetOutput().GetPointData().GetArray('S11'))
+    q = v2n(probe.GetOutput().GetPointData().GetArray(component))
 
     return q
 
@@ -349,6 +417,28 @@ def get_save_file(ext,outputd):
         return None, None
     else:
         return filer, os.path.dirname(filer)
+
+def get_file(*args):
+    '''
+    Returns absolute path to filename and the directory it is located in from a PyQt5 filedialog. First value is file extension, second is a string which overwrites the window message.
+    '''
+    ext = args[0]
+    if len(args)>1:
+        launchdir = args[1]
+    else: launchdir = os.getcwd()
+    ftypeName={}
+    ftypeName['*.vtu']=["OpenRS VTK unstructured grid (XML format)", "*.vtu", "VTU file"]
+        
+    filer = QtWidgets.QFileDialog.getOpenFileName(None, ftypeName[ext][0], 
+         os.getcwd(),(ftypeName[ext][2]+' ('+ftypeName[ext][1]+');;All Files (*.*)'))
+
+    if filer[0] == '':
+        filer = None
+        startdir = None
+        return filer, startdir
+        
+    else: #return the filename/path
+        return filer[0], os.path.dirname(filer[0])
 
 
 if __name__ == "__main__":
