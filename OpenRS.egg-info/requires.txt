@@ -1,2 +1,4 @@
 numpy
 vtk
+matplotlib
+PyQt5>=5.13

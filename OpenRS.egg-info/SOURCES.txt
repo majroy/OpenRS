@@ -1,9 +1,8 @@
+LICENSE
 README.md
 setup.py
 OpenRS/__init__.py
-OpenRS/build_model.py
-OpenRS/odb_access.py
-OpenRS/packager.py
+OpenRS/viewer.py
 OpenRS.egg-info/PKG-INFO
 OpenRS.egg-info/SOURCES.txt
 OpenRS.egg-info/dependency_links.txt
