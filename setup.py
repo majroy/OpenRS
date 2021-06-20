@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(name = 'OpenRS',
-    version = '0.1',
+    version = '0.2',
     description = 'Open Residual Stress analysis suite',
     long_description = 'https://github.com/majroy/OpenRS',
     url = 'https://github.com/majroy/OpenRS',
@@ -21,10 +21,10 @@ setup(name = 'OpenRS',
         'Natural Language :: English',
         ],
 
-    install_requires=['numpy','vtk', 'matplotlib', 'PyQt5>=5.13'],
+    install_requires=['numpy','vtk', 'matplotlib', 'PyQt5>=5.13', 'h5py'],
     license = 'Creative Commons Attribution-Noncommercial-Share Alike license',
     python_requires='>=3.8',
-    packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples'],
-    package_data = {'OpenRS' : ['README.MD',], 'OpenRS.geometry' : ['*.*',], 'OpenRS.examples' : ['*.*',] },
+    packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples', 'OpenRS.meta'],
+    package_data = {'OpenRS' : ['README.MD',], 'OpenRS.geometry' : ['*.*',], 'OpenRS.examples' : ['*.*',],  'OpenRS.meta' : ['*.*',]},
     include_package_data=True
     )
