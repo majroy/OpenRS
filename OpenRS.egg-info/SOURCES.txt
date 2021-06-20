@@ -2,7 +2,12 @@ LICENSE
 README.md
 setup.py
 OpenRS/__init__.py
-OpenRS/viewer.py
+OpenRS/main.py
+OpenRS/model_viewer.py
+OpenRS/open_rs_common.py
+OpenRS/open_rs_hdf5_io.py
+OpenRS/point_selector.py
+OpenRS/sgv.py
 OpenRS.egg-info/PKG-INFO
 OpenRS.egg-info/SOURCES.txt
 OpenRS.egg-info/dependency_links.txt
@@ -10,3 +15,4 @@ OpenRS.egg-info/requires.txt
 OpenRS.egg-info/top_level.txt
 OpenRS/examples/__init__.py
 OpenRS/geometry/__init__.py
+OpenRS/meta/__init__.py
