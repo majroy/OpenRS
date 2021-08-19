@@ -38,8 +38,8 @@ class modeling_widget(QtWidgets.QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setMinimumSize(QtCore.QSize(450, 400))
 
-        
-        fid_layout_image = QtGui.QPixmap(r"meta\flexure_pnts.png",'PNG')
+        spl_fname=resource_filename("OpenRS","meta/flexure_pnts.png")
+        fid_layout_image = QtGui.QPixmap(spl_fname,'PNG')
         self.fid_layout_image = fid_layout_image.scaledToHeight(250)
         self.image_label = QtWidgets.QLabel()
         self.image_label.setScaledContents(True)

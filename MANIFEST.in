@@ -1,0 +1,4 @@
+include OpenRS/meta/*.*
+include OpenRS.geometry/*.* 
+include OpenRS.examples/*.*
+include README.MD

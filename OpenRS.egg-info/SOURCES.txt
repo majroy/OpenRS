@@ -1,4 +1,6 @@
 LICENSE
+MANIFEST.in
+README.MD
 README.md
 setup.py
 OpenRS/__init__.py
@@ -17,4 +19,8 @@ OpenRS.egg-info/requires.txt
 OpenRS.egg-info/top_level.txt
 OpenRS/examples/__init__.py
 OpenRS/geometry/__init__.py
+OpenRS/meta/Logo.png
+OpenRS/meta/OpenRS_icon.png
+OpenRS/meta/OpenRSconfig.yml
 OpenRS/meta/__init__.py
+OpenRS/meta/flexure_pnts.png
