@@ -165,7 +165,7 @@ def postprocess(frdname,outfile,fiducial_file):
                     lineFlag.append(i)
     fid.close()
 
-    with open(fiducial_file, "w") as f:
+    with open(fiducial_file, "w+") as f:
 
         for i in range(len(datum_nodeSets)):
             disp_array = np.genfromtxt(datname,

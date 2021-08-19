@@ -3,3 +3,5 @@ vtk
 matplotlib
 PyQt5>=5.13
 h5py
+pyyaml>=5.0
+scipy

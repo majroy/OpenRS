@@ -144,9 +144,10 @@ lld = instance[instancename].nodeSets['left_lower_datum'.upper()]
 lud = instance[instancename].nodeSets['left_upper_datum'.upper()]
 rud = instance[instancename].nodeSets['right_upper_datum'.upper()]
 rld = instance[instancename].nodeSets['right_lower_datum'.upper()]
+p = instance[instancename].nodeSets['xy_outer'.upper()]
 Disp = N_Frame.fieldOutputs['U']
-datum_nodeSets = [lld, lud, rud, rld] #list of nodeSets
-
+datum_nodeSets = [lld, lud, rud, rld, p] #list of nodeSets
+print('datum nodesets',datum_nodeSets)
 
 def get_deformed_datum(nodeSet):
     '''
@@ -165,9 +166,15 @@ def get_deformed_datum(nodeSet):
         disp_array[disp_array[:,0]==node.label,1::] = disp_array[disp_array[:,0]==node.label,1::]+[node.coordinates[0], node.coordinates[1], node.coordinates[2]] 
     return disp_array
 
+#delete the file if it exists
+if os.path.isfile(fiducial_file):
+    os.remove(fiducial_file)
+    print(os.path.isfile(fiducial_file))
+
 for nodeSet in datum_nodeSets:
     datum_values = get_deformed_datum(nodeSet)
-    with open(fiducial_file, "w") as f:
+    print(datum_values)
+    with open(fiducial_file, "a") as f:
         f.write('U_%s\n'%nodeSet.name) #'U_' required to identify as datum for main postprocessor
         np.savetxt(f,datum_values)
 

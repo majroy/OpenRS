@@ -2,11 +2,13 @@ LICENSE
 README.md
 setup.py
 OpenRS/__init__.py
+OpenRS/flexure_widget.py
 OpenRS/main.py
 OpenRS/model_viewer.py
 OpenRS/open_rs_common.py
 OpenRS/open_rs_hdf5_io.py
 OpenRS/point_selector.py
+OpenRS/return_disp.py
 OpenRS/sgv.py
 OpenRS.egg-info/PKG-INFO
 OpenRS.egg-info/SOURCES.txt

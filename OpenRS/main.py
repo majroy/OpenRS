@@ -11,13 +11,14 @@ __email__ = "matthew.roy@manchester.ac.uk"
 __status__ = "Experimental"
 __copyright__ = "(c) M. J. Roy, 2021-"
 
-import sys
+import sys,os,ctypes
 from PyQt5 import QtCore, QtGui, QtWidgets
 import vtk
 from pkg_resources import Requirement, resource_filename
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
 from OpenRS.open_rs_common import get_file, get_save_file
+from OpenRS.flexure_widget import modeling_widget
 from OpenRS.open_rs_hdf5_io import *
 
 class main_window(QtWidgets.QMainWindow):
@@ -29,6 +30,9 @@ class main_window(QtWidgets.QMainWindow):
         
         self.setWindowIcon(QtGui.QIcon(resource_filename("OpenRS","meta/OpenRS_icon.png")))
         self.setWindowTitle("OpenRS - main v%s" %__version__)
+        if os.name == 'nt':
+            myappid = 'OpenRS.main.%s'%__version__ # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid) #windows taskbar icon
         
         self.file = None #active OpenRS datafile
         
@@ -63,11 +67,17 @@ class main_window(QtWidgets.QMainWindow):
         exit_button.setStatusTip('Exit application')
         exit_button.triggered.connect(self.close)
         
+        util_menu = self.menubar.addMenu('&Utilities')
+        flexure_button = QtWidgets.QAction('Flexure model', self)
+        flexure_button.setStatusTip('Opens FEA flexure calculation dialog')
+        flexure_button.triggered.connect(self.launch_modeling)
+        
         #add actions to menubar
         file_menu.addAction(load_button)
         file_menu.addAction(save_button)
         file_menu.addAction(save_as_button)
         file_menu.addAction(exit_button)
+        util_menu.addAction(flexure_button)
 
         #add menubar to window
         self.setMenuBar(self.menubar)
@@ -153,7 +163,9 @@ class main_window(QtWidgets.QMainWindow):
             self.mvui.write_h5()
             self.psui.write_h5()
 
-        
+    def launch_modeling(self):
+        self.mw = modeling_widget(self)
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 

@@ -90,6 +90,7 @@ pickedFaces = f.findAt(((0, 75, 0.0), ))
 p.PartitionFaceByDatumPlane(datumPlane=p.datums[2], faces=pickedFaces)
 
 
+
 a.regenerate() #important to run in order to update partitions done at the part level to get over to the assembly level
 
 #create geometric sets and surfaces
@@ -100,7 +101,9 @@ a.Set(edges=edges, name='left')
 edges = e.findAt(((28, 15, 6), ), ((28, 
     15, -6), ))
 a.Set(edges=edges, name='right')
-
+edges = e.findAt(((-11.480503, 77.716386, 0.0), ), ((27.716386, 61.480503, 
+    0.0), ))
+a.Set(edges=edges, name='xy_outer')
 
 #fiducial mounting features - either there are holes, or there aren't. Find at will fail in the latter
 if explicit_datums:
@@ -164,7 +167,6 @@ a.Surface(side1Faces=faces, name='right_inner')
 faces = f.findAt(((29,12.5,7.0), ), ((29, 17.5, 
     7.0), ))
 a.Surface(side1Faces=faces, name='right_outer')
-
 
 
 #mesh controls/type
