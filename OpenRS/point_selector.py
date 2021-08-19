@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from OpenRS.open_rs_common import get_file, get_save_file, generate_sphere, generate_axis_actor, generate_point_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, table_model
-from sgv import sgv_viewer, draw_sgv
+from OpenRS.sgv import sgv_viewer, draw_sgv
 from OpenRS.open_rs_hdf5_io import *
 
 __author__ = "M.J. Roy"
