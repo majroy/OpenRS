@@ -10,7 +10,7 @@ import os
 import subprocess as subproc
 import sys
 import glob
-from frd_access import postprocess
+from OpenRS.generate.frd_access import postprocess
 
 def run_packager_ccx(mesh_file_name='U_elastic_mesh_only.inp', \
             run_file_name='U_elastic_run_ccx.inp', \
