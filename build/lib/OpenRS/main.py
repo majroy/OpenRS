@@ -15,11 +15,10 @@ import sys,os,ctypes
 from PyQt5 import QtCore, QtGui, QtWidgets
 import vtk
 from pkg_resources import Requirement, resource_filename
+from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtu
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
-from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtu
 from OpenRS.flexure_widget import modeling_widget
-from OpenRS.open_rs_hdf5_io import *
 
 class main_window(QtWidgets.QMainWindow):
     '''

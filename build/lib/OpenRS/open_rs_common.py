@@ -15,7 +15,6 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from pkg_resources import Requirement, resource_filename
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
-from OpenRS.open_rs_hdf5_io import *
 
 
 def generate_sphere(center, radius, color):

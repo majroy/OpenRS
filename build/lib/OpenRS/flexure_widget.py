@@ -1,10 +1,11 @@
 import numpy as np
+import os
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from pkg_resources import Requirement, resource_filename
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
-from OpenRS.open_rs_common import table_model
+from OpenRS.open_rs_common import table_model, get_file
 
 class external(QThread):
     '''
@@ -19,6 +20,8 @@ class external(QThread):
 
     def run(self):
         from OpenRS.generate.packager_ccx import run_packager_ccx
+        current_dir = os.getcwd()
+        os.chdir(self.outputdir)
         mf = resource_filename("OpenRS","generate/U_elastic_mesh_only.inp")
         rf = 'U_elastic_run_ccx.inp'
         run_packager_ccx(mesh_file_name = mf, \
@@ -27,6 +30,7 @@ class external(QThread):
             ccx_exe = self.ccx_exe, \
             outputdir = self.outputdir)
         self._signal.emit(100)
+        os.chdir(current_dir)
 
 
 class modeling_widget(QtWidgets.QDialog):
