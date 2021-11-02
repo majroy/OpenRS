@@ -107,7 +107,8 @@ class main_window(object):
         contour_label.setFont(head_font)
         min_contour_label = QtWidgets.QLabel("Min:")
         self.min_contour = QtWidgets.QDoubleSpinBox()
-
+        self.min_contour.setMinimum(-100000)
+        self.min_contour.setMaximum(100000)
         max_contour_label = QtWidgets.QLabel("Max:")
         self.max_contour = QtWidgets.QDoubleSpinBox()
         self.max_contour.setMinimum(-100000)
@@ -322,6 +323,7 @@ class interactor(QtWidgets.QWidget):
             self.component, \
             self.mesh_lut, \
             (self.ui.min_contour.value(),self.ui.max_contour.value()))
+            print(r)
         else:
             return
         

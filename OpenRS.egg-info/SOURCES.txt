@@ -18,6 +18,15 @@ OpenRS.egg-info/dependency_links.txt
 OpenRS.egg-info/requires.txt
 OpenRS.egg-info/top_level.txt
 OpenRS/examples/__init__.py
+OpenRS/generate/__init__.py
+OpenRS/generate/build_model.py
+OpenRS/generate/build_model_plastic.py
+OpenRS/generate/frd_access.py
+OpenRS/generate/odb_access.py
+OpenRS/generate/odb_access_plastic.py
+OpenRS/generate/packager.py
+OpenRS/generate/packager_ccx.py
+OpenRS/generate/packager_plastic.py
 OpenRS/geometry/__init__.py
 OpenRS/meta/Logo.png
 OpenRS/meta/OpenRS_icon.png

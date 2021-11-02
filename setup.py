@@ -24,7 +24,7 @@ setup(name = 'OpenRS',
     install_requires=['numpy','vtk', 'matplotlib', 'PyQt5>=5.13', 'h5py', 'pyyaml>=5.0', 'scipy'],
     license = 'Creative Commons Attribution-Noncommercial-Share Alike license',
     python_requires='>=3.8',
-    packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples', 'OpenRS.meta'],
-    package_data = {'OpenRS' : ['README.MD',], 'OpenRS.geometry' : ['*.*',], 'OpenRS.examples' : ['*.*',],  'OpenRS.meta' : ['*.*',]},
+    packages=['OpenRS', 'OpenRS.geometry', 'OpenRS.examples',  'OpenRS.generate', 'OpenRS.meta'],
+    package_data = {'OpenRS' : ['README.MD',], 'OpenRS.geometry' : ['*.*',], 'OpenRS.examples' : ['*.*',], 'OpenRS.generate' : ['*.*',], 'OpenRS.meta' : ['*.*',]},
     include_package_data=True
     )
