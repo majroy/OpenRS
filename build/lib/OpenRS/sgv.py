@@ -8,7 +8,7 @@ import numpy as np
 import vtk
 from PyQt5 import QtCore, QtGui, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from OpenRS.open_rs_common import xyview
+from OpenRS.open_rs_common import xyview, generate_axis_actor
 
 class sgv_viewer(QtWidgets.QWidget):
     def __init__(self, parent = None):
@@ -186,7 +186,8 @@ class sgv_viewer(QtWidgets.QWidget):
         self.ren.RemoveAllViewProps()
         w=self.width.value()
         d = self.depth.value()
-        t=np.radians(np.absolute(180-self.theta.value())/2)
+        # t=np.radians(np.absolute(180-self.theta.value())/2)
+        t = np.radians(self.theta.value())
         
         #build transformation matrix from ui
         ax = np.deg2rad(self.rotate_x.value())
@@ -210,7 +211,8 @@ class sgv_viewer(QtWidgets.QWidget):
         # Create a mapper and actor for gauge volume
         mapper = vtk.vtkDataSetMapper()
         mapper.SetInputData(ugrid)
-
+        
+        
         colors = vtk.vtkNamedColors()
         self.actor = vtk.vtkActor()
         self.actor.SetMapper(mapper)
@@ -221,6 +223,7 @@ class sgv_viewer(QtWidgets.QWidget):
         
         self.ren.AddActor(self.actor)
         self.ren.AddActor(sgv_arrows)
+        self.ren.AddActor(generate_axis_actor(self.actor,self.ren))
         
         self.ren.ResetCamera()
         self.vtkWidget.update()
@@ -237,10 +240,14 @@ def draw_directions(w, t, trans):
     '''
     Return a vtkAssembly of arrows showing entry and exit of beam from sgv
     '''
+    arrow_length = w / np.sin(t)
+    
+    t = np.absolute((np.pi - t)/2) # rotate by 2 theta
     
     exit_direction = np.array([w*np.sin(t), w*np.cos(t), 0])
     enter_direction = np.array([-w*np.sin(t), w*np.cos(t), 0])
     strain_direction_ref = np.array([0, w, 0])
+    
     #transform directions based on trans
     enter_direction = np.dot(enter_direction,trans[0:3,0:3])
     exit_direction = np.dot(exit_direction,trans[0:3,0:3])
@@ -249,9 +256,9 @@ def draw_directions(w, t, trans):
     exit_norm = exit_direction / (np.linalg.norm(exit_direction))
     enter_norm = enter_direction / (np.linalg.norm(enter_direction))
     strain_ref_norm = strain_direction_ref / (np.linalg.norm(strain_direction_ref))
-    exit_arrow_actor = arrow(np.array([0,0,0]),w,exit_norm,False,(1,0,0))
-    enter_arrow_actor = arrow(np.array([0,0,0]),w,enter_norm,True,(1,0,0))
-    strain_arrow_actor = arrow(np.array([0,0,0]),w,strain_ref_norm,False,(0,0,1))
+    exit_arrow_actor = arrow(np.array([0,0,0]),arrow_length,exit_norm,False,(1,0,0))
+    enter_arrow_actor = arrow(np.array([0,0,0]),arrow_length,enter_norm,True,(1,0,0))
+    strain_arrow_actor = arrow(np.array([0,0,0]),arrow_length,strain_ref_norm,False,(0,0,1))
     arrows = vtk.vtkAssembly()
     arrows.AddPart(enter_arrow_actor)
     arrows.AddPart(exit_arrow_actor)
@@ -264,15 +271,24 @@ def draw_sgv(w, l, t, trans):
     trans is either a 4x4 transformation matrix, or a 3x3 rotation matrix. Rotations are applied first.
     '''
     
-    vertices = np.array([[-w*np.sin(t), 0, -l/2], #0
-    [0, -w*np.cos(t), -l/2], #1
-    [w*np.sin(t), 0, -l/2], #2
-    [0, w*np.cos(t), -l/2], #3
-    [-w*np.sin(t), 0, l/2], #4
-    [0, -w*np.cos(t), l/2], #5
-    [w*np.sin(t), 0, l/2], #6
-    [0, w*np.cos(t), l/2] #7
+    q = w/np.sin(t)
+    vertices = np.array([[0,0,-l/2], #0
+    [q, 0, -l/2], #1
+    [q*(1+np.cos(t)), w, -l/2], #2
+    [q*np.cos(t), w, -l/2], #3
+    [0,0, l/2], #4
+    [q, 0, l/2], #5
+    [q*(1+np.cos(t)), w, l/2], #6
+    [q*np.cos(t), w, l/2] #7
     ])
+    
+    #move vertices to centroid
+    vertices = vertices - np.mean(vertices, axis=0)
+    #rotate about z by half of (two) theta
+    vertices = np.dot(vertices,np.array([[np.cos(t/2), -np.sin(t/2), 0],
+    [np.sin(t/2), np.cos(t/2), 0],
+    [0, 0, 1]]))
+    
     vertices = np.dot(vertices,trans[0:3,0:3])
     if trans.size == 16:
         vertices = vertices+trans[0:3,3]

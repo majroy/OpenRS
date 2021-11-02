@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(name = 'OpenRS',
-    version = '0.3',
+    version = '0.3.1',
     description = 'Open Residual Stress analysis suite',
     long_description = 'https://github.com/majroy/OpenRS',
     url = 'https://github.com/majroy/OpenRS',

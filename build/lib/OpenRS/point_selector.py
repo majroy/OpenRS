@@ -10,9 +10,9 @@ import numpy as np
 import vtk
 from vtk.util import numpy_support as nps
 from PyQt5 import QtCore, QtGui, QtWidgets
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtCore import Qt
-from OpenRS.open_rs_common import get_file, get_save_file, generate_sphere, generate_axis_actor, generate_point_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo
+from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from OpenRS.open_rs_common import get_file, get_save_file, generate_sphere, generate_axis_actor, generate_point_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, table_model
 from OpenRS.sgv import sgv_viewer, draw_sgv
 from OpenRS.open_rs_hdf5_io import *
 
@@ -593,7 +593,7 @@ class interactor(QtWidgets.QWidget):
             sgv_assembly = vtk.vtkAssembly()
             w = self.ui.sgv.width.value()
             d = self.ui.sgv.depth.value()
-            t = np.radians(self.ui.sgv.theta.value()/2)
+            t = np.radians(self.ui.sgv.theta.value())
             trans = self.ui.sgv.trans
             for pnt in a:
                 local_trans = trans
@@ -604,7 +604,7 @@ class interactor(QtWidgets.QWidget):
                 local_actor = vtk.vtkActor()
                 local_actor.SetMapper(mapper)
                 local_actor.GetProperty().SetColor(color)
-                local_actor.GetProperty().SetOpacity(0.5)
+                # local_actor.GetProperty().SetOpacity(0.5)
                 sgv_assembly.AddPart(local_actor)
             return sgv_assembly
         
@@ -822,72 +822,6 @@ class interactor(QtWidgets.QWidget):
             self.ren.RemoveActor(self.info_actor)
         else:
             pass
-
-class table_model(QtCore.QAbstractTableModel):
-
-    def __init__(self, data, headerlabels):
-        '''
-        data - matrix-like data (needs to be a list of lists)
-        headerlabels - list of strings for column labels
-        '''
-        super(table_model, self).__init__()
-        self._data = data
-        self.headerlabels = headerlabels
-        
-    def data(self, index, role):
-        if role == Qt.DisplayRole:
-            # See below for the nested-list data structure.
-            # .row() indexes into the outer list,
-            # .column() indexes into the sub-list
-            value = self._data[index.row()][index.column()] 
-            return str(value)
-
-    def setData(self, index, value, role):
-        if role == Qt.EditRole:
-            if value.replace('.','',1).isdigit():
-                self._data[index.row()][index.column()] = value
-                return True
-            else:
-                return False
-    
-    def getCellData(self, index):
-        return self._data[index[0]][index[1]]
-            
-    def rowCount(self, index):
-        # The length of the outer list.
-        return len(self._data)
-
-    def columnCount(self, index):
-        # The following takes the first sub-list, and returns
-        # the length (only works if all rows are an equal length)
-        return len(self._data[0])
-
-    def headerData(self, col, orientation, role):
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
-                return QtCore.QVariant(self.headerlabels[col])
-            if orientation == QtCore.Qt.Vertical:
-                return str(col)
-
-    def insertRows(self, position, rows, QModelIndex, parent):
-        self.beginInsertRows(QModelIndex, position, position+rows-1)
-        default_row = [0]*len(self._data[0])  # or _headers if defined.
-        for i in range(rows):
-            self._data.insert(position, default_row)
-        self.endInsertRows()
-        self.layoutChanged.emit()
-        return True
-
-    def removeRows(self, position, rows, QModelIndex):
-        self.beginRemoveRows(QModelIndex, position, position+rows-1)
-        for i in range(rows):
-            del(self._data[position])
-        self.endRemoveRows()
-        self.layoutChanged.emit()
-        return True
-
-    def flags(self, index):
-        return Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsEditable
 
 def vtkmatrix_to_numpy(matrix):
     """

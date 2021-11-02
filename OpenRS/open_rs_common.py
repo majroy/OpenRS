@@ -8,11 +8,14 @@ import os
 import vtk
 import numpy as np
 from vtk.util.numpy_support import vtk_to_numpy as v2n
+from vtk.numpy_interface import dataset_adapter as dsa
+from vtk.util.numpy_support import vtk_to_numpy as v2n
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from pkg_resources import Requirement, resource_filename
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
+from OpenRS.open_rs_hdf5_io import *
 
 
 def generate_sphere(center, radius, color):
@@ -150,7 +153,7 @@ def get_save_file(ext):
     ftypeName['*.csv']='OpenRS comma delimited output file'
     ftypeName['*.txt']='OpenRS whitespace delimited output file'
     ftypeName['*.OpenRS'] = 'OpenRS HDF5-format data file'
-
+    ftypeName['*.Amphyon_to_OpenRS.vtu']= 'OpenRS converted VTK unstructured grid (XML format)'
     id=str(os.getcwd())
 
     filer, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save as:", id,str(ftypeName[ext]+' ('+ext+')'))
@@ -169,7 +172,7 @@ def get_file(*args):
         launchdir = args[1]
     else: launchdir = os.getcwd()
     ftypeName={}
-    ftypeName['*.vtu']=["OpenRS VTK unstructured grid (XML format)", "*.vtu", "VTU file"]
+    ftypeName['*.vtu']=["VTK unstructured grid (XML format)", "*.vtu", "VTU file"]
     ftypeName['*.stl']=["OpenRS STL", "*.stl","STL file"]
     ftypeName['*.OpenRS'] = ["OpenRS HDF5-format data file", "*.OpenRS", "OpenRS file"]
     ftypeName['*.txt'] = ["OpenRS whitespace delimited points", "*.txt", "OpenRS text input"]
@@ -503,6 +506,49 @@ class modeling_widget(QtWidgets.QDialog):
         fname=resource_filename("OpenRS","meta/OpenRSconfig.yml")
         with open(fname,'w+') as f:
             yaml.dump(data,f, default_flow_style=False)
+
+def translate_amphyon_vtu(infile=None, outfile=None):
+    '''
+    Function that modifies/converts Amphyon VTU file with single component data arrays from the three component 'Stress [MPa]' array that is written by Amphyon. Writes to an OpenRS formatted vtu file. Returns an unstructured grid object
+    '''
+    if infile is None:
+        infile,startdir=get_file('*.vtu')
+        if infile is None: #dialog cancelled
+            return
+        if not(os.path.isfile(infile)):
+            print('Data file invalid.')
+            return
+
+    reader = vtk.vtkXMLUnstructuredGridReader()
+    reader.SetFileName(infile)
+    reader.Update()  
+    output = reader.GetOutput()
+
+
+    c= v2n(output.GetPointData().GetArray('Stress [MPa]'))
+    #nx3 stresses
+    Sxx = c[:,0].ravel()
+    Syy = c[:,1].ravel()
+    Szz = c[:,2].ravel()
+
+    o = vtk.vtkUnstructuredGrid()
+    o.CopyStructure(output)
+    new = dsa.WrapDataObject(o)
+    new.PointData.append(Sxx, 'S11')
+    new.PointData.append(Syy, 'S22')
+    new.PointData.append(Szz, 'S33')
+
+    if outfile is None:
+        outfile, _ = get_save_file('*.Amphyon_to_OpenRS.vtu')
+        if outfile is None: #dialog cancelled
+            return
+
+    writer = vtk.vtkXMLUnstructuredGridWriter()
+    writer.SetFileName(outfile)
+    writer.SetInputData(new.VTKObject)
+    writer.Write()
+
+    return new #return new vtu object
 
 if __name__ == "__main__":
     import sys

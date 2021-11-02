@@ -17,7 +17,7 @@ import vtk
 from pkg_resources import Requirement, resource_filename
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
-from OpenRS.open_rs_common import get_file, get_save_file
+from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtu
 from OpenRS.flexure_widget import modeling_widget
 from OpenRS.open_rs_hdf5_io import *
 
@@ -71,6 +71,9 @@ class main_window(QtWidgets.QMainWindow):
         flexure_button = QtWidgets.QAction('Flexure model', self)
         flexure_button.setStatusTip('Opens FEA flexure calculation dialog')
         flexure_button.triggered.connect(self.launch_modeling)
+        amphyon_translate_button = QtWidgets.QAction('Translate Amphyon VTU file ...', self)
+        amphyon_translate_button.setStatusTip('Translates Amphyon-formatted VTU file into OpenRS format, and opens it in the model viewer.')
+        amphyon_translate_button.triggered.connect(self.launch_translate_amphyon)
         
         #add actions to menubar
         file_menu.addAction(load_button)
@@ -78,6 +81,7 @@ class main_window(QtWidgets.QMainWindow):
         file_menu.addAction(save_as_button)
         file_menu.addAction(exit_button)
         util_menu.addAction(flexure_button)
+        util_menu.addAction(amphyon_translate_button)
 
         #add menubar to window
         self.setMenuBar(self.menubar)
@@ -165,7 +169,10 @@ class main_window(QtWidgets.QMainWindow):
 
     def launch_modeling(self):
         self.mw = modeling_widget(self)
-
+    
+    def launch_translate_amphyon(self):
+        translate_amphyon_vtu(None,None)
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 

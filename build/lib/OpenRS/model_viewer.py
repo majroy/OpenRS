@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib import rc
 from pkg_resources import Requirement, resource_filename
-from OpenRS.open_rs_common import get_file, get_save_file, line_query, generate_axis_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo
+from OpenRS.open_rs_common import get_file, get_save_file, line_query, generate_axis_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, modeling_widget
 from OpenRS.open_rs_hdf5_io import *
 
 def launch(*args, **kwargs):
@@ -107,8 +107,7 @@ class main_window(object):
         contour_label.setFont(head_font)
         min_contour_label = QtWidgets.QLabel("Min:")
         self.min_contour = QtWidgets.QDoubleSpinBox()
-        self.min_contour.setMinimum(-100000)
-        self.min_contour.setMaximum(100000)
+
         max_contour_label = QtWidgets.QLabel("Max:")
         self.max_contour = QtWidgets.QDoubleSpinBox()
         self.max_contour.setMinimum(-100000)
@@ -260,6 +259,15 @@ class interactor(QtWidgets.QWidget):
         self.ui.extract_button.clicked.connect(self.extract)
         self.ui.export_button.clicked.connect(self.export)
         self.ui.update_contours_button.clicked.connect(self.draw_model)
+    
+    def contextMenuEvent(self, event):
+        contextMenu = QtWidgets.QMenu(self)
+        newAct = contextMenu.addAction("New")
+        openAct = contextMenu.addAction("Open")
+        quitAct = contextMenu.addAction("Quit")
+        action = contextMenu.exec_(self.mapToGlobal(event.pos()))
+        if action == quitAct:
+            self.close()
     
     def write_h5(self):
         '''
@@ -496,6 +504,8 @@ class interactor(QtWidgets.QWidget):
             self.write_h5()
         elif key == "l": #debug
             self.load_h5()
+        elif key == "m":
+            self.mw = modeling_widget(self)
 
         elif key=="i":
             im = vtk.vtkWindowToImageFilter()
