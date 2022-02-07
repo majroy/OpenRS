@@ -75,10 +75,11 @@ def generate_point_actor(pts,color,size):
     actor.GetProperty().SetPointSize(size)
     return actor, polydata
 
-def generate_info_actor(ren,message):
+def generate_info_actor(message,ren):
     '''
-    Returns an information actor comprised of the incoming message string on the specified renderer
+    Returns an information actor comprised of the incoming message string positioned correctly according to the incoming renderer
     '''
+    
     textmapper = vtk.vtkTextMapper()
     textmapper.SetInput(message)
     textProperty = vtk.vtkTextProperty()
@@ -91,8 +92,6 @@ def generate_info_actor(ren,message):
     #get size of renderwindow
     size = ren.GetSize() #(width,height)
     info_actor.SetPosition(int(0.5*size[0]), int(0.001*size[1]))
-    ren.AddActor(info_actor)
-    
     return info_actor
 
 def generate_axis_actor(actor,ren):
@@ -132,17 +131,25 @@ def line_query(output,q1,q2,numPoints,component):
     line.SetPoint1(q1)
     line.SetPoint2(q2)
     line.Update()
-
+    
     probe = vtk.vtkProbeFilter()
     probe.SetInputConnection(line.GetOutputPort())
     probe.SetSourceData(output)
+    
+    probe.Update() 
+    
+    #initialize numpy array - number of points in probe potentially != numPoints
+    line_pts = np.empty((probe.GetOutput().GetNumberOfPoints(),3)) #x,y,z
+    
+    #get all points: could also iterate over probe.GetOutput().GetNumberOfPoints()
+    for i in range(numPoints):
+        line_pts[i,:] = probe.GetOutput().GetPoint(i)
+    #stack probe value on end column of line_pts
+    line_pts = np.hstack((line_pts, \
+            np.array([v2n(probe.GetOutput().GetPointData().GetArray(component))]).T))
+    
 
-    probe.Update()
-
-    # get the data from the VTK-object (probe) to an numpy array
-    q = v2n(probe.GetOutput().GetPointData().GetArray(component))
-
-    return q
+    return line_pts
 
 def get_save_file(ext):
     '''
@@ -151,6 +158,7 @@ def get_save_file(ext):
     ftypeName={}
     ftypeName['*.csv']='OpenRS comma delimited output file'
     ftypeName['*.txt']='OpenRS whitespace delimited output file'
+    ftypeName['*.stl']='OpenRS stereolithography (STL) file'
     ftypeName['*.OpenRS'] = 'OpenRS HDF5-format data file'
     ftypeName['*.Amphyon_to_OpenRS.vtu']= 'OpenRS converted VTK unstructured grid (XML format)'
     id=str(os.getcwd())
@@ -515,7 +523,6 @@ def translate_amphyon_vtu(infile=None, outfile=None):
         if infile is None: #dialog cancelled
             return
         if not(os.path.isfile(infile)):
-            print('Data file invalid.')
             return
 
     reader = vtk.vtkXMLUnstructuredGridReader()

@@ -4,6 +4,7 @@ README.MD
 README.md
 setup.py
 OpenRS/__init__.py
+OpenRS/compare.py
 OpenRS/flexure_widget.py
 OpenRS/main.py
 OpenRS/model_viewer.py
@@ -17,7 +18,10 @@ OpenRS.egg-info/SOURCES.txt
 OpenRS.egg-info/dependency_links.txt
 OpenRS.egg-info/requires.txt
 OpenRS.egg-info/top_level.txt
+OpenRS/examples/U_elastic_run.vtu
+OpenRS/examples/U_plastic_run.vtu
 OpenRS/examples/__init__.py
+OpenRS/generate/U_elastic_mesh_only.inp
 OpenRS/generate/__init__.py
 OpenRS/generate/build_model.py
 OpenRS/generate/build_model_plastic.py
@@ -27,6 +31,13 @@ OpenRS/generate/odb_access_plastic.py
 OpenRS/generate/packager.py
 OpenRS/generate/packager_ccx.py
 OpenRS/generate/packager_plastic.py
+OpenRS/geometry/Arch_AM.STL
+OpenRS/geometry/Arch_BA_xx.STL
+OpenRS/geometry/U_elastic.scad
+OpenRS/geometry/U_elastic.stl
+OpenRS/geometry/U_elastic_exp_fid.STEP
+OpenRS/geometry/U_elastic_imp_fid.STEP
+OpenRS/geometry/U_plastic.stl
 OpenRS/geometry/__init__.py
 OpenRS/meta/Logo.png
 OpenRS/meta/OpenRS_icon.png

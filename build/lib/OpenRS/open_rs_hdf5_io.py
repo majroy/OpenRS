@@ -33,7 +33,11 @@ def initialize_HDF5(file=None):
         # f.attrs['version'] = __version__
         
         #create model group
-        model = f.create_group("model")
+        # model = f.create_group("model_data")
+        boundary = f.create_group("model_boundary")
+        boundary.create_dataset("points", data=h5py.Empty("f"))
+        boundary.create_dataset("vertices", data=h5py.Empty("f"))
+        boundary.create_dataset("transform", data=h5py.Empty("f"))
         
         #create fiducial group
         fid = f.create_group("fiducials")
@@ -78,9 +82,9 @@ class HDF5vtkug_writer(VTKPythonAlgorithmBase):
         if self.__CurrentPiece == 0:
             self.__File = h5py.File(self.__FileName, 'r+')
             if "model" in self.__File:
-                del self.__File["model"]
+                del self.__File["model_data"]
         
-        model = self.__File.create_group("model")
+        model = self.__File.create_group("model_data")
         grp = model.create_group("piece%d" % self.__CurrentPiece)
         grp.attrs['bounds'] = inp.GetBounds()
  
@@ -154,7 +158,7 @@ class HDF5vtkug_reader(VTKPythonAlgorithmBase):
         output = dsa.WrapDataObject(vtk.vtkMultiBlockDataSet.GetData(outInfo))
         f = h5py.File(self.__FileName, 'r')
         idx = 0
-        data = f["model"]
+        data = f["model_data"]
         for grp_name in data:
             ug = vtk.vtkUnstructuredGrid()
             output.SetBlock(idx, ug)

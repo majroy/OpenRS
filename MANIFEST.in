@@ -1,5 +1,5 @@
 include OpenRS/meta/*.*
-include OpenRS.geometry/*.* 
-include OpenRS.examples/*.*
-include OpenRS.generate/*.*
+include OpenRS/geometry/*.* 
+include OpenRS/examples/*.*
+include OpenRS/generate/*.*
 include README.MD

@@ -2,11 +2,16 @@ from os import path
 import sys
 from setuptools import setup, find_packages
 
+#read contents of README file
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(name = 'OpenRS',
-    version = '0.3.1post1',
+    version = '0.3.2',
     description = 'Open Residual Stress analysis suite',
-    long_description = 'https://github.com/majroy/OpenRS',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url = 'https://github.com/majroy/OpenRS',
     author = 'M J Roy',
     author_email = 'matthew.roy@manchester.ac.uk',

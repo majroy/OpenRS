@@ -19,6 +19,7 @@ from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtu
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
 from OpenRS.flexure_widget import modeling_widget
+from OpenRS.open_rs_hdf5_io import *
 
 class main_window(QtWidgets.QMainWindow):
     '''
@@ -129,9 +130,9 @@ class main_window(QtWidgets.QMainWindow):
         '''
         Gets an OpenRS file, calls load_h5 methods
         '''
-
+        
         self.file, _ = get_file('*.OpenRS')
-            
+        
         if self.file is not None:
             self.setWindowTitle("%s  -  OpenRS v%s" %(self.file,__version__))
             self.psui.file = self.file
