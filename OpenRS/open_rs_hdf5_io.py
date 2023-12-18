@@ -14,6 +14,7 @@ import vtk
 import h5py
 from vtk.util.vtkAlgorithm import VTKPythonAlgorithmBase
 from vtk.numpy_interface import dataset_adapter as dsa
+import numpy as np
 from datetime import datetime
 from OpenRS.open_rs_common import get_save_file
 
@@ -145,6 +146,87 @@ class HDF5vtkug_writer(VTKPythonAlgorithmBase):
     def GetNumberOfPieces(self):
         return self.__NumberOfPieces
 
+class HDF5vtkpd_writer(VTKPythonAlgorithmBase):
+    def __init__(self):
+        VTKPythonAlgorithmBase.__init__(self, \
+        nInputPorts=1, \
+        inputType='vtkPolyData', \
+        nOutputPorts=0)
+ 
+        self.__FileName = ""
+        self.__NumberOfPieces = 1
+        self.__CurrentPiece = 0
+
+
+    def RequestData(self, request, inInfo, outInfo):
+        info = inInfo[0].GetInformationObject(0)
+        inp = dsa.WrapDataObject(vtk.vtkDataSet.GetData(info))
+ 
+        if self.__CurrentPiece == 0:
+            self.__File = h5py.File(self.__FileName, 'r+')
+            if "model" in self.__File:
+                del self.__File["model_data"]
+        
+        model = self.__File.create_group("model_data")
+        grp = model.create_group("piece%d" % self.__CurrentPiece)
+        grp.attrs['bounds'] = inp.GetBounds()
+ 
+        # grp.create_dataset("cells", data=inp.Cells)
+        
+        # grp.create_dataset("cell_locations", data=inp.CellLocations)
+ 
+        grp.create_dataset("points", data=inp.Points)
+ 
+        pdata = grp.create_group("point_data")
+        for name in inp.PointData.keys():
+            pdata.create_dataset(name, data=inp.PointData[name])
+        
+        self.__File.attrs['date_modified'] = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        
+        if self.__CurrentPiece < self.__NumberOfPieces - 1:
+            # If we are not done, ask the pipeline to re-execute us.
+            self.__CurrentPiece += 1
+            request.Set(
+                vtk.vtkStreamingDemandDrivenPipeline.CONTINUE_EXECUTING(),
+                1)
+        else:
+            # Stop execution
+            request.Remove(
+                vtk.vtkStreamingDemandDrivenPipeline.CONTINUE_EXECUTING())
+            self.__File.close()
+            del self.__File
+        return 1
+ 
+    def RequestInformation(self, request, inInfo, outInfo):
+        # Reset values.
+        self.__CurrentPiece = 0
+        return 1
+ 
+    def RequestUpdateExtent(self, request, inInfo, outInfo):
+        info = inInfo[0].GetInformationObject(0)
+        info.Set(
+            vtk.vtkStreamingDemandDrivenPipeline.UPDATE_NUMBER_OF_PIECES(),
+            self.__NumberOfPieces)
+        info.Set(
+            vtk.vtkStreamingDemandDrivenPipeline.UPDATE_PIECE_NUMBER(),
+            self.__CurrentPiece)
+        return 1
+ 
+    def SetFileName(self, fname):
+        if fname != self.__FileName:
+            self.Modified()
+            self.__FileName = fname
+ 
+    def GetFileName(self):
+        return self.__FileName
+ 
+    def SetNumberOfPieces(self, npieces):
+        if npieces != self.__NumberOfPieces:
+            self.Modified()
+            self.__NumberOfPieces = npieces
+ 
+    def GetNumberOfPieces(self):
+        return self.__NumberOfPieces
 
 class HDF5vtkug_reader(VTKPythonAlgorithmBase):
     def __init__(self):
@@ -175,6 +257,48 @@ class HDF5vtkug_reader(VTKPythonAlgorithmBase):
             for pt_array in pt_arrays:
                 array = pt_arrays[pt_array][:]
                 ug.PointData.append(array, pt_array)
+ 
+        return 1
+ 
+    def SetFileName(self, fname):
+        if fname != self.__FileName:
+            self.Modified()
+            self.__FileName = fname
+ 
+    def GetFileName(self):
+        return self.__FileName
+
+class HDF5vtkpd_reader(VTKPythonAlgorithmBase):
+    def __init__(self):
+        VTKPythonAlgorithmBase.__init__(self,
+            nInputPorts=0,
+            nOutputPorts=1, outputType='vtkMultiBlockDataSet')
+ 
+        self.__FileName = ""
+ 
+    def RequestData(self, request, inInfo, outInfo):
+        output = dsa.WrapDataObject(vtk.vtkMultiBlockDataSet.GetData(outInfo))
+        f = h5py.File(self.__FileName, 'r')
+        idx = 0
+        data = f["model_data"]
+        for grp_name in data:
+            pd = vtk.vtkPolyData()
+            output.SetBlock(idx, pd)
+            idx += 1
+            pd = dsa.WrapDataObject(pd)
+            grp = data[grp_name]
+            pts = grp['points'][:]
+            pd.Points = pts
+            pt_arrays = grp['point_data']
+            verts = vtk.vtkCellArray()
+            for i in np.arange(len(pts)):
+                verts.InsertNextCell(1)
+                verts.InsertCellPoint(i)
+            pd.SetVerts(verts)
+            
+            for pt_array in pt_arrays:
+                array = pt_arrays[pt_array][:]
+                pd.PointData.append(array, pt_array)
  
         return 1
  

@@ -3,9 +3,11 @@
 Qt, VTK and matplotlib application to allow for viewing and querying residual stress fields. 
 -------------------------------------------------------------------------------
 0.1 - Inital release
+0.2 - added clipping, etc
+0.3 - allows for translation of model and resulting STL file
 '''
 __author__ = "M.J. Roy"
-__version__ = "0.2"
+__version__ = "0.3"
 __email__ = "matthew.roy@manchester.ac.uk"
 __status__ = "Experimental"
 __copyright__ = "(c) M. J. Roy, 2021-"
@@ -14,14 +16,16 @@ import os, sys
 import numpy as np
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy as v2n
+from vtk.util.numpy_support import numpy_to_vtk as n2v
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5 import QtGui, QtWidgets, QtCore
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib import rc
 from pkg_resources import Requirement, resource_filename
-from OpenRS.open_rs_common import get_file, get_save_file, line_query, generate_axis_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, modeling_widget
+from OpenRS.open_rs_common import get_file, get_save_file, line_query_vtk, line_query_NDinterp, generate_axis_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, modeling_widget, generate_sphere, do_transform
 from OpenRS.open_rs_hdf5_io import *
+from OpenRS.transform_widget import make_translate_button_layout
 
 def launch(*args, **kwargs):
     '''
@@ -35,8 +39,6 @@ def launch(*args, **kwargs):
     
     window = interactor(None) #otherwise specify parent widget
     window.show()
-    
-    window.iren.Initialize()
     
     if len(args) == 1:
         window.file = args[0]
@@ -106,6 +108,9 @@ class main_window(object):
         self.mesh_display.setCheckable(True)
         self.mesh_display.setChecked(False)
         self.mesh_display.setEnabled(False)
+        # self.translate_drop_button = make_trans_button(self)
+        
+        
         self.extract_boundaries_button = QtWidgets.QPushButton('Extract boundary')
         self.extract_boundaries_button.setEnabled(False)
         self.extract_boundaries_button.setToolTip('Extract boundary of model')
@@ -246,6 +251,8 @@ class main_window(object):
         load_model_box.addWidget(self.component_cb,0,1,1,1)
         load_model_box.addWidget(self.mesh_display,0,2,1,1)
         load_model_box.addWidget(self.load_label,1,0,1,3)
+        # load_model_box.addWidget(self.translate_drop_button, 2,0,1,1)
+        load_model_box.addLayout(make_translate_button_layout(self), 2,0,1,1)
         load_model_box.addWidget(self.extract_boundaries_button,2,1,1,1)
         load_model_box.addWidget(self.export_STL_button,2,2,1,1)
         
@@ -298,25 +305,73 @@ class interactor(QtWidgets.QWidget):
         self.iren.AddObserver("KeyPressEvent", self.keypress)
         self.iren.AddObserver("MouseMoveEvent", self.on_mouse_move)
         self.ren.GetActiveCamera().ParallelProjectionOn()
+        self.ui.vtkWidget.Initialize()
         
         self.file = None #overwritten at launch
+        self.picking = False
+        self.trans = np.eye(4) #default
+        self.c_trans = np.eye(4) #initialise cumulative transformation
         make_logo(self.ren)
         
-        self.ui.load_button.clicked.connect(self.load_vtu)
+        self.ui.load_button.clicked.connect(self.load_model)
         self.ui.mesh_display.clicked.connect(self.toggle_edges)
         self.ui.clip_active_button.clicked.connect(self.clip)
         self.ui.extract_button.clicked.connect(self.extract)
         self.ui.export_line_button.clicked.connect(self.export_line)
         self.ui.update_contours_button.clicked.connect(self.update_scale_bar)
         self.ui.extract_boundaries_button.clicked.connect(self.get_boundaries)
+        self.ui.trans_widget.trans_origin_button.clicked.connect(self.apply_trans)
+        self.ui.trans_reset_button.clicked.connect(self.reset_trans)
+        self.ui.trans_widget.choose_vertex_button.clicked.connect(self.actuate_node_pick)
+        self.ui.component_cb.currentIndexChanged.connect(self.draw_model)
     
+    def reset_trans(self):
+        '''
+        Applies the inverse of the current transformation matrix to revert all transformations, resets inputs for movement
+        '''
+        self.trans = np.linalg.inv(self.c_trans)
+        self.apply_transformation()
+        
+        self.ui.trans_widget.translate_x.setValue(0)
+        self.ui.trans_widget.translate_y.setValue(0)
+        self.ui.trans_widget.translate_z.setValue(0)
+        self.display_info('Reset translation.')
+    
+    def apply_trans(self):
+        '''
+        Applies the appropriate transformation to the existing model object(s)
+        '''
+        self.ui.translate_drop_button.setChecked(False)
+
+        self.trans[0,-1] = self.ui.trans_widget.translate_x.value()
+        self.trans[1,-1] = self.ui.trans_widget.translate_y.value()
+        self.trans[2,-1] = self.ui.trans_widget.translate_z.value()
+        self.apply_transformation()
+        self.display_info('Translated model.')
+        if self.picking:
+            self.actuate_node_pick()
+
+    def apply_transformation(self):
+    
+        T = self.trans.copy()
+
+        np_pts = v2n(self.model_obj.GetPoints().GetData())
+        np_pts = do_transform(np_pts,T)
+        self.c_trans = T @ self.c_trans
+        self.trans = np.eye(4)
+        
+        self.model_obj.GetPoints().SetData(n2v(np_pts))
+        self.model_obj.Modified()
+        self.draw_model()
+        self.ui.vtkWidget.update()
+
     def get_boundaries(self):
         '''
         Extracts the boundaries of the model to a polydata object, if export_STL is selected then ask for where to save it.
         '''
         #can't be activated unless load_model has run
         extract_surface = vtk.vtkDataSetSurfaceFilter()
-        extract_surface.SetInputDataObject(self.vtu_output)
+        extract_surface.SetInputDataObject(self.model_obj)
         extract_surface.Update()
         self.model_boundary = vtk.vtkPolyData()
         self.model_boundary = extract_surface.GetOutput()
@@ -343,9 +398,9 @@ class interactor(QtWidgets.QWidget):
         '''
         if hasattr(self,'mesh_actor'):
             if self.ui.mesh_display.isChecked():
-                self.mesh_actor.GetProperty().EdgeVisibilityOff()
+                self.model_actor.GetProperty().EdgeVisibilityOff()
             else:
-                self.mesh_actor.GetProperty().EdgeVisibilityOn()
+                self.model_actor.GetProperty().EdgeVisibilityOn()
         
         if hasattr(self,'clipped_actor'):
             if self.ui.mesh_display.isChecked():
@@ -364,12 +419,16 @@ class interactor(QtWidgets.QWidget):
             self.file = initialize_HDF5()
         
         #itinerary from this interactor is just the model. If there is an existing unstructured grid, then nothing needs to be written
-        if hasattr(self,'active_vtu') and isinstance(self.active_vtu, str):
-            w = HDF5vtkug_writer()
-            reader = vtk.vtkXMLUnstructuredGridReader()
-            reader.SetFileName(self.active_vtu)
-            reader.Update()
-            w.SetInputConnection(reader.GetOutputPort())
+        if hasattr(self,'active_obj') and isinstance(self.active_obj, str):
+            if "vtkPolyData" in str(type(self.model_obj)):
+                w = HDF5vtkpd_writer()
+            else:
+                w = HDF5vtkug_writer()
+            #set up pipeline for pushing through the current mesh
+            pt = vtk.vtkPassThrough()
+            pt.SetInputData(self.model_obj)
+            w.SetInputConnection(pt.GetOutputPort())
+            
             w.SetFileName(self.file)
             w.Update()
             self.display_info('Saved to data file.')
@@ -393,39 +452,68 @@ class interactor(QtWidgets.QWidget):
         Main method which updates the display of the model.
         '''
         
+        #clear renderer
+        self.ren.RemoveAllViewProps()
+        
         #Logic which bypasses the initial call from the combobox on loading
         if self.ui.component_cb.currentText() != '':
             self.component = self.ui.component_cb.currentText()
         
+        edges = False
+        from_load = False #until turned false
         
-        if self.ui.mesh_display.isChecked():
-            edges = False
-        else:
-            edges = True
-        #clear all actors
-        self.ren.RemoveAllViewProps()
-        if hasattr(self,'active_vtu') and not hasattr(self,'vtu_output'):
+        
+        if hasattr(self,'active_obj') and not hasattr(self,'model_obj'):
+            from_load = True
             #read the model data
-            self.vtu_output, components = read_model_data(self.active_vtu)
+            self.model_obj, components = read_model_data(self.active_obj)
             #update the combobox with the components
+            self.ui.component_cb.clear()
             self.ui.component_cb.addItems(components)
             self.component = self.ui.component_cb.currentText()
+            
+            #edge display conditioning
+            
+            if "vtkUnstructuredGrid" in str(type(self.model_obj)):
+                self.ui.mesh_display.setEnabled(True)
+            elif "vtkPolyData" in str(type(self.model_obj)):
+                self.ui.mesh_display.setEnabled(False)
 
-            self.mesh_actor, self.mesh_mapper, self.mesh_lut, range = generate_ug_actor(self.vtu_output, self.component, edges)
+            if "vtkPolyData" in str(type(self.model_obj)):
+                self.model_actor, self.model_mapper, self.lut, range_ = gen_pd_actor(self.model_obj, self.component)
+                self.ui.extract_boundaries_button.setEnabled(False)
+                self.ui.export_STL_button.setEnabled(False)
+            else:
+            
+                if not self.ui.mesh_display.isChecked():
+                    edges = True
+                self.model_actor, self.model_mapper, self.lut, range_ = gen_ug_actor(self.model_obj, self.component, edges)
 
-            self.ui.extract_boundaries_button.setEnabled(True)
-            self.ui.export_STL_button.setEnabled(True)
+                self.ui.extract_boundaries_button.setEnabled(True)
+                self.ui.export_STL_button.setEnabled(True)
+
             self.ui.update_contours_button.setEnabled(True)
             self.ui.extract_button.setEnabled(True)
             self.ui.export_line_button.setEnabled(True)
-        elif hasattr(self,'vtu_output'): #then operate on the existing vtu's contents
-            self.mesh_actor, self.mesh_mapper, self.mesh_lut, range = generate_ug_actor(self.vtu_output, self.component, edges)
-        else:
-            return
+            
+            self.ui.trans_widget.trans_origin_button.setEnabled(True)
+            self.ui.trans_reset_button.setEnabled(True)
+            self.ui.trans_widget.choose_vertex_button.setEnabled(True)
+            
+        else: #hasattr(self,'model_obj'): #then operate on the existing model
+            try:
+                if "vtkPolyData" in str(type(self.model_obj)):
+                    self.model_actor, self.model_mapper, self.lut, range_ = gen_pd_actor(self.model_obj, self.component)
+                else:
+                    if not self.ui.mesh_display.isChecked():
+                        edges = True
+                    self.model_actor, self.model_mapper, self.lut, range_ = gen_ug_actor(self.model_obj, self.component, edges)
+            except:
+                return
         
         #update contour limits
-        self.ui.min_contour.setValue(range[0])
-        self.ui.max_contour.setValue(range[1])
+        self.ui.min_contour.setValue(range_[0])
+        self.ui.max_contour.setValue(range_[1])
         
         
         #create scale bar
@@ -437,7 +525,7 @@ class interactor(QtWidgets.QWidget):
 
         self.sb_actor.SetNumberOfLabels(self.ui.num_contour.value())
 
-        self.sb_actor.SetLookupTable(self.mesh_lut)
+        self.sb_actor.SetLookupTable(self.lut)
         self.sb_actor.SetTitle('MPa')
 
 
@@ -458,9 +546,9 @@ class interactor(QtWidgets.QWidget):
         self.sb_actor.GetTitleTextProperty().SetFontSize(1)
         self.sb_actor.SetLabelFormat("%.1f")
 
-        self.ren.AddActor(self.mesh_actor)
+        self.ren.AddActor(self.model_actor)
         self.ren.AddActor(self.sb_actor)
-        self.axis_actor = generate_axis_actor(self.vtu_output,self.ren)
+        self.axis_actor = generate_axis_actor(self.model_obj,self.ren)
         self.ren.AddActor(self.axis_actor)
         
         scalar_bar_widget.SetInteractor(self.iren)
@@ -474,7 +562,7 @@ class interactor(QtWidgets.QWidget):
         updates the active scale bar with limits and number of intervals from ui
         '''
         r = (self.ui.min_contour.value(),self.ui.max_contour.value())
-        self.mesh_mapper.SetScalarRange(r[0], r[1])
+        self.model_mapper.SetScalarRange(r[0], r[1])
         if hasattr(self,'clip_mapper'):
             self.clip_mapper.SetScalarRange(r[0], r[1])
         self.sb_actor.SetNumberOfLabels(self.ui.num_contour.value())
@@ -484,23 +572,25 @@ class interactor(QtWidgets.QWidget):
         '''
         Get points from ui, call line_query and plot data on matplotlib canvas
         '''
-        if not hasattr(self,'vtu_output'):
+        if not hasattr(self,'model_obj'):
             return
         
         p1 = [self.ui.point1_x_coord.value(), self.ui.point1_y_coord.value(), self.ui.point1_z_coord.value()]
         p2 = [self.ui.point2_x_coord.value(), self.ui.point2_y_coord.value(), self.ui.point2_z_coord.value()]
-        self.q = line_query(self.vtu_output,p1,p2,self.ui.extract_interval.value(),self.component)
+        if "vtkPolyData" in str(type(self.model_obj)):
+            self.q = line_query_NDinterp(self.model_obj,p1,p2,self.ui.extract_interval.value(),self.component)
+        else:
+            self.q = line_query_vtk(self.model_obj,p1,p2,self.ui.extract_interval.value(),self.component)
         self.x = range(self.q.shape[0])
         self.ui.figure.clear()
         
-        # print(self.x,self.q)
         ax = self.ui.figure.add_subplot(111)
         ax.scatter(self.x,self.q[:,-1])
         ax.set_ylabel("%s (MPa)"%self.component)
         ax.set_xlabel("Point number")
-        ax.grid(b=True, which='major', color='#666666', linestyle='-')
+        ax.grid(visible=True, which='major', color='#666666', linestyle='-')
         ax.minorticks_on()
-        ax.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+        ax.grid(visible=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
         self.ui.figure.tight_layout()
         self.ui.canvas.draw()
         
@@ -556,8 +646,8 @@ class interactor(QtWidgets.QWidget):
         p3 = np.array([self.ui.clip_x_coord.value(), self.ui.clip_y_coord.value(), self.ui.clip_z_coord.value()])
         
         c = p3 == np.zeros(3)
-        if c.all() and self.mesh_actor.GetVisibility() == 0: #no clipping plane (p3 = 0,0,0) is specified & mesh is hidden
-            flip_visible(self.mesh_actor)
+        if c.all() and self.model_actor.GetVisibility() == 0: #no clipping plane (p3 = 0,0,0) is specified & mesh is hidden
+            flip_visible(self.model_actor)
 
         elif not c.all():
             clipPlane = vtk.vtkPlane()
@@ -569,14 +659,14 @@ class interactor(QtWidgets.QWidget):
             
             clipper = vtk.vtkTableBasedClipDataSet() #needs to be table based, otherwise the grid is interpolated
             clipper.SetClipFunction(clipPlane)
-            clipper.SetInputData(self.vtu_output) #needs to remain vtk object
+            clipper.SetInputData(self.model_obj) #needs to remain vtk object
             clipper.GenerateClippedOutputOn()
             clipper.Update()
 
             self.clip_mapper = vtk.vtkDataSetMapper()
             self.clip_mapper.SetInputData(clipper.GetClippedOutput())
-            self.clip_mapper.SetLookupTable(self.mesh_lut)
-            self.clip_mapper.SetScalarRange(self.vtu_output.GetScalarRange())
+            self.clip_mapper.SetLookupTable(self.lut)
+            self.clip_mapper.SetScalarRange(self.model_obj.GetScalarRange())
 
             self.clipped_actor = vtk.vtkActor()
             self.clipped_actor.SetMapper(self.clip_mapper)
@@ -584,8 +674,8 @@ class interactor(QtWidgets.QWidget):
                 self.clipped_actor.GetProperty().EdgeVisibilityOff()
             else:
                 self.clipped_actor.GetProperty().EdgeVisibilityOn()
-            if self.mesh_actor.GetVisibility() == 1:
-                flip_visible(self.mesh_actor)
+            if self.model_actor.GetVisibility() == 1:
+                flip_visible(self.model_actor)
             self.ren.AddActor(self.clipped_actor)
         
         self.ui.vtkWidget.update()
@@ -603,51 +693,69 @@ class interactor(QtWidgets.QWidget):
         np.savetxt(fileo,
         np.column_stack((self.x,self.q)), 
         delimiter=',',
-        header = "%s\nPoint number, x, y, z, %s (MPa)"%(self.active_vtu,self.component),
+        header = "%s\nPoint number, x, y, z, %s (MPa)"%(self.active_obj,self.component),
         fmt='%i, %.3f, %.3f, %.3f, %.3f')
         self.display_info('Line exported.')
 
-    def load_vtu(self):
+    def load_model(self):
         """
-        Method to return a valid vtu file
+        Method to return a valid model file
         """
         
-        filep,startdir=get_file('*.vtu')
+        filep, startdir = get_file('*.vtu','*.vtp')
         if filep is None:
             return
         if not(os.path.isfile(filep)):
-            self.display_info('Invalid *.vtu file.')
+            self.display_info('Invalid model file.')
             return
         
-        self.active_vtu = filep
+        if hasattr(self,'model_obj'):
+            delattr(self, 'active_obj')
+            delattr(self, 'model_obj')
+            delattr(self, 'component')
+            #clear all actors
+            self.ren.RemoveAllViewProps()
+            
+        self.active_obj = filep
         self.ui.load_label.setText(filep)
         #call draw_model
         self.ui.component_cb.setEnabled(True)
-        self.ui.mesh_display.setEnabled(True)
+        
         self.ui.clip_active_button.setEnabled(True)
         self.draw_model()
-        #connect after the first time draw_model runs and finds all components
-        self.ui.component_cb.currentIndexChanged.connect(self.draw_model)
+        
+        
         
             
     def load_h5(self):
         if self.file is None:
             self.file, _ = get_file("*.OpenRS")
         
+        self.polydata_mode = False
         if self.file is not None:
             #check the file has a populated model object
             with h5py.File(self.file, 'r') as f:
                 if "model_data/piece0" not in f:
                     self.display_info('Model data could not be loaded.')
-                    
-            r = HDF5vtkug_reader()
-            r.SetFileName(self.file)
-            r.Update()
-            self.active_vtu = r.GetOutputDataObject(0).GetBlock(0)
+                if "model_data/piece0/cell_types" not in f:
+                    self.polydata_mode = True
+            
+            if not self.polydata_mode:
+                r = HDF5vtkug_reader()
+                r.SetFileName(self.file)
+                r.Update()
+            else:
+                r = HDF5vtkpd_reader()
+                r.SetFileName(self.file)
+                r.Update()
+            
+            self.active_obj = r.GetOutputDataObject(0).GetBlock(0)
+            
             self.ui.load_label.setText(self.file)
             #call draw_model
             self.ui.component_cb.setEnabled(True)
             self.ui.mesh_display.setEnabled(True)
+            self.ui.clip_active_button.setEnabled(True)
             self.draw_model()
             self.display_info('Loaded model from data file.')
         self.ui.vtkWidget.update() #for display of info_actor
@@ -674,6 +782,8 @@ class interactor(QtWidgets.QWidget):
             self.load_h5()
         elif key == "m":
             self.mw = modeling_widget(self)
+        elif key == "n":
+            self.actuate_node_pick()
 
         elif key=="i":
             im = vtk.vtkWindowToImageFilter()
@@ -695,6 +805,9 @@ class interactor(QtWidgets.QWidget):
         self.ui.vtkWidget.update()
 
     def on_mouse_move(self, obj, event):
+        '''
+        causes issues with finalizing when run as a stand-alone widget
+        '''
         if hasattr(self,'info_actor'):
             self.ren.RemoveActor(self.info_actor)
         else:
@@ -708,20 +821,85 @@ class interactor(QtWidgets.QWidget):
             self.ren.RemoveActor(self.info_actor)
         self.info_actor = generate_info_actor(msg,self.ren)
         self.ren.AddActor(self.info_actor)
+
+    def actuate_node_pick(self):
+        '''
+        Starts picking and handles ui button display
+        '''
+        
+        if hasattr(self,'selected_actor'):
+            self.ren.RemoveActor(self.selected_actor)
+        
+        if self.picking:
+            #Remove picking observer and re-initialise
+            self.iren.RemoveObservers('LeftButtonPressEvent')
+            self.iren.AddObserver('LeftButtonPressEvent',self.default_left_button)
+            QtWidgets.QApplication.processEvents()
+            self.picking = False
+            self.ui.translate_drop_button.setChecked(False)
+
+        else:
+            self.iren.AddObserver('LeftButtonPressEvent', self.picker_callback)
+            self.picking = True
+            #meant to keep dropdown engaged through the picking process, but ineffective. Stopping picking suspends, as does 'updating'.
+            self.ui.translate_drop_button.setChecked(True)
+
+    def default_left_button(self, obj, event):
+        #forward standard events according to the default style`
+        self.iren.GetInteractorStyle().OnLeftButtonDown()
+
+    def picker_callback(self, obj, event):
+        """
+        Actuates a pick of a node
+        """
+        
+        colors = vtk.vtkNamedColors()
+        
+        picker = vtk.vtkPointPicker()
+        picker.SetTolerance(0.005)
+        
+        pos = self.iren.GetEventPosition()
+        
+        picker.Pick(pos[0], pos[1], 0, self.ren)
+        
+        if picker.GetPointId() != -1:
+
+            ids = vtk.vtkIdTypeArray()
+            ids.SetNumberOfComponents(1)
+            ids.InsertNextValue(picker.GetPointId())
+
+            if hasattr(self,'selected_actor'):
+                self.ren.RemoveActor(self.selected_actor)
+            self.selected_node = picker.GetPointId()
+            centre = self.model_obj.GetPoint(picker.GetPointId())
+            self.selected_actor = generate_sphere(centre,1,colors.GetColor3d("orchid"))
             
-def read_model_data(vtu):
+            self.ui.trans_widget.translate_x.setValue(-centre[0])
+            self.ui.trans_widget.translate_y.setValue(-centre[1])
+            self.ui.trans_widget.translate_z.setValue(-centre[2])
+            
+            self.ren.AddActor(self.selected_actor)
+            
+
+
+def read_model_data(obj):
     '''
-    Read an unstructured grid from an XML formated vtu file, or operate on a ug object, returning the ug and component names.
+    Read an unstructured grid from an XML formatted vtu file, or operate on a ug object, returning the ug and component names.
     '''
 
     #If read is true, then vtuname is a VTU file
-    if type(vtu) is str:
+    if type(obj) is str and obj.lower().endswith('.vtu'):
         reader = vtk.vtkXMLUnstructuredGridReader()
-        reader.SetFileName(vtu)
+        reader.SetFileName(obj)
+        reader.Update()
+        output = reader.GetOutput()
+    elif type(obj) is str and obj.lower().endswith('.vtp'):
+        reader = vtk.vtkXMLPolyDataReader()
+        reader.SetFileName(obj)
         reader.Update()
         output = reader.GetOutput()
     else: #coming from hdf5reader
-        output = vtu
+        output = obj
     #get the component names
     components = []
     for index in range(output.GetPointData().GetNumberOfArrays()):
@@ -729,9 +907,9 @@ def read_model_data(vtu):
 
     return output, components
 
-def generate_ug_actor(ug, component, edges):
+def gen_ug_actor(ug, component, edges):
     '''
-    Return an actor with a look up table and range of component selected. Edges are on if true.
+    Return an actor with a look up table and range_ of component selected. Edges are on if true.
     '''
     ug.GetPointData().SetActiveScalars(component)
 
@@ -739,12 +917,12 @@ def generate_ug_actor(ug, component, edges):
     lut = vtk.vtkLookupTable()
     lut.SetHueRange(0.667, 0)
     lut.Build()
-    range = ug.GetScalarRange()
+    range_ = ug.GetScalarRange()
 
     # map data set
     mesh_mapper = vtk.vtkDataSetMapper()
     mesh_mapper.SetInputData(ug)
-    mesh_mapper.SetScalarRange(range)
+    mesh_mapper.SetScalarRange(range_)
     mesh_mapper.SetLookupTable(lut)
 
     actor = vtk.vtkActor()
@@ -755,7 +933,36 @@ def generate_ug_actor(ug, component, edges):
         actor.GetProperty().EdgeVisibilityOff()
     actor.GetProperty().SetLineWidth(0)
 
-    return actor, mesh_mapper, lut, range
+    return actor, mesh_mapper, lut, range_
+
+def gen_pd_actor(pd,component,size=2):
+    '''
+    Returns vtk objects and actor for a point cloud having size points, returns color array associated with the actor/polydata object as well as a lookuptable for rendering a scalebar.
+    '''
+    
+    pd.GetPointData().SetActiveScalars(component)
+
+    lut = vtk.vtkLookupTable()
+    lut.SetHueRange(0.667, 0.0)
+    lut.Build()
+    range_ = pd.GetScalarRange()
+
+    # map data set
+    mapper = vtk.vtkDataSetMapper()
+    mapper.SetInputData(pd)
+    mapper.SetScalarRange(range_)
+    mapper.SetLookupTable(lut)
+
+    actor = vtk.vtkActor()
+
+    mapper.SetInputData(pd)
+
+    actor=vtk.vtkActor()
+    actor.SetMapper(mapper)
+
+    actor.GetProperty().SetPointSize(size)
+    return actor, mapper, lut, range_
+
 
 if __name__ == "__main__":
     if len(sys.argv)>1:

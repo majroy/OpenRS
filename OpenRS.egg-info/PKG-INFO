@@ -1,12 +1,11 @@
 Metadata-Version: 2.1
 Name: OpenRS
-Version: 0.3.2
+Version: 0.3.3
 Summary: Open Residual Stress analysis suite
 Home-page: https://github.com/majroy/OpenRS
 Author: M J Roy
 Author-email: matthew.roy@manchester.ac.uk
 License: Creative Commons Attribution-Noncommercial-Share Alike license
-Platform: UNKNOWN
 Classifier: Environment :: Win32 (MS Windows)
 Classifier: Topic :: Scientific/Engineering :: Visualization
 Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
@@ -32,18 +31,23 @@ The [Visualisation ToolKit (VTK)](http://www.vtk.org/overview/) is a powerful to
 Primarily comprising a simplified viewer which allows a user to conduct arbitrary traces of scalar representation of stress fields in components, this repository is also populated with a series of case studies which exemplify how stresses can develop in components, and identify where further measurements need to be carried out.
 
 # Overview
-Details of how to use the main application are [here.](doc/main.md)
+At the current stage of development, the application comprises a model viewer and the prototype of a diffraction volume viewer, existing as tabs in the main application. The main application can be launched at the command line with:
+
+~~~
+python -m OpenRS.main
+~~~
+This will run the OpenRS application as a script directly from the command line, with the two following sub-applications:
+* [Model viewer](doc/model.md)
+* [Point selector](doc/point_selector.md)
 
 # Examples
-Details of example components and how to generate their respective predictive models are available [here.](doc/examples.md)
+Representative examples to be employed with the model viewer and how to generate them are available [here.](doc/examples.md)
 
 # Installation
 Python package dependencies are available through PyPI by running the following at the command line:
 ~~~
 pip install OpenRS
 ~~~
-If it is desired to generate finite element models, then it is recommended that either Dassault SystÃ¨mes' ABAQUS is available - limited support for CalculiX is currently available. For more information on CalculiX, see http://www.dhondt.de/
+If it is desired to generate finite element models, then it is recommended that either Dassault SystÃ¨mes' ABAQUS is available, with limited support for CalculiX. For more information on CalculiX, see http://www.dhondt.de/
 
 Note that scripts for generating the examples are not included as part of the PyPI installer. These can be either copied from `OpenRS\examples` or from a cloned repository.
-
-

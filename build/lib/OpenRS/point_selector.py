@@ -8,13 +8,16 @@ Qt and VTK application to allow for viewing and querying positions to measure re
 import sys, os
 import numpy as np
 import vtk
-from vtk.util import numpy_support as nps
+from vtk.util.numpy_support import vtk_to_numpy as v2n
+from vtk.util.numpy_support import numpy_to_vtk as n2v
+from vtk.util.numpy_support import numpy_to_vtkIdTypeArray as n2v_id
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from OpenRS.open_rs_common import get_file, get_save_file, generate_sphere, generate_axis_actor, generate_point_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, table_model
+from OpenRS.open_rs_common import get_file, get_save_file, generate_sphere, generate_axis_actor, generate_point_actor, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo, table_model, do_transform
 from OpenRS.sgv import sgv_viewer, draw_sgv
 from OpenRS.open_rs_hdf5_io import *
+from OpenRS.transform_widget import make_transformation_button_layout, get_trans_from_euler_angles
 
 __author__ = "M.J. Roy"
 __version__ = "0.1"
@@ -43,6 +46,78 @@ def launch(*args, **kwargs):
         window.closeEvent()
     else:
         return window
+
+class entry_combo_box(QtWidgets.QComboBox):
+    '''
+    Custom combo box allowing insertion, renaming and clearing of entries
+    '''
+    def __init__(self, *args, **kwargs):
+        super(QtWidgets.QComboBox, self).__init__()
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        size_policy = self.sizePolicy()
+        size_policy.setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
+        self.setSizePolicy(size_policy)
+        self.customContextMenuRequested.connect(self.show_entry_menu)
+        
+
+    def show_entry_menu(self,pos):
+        menu = QtWidgets.QMenu()
+        rename_action = menu.addAction("Rename") 
+        insert_action = menu.addAction("Insert")
+        clear_action = menu.addAction("Clear")
+        action = menu.exec_(self.mapToGlobal(pos))
+        if action == clear_action:
+            self.clear_selection()
+        if action == rename_action:
+            self.rename_selection()
+        if action == insert_action:
+            self.insert_entry()
+    
+    @pyqtSlot(int)
+    def on_clear_selection(self, value):
+        pass
+    
+    def clear_selection(self):
+        self.activated[int].connect(self.on_clear_selection)
+        self.removeItem(self.currentIndex())
+        
+    
+    def rename_selection(self):
+        '''
+        Sets up dialog with a line edit to change the entry.
+        '''
+        
+        QBtn = QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel
+        
+        self.dlg = QtWidgets.QDialog(self)
+        buttons = QtWidgets.QDialogButtonBox(QBtn)
+        self.dlg.setWindowTitle('Rename entry')
+        
+        line_edit = QtWidgets.QLineEdit(self.currentText(), self)
+        
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(line_edit)
+        layout.addWidget(buttons)
+        self.dlg.setLayout(layout)
+        buttons.accepted.connect(lambda: self.change_text(line_edit.text()))
+        buttons.rejected.connect(self.close_dialog)
+        self.dlg.exec()
+        
+    
+    def change_text(self, text):
+        index = self.currentIndex()
+        self.setItemText(index,text)
+        if hasattr(self,'dlg'):
+            self.close_dialog()
+
+    def close_dialog(self):
+        self.dlg.close()
+        self.setEditable(False)
+        
+    def insert_entry(self):
+        num_items = self.count()
+        self.insertItem(num_items,"Entry %d"%(num_items))
+        self.setCurrentIndex(self.count()-1) #because python indices start from 0
 
 class main_window(object):
     """
@@ -75,97 +150,36 @@ class main_window(object):
         horizLine2.setFrameStyle(frame_style)
         
         #make upper layout
+        display_box = QtWidgets.QGroupBox('Display')
         geo_button_layout = QtWidgets.QGridLayout()
-        load_stl_label = QtWidgets.QLabel("Display")
-        load_stl_label.setFont(headFont)
-        self.load_stl_button = QtWidgets.QPushButton('Load')
-        self.load_label = QtWidgets.QLabel("Nothing loaded.")
+        
+        stl_layout = QtWidgets.QHBoxLayout()
+        self.load_stl_button = QtWidgets.QPushButton('Load STL')
+        self.load_stl_button.setToolTip('Load external STL file')
+
+        self.entry_spec = entry_combo_box()
+        self.entry_spec.setToolTip('Register discrete interaction geometry')
+        stl_layout.addWidget(self.entry_spec)
+        stl_layout.addWidget(self.load_stl_button)
+        
+        
+        self.load_label = QtWidgets.QLabel("No geometry to show.")
+        self.load_label.setToolTip("Path of last STL loaded.")
         self.load_label.setWordWrap(True)
-        op_slider_label = QtWidgets.QLabel("Set geometry opacity:")
+        self.op_slider_label = QtWidgets.QLabel("Opacity:")
         self.op_slider = QtWidgets.QSlider(Qt.Horizontal)
         self.op_slider.setRange(0,100)
-        self.op_slider.setSliderPosition(50)
-        geo_button_layout.addWidget(load_stl_label,0,0,1,1)
-        geo_button_layout.addWidget(self.load_stl_button,0,1,1,1)
+        self.op_slider.setSliderPosition(100)
+
+        geo_button_layout.addLayout(stl_layout,0,0,1,2)
         geo_button_layout.addWidget(self.load_label,1,0,1,2)
-        geo_button_layout.addWidget(op_slider_label,2,0,1,1)
+        geo_button_layout.addWidget(self.op_slider_label,2,0,1,1)
         geo_button_layout.addWidget(self.op_slider,2,1,1,1)
+        geo_button_layout.addLayout(make_transformation_button_layout(self),3,0,1,2)
+        geo_button_layout.setColumnStretch(0, 0)
+        geo_button_layout.setColumnStretch(1, 1)
+        display_box.setLayout(geo_button_layout)
         
-        #make button group for translation of STL origin
-        translate_label = QtWidgets.QLabel("Translate origin:")
-        translate_label.setFont(headFont)
-        
-        #right hand button group
-        self.choose_vertex_button = QtWidgets.QPushButton('Vertex')
-        self.choose_vertex_button.setEnabled(False)
-        self.choose_vertex_button.setCheckable(True)
-        self.choose_vertex_button.setToolTip("Press 'R' to select")
-        self.trans_reset_button = QtWidgets.QPushButton('Reset')
-        self.trans_reset_button.setEnabled(False)
-        self.trans_origin_button = QtWidgets.QPushButton('Update')
-        self.trans_origin_button.setEnabled(False)
-        
-        translate_x_label =QtWidgets.QLabel("X")
-        self.translate_x = QtWidgets.QDoubleSpinBox()
-        self.translate_x.setMinimum(-1000)
-        self.translate_x.setValue(0)
-        self.translate_x.setMaximum(1000)
-        
-        translate_y_label =QtWidgets.QLabel("Y")
-        self.translate_y = QtWidgets.QDoubleSpinBox()
-        self.translate_y.setMinimum(-1000)
-        self.translate_y.setValue(0)
-        self.translate_y.setMaximum(1000)
-        
-        translate_z_label =QtWidgets.QLabel("Z")
-        self.translate_z = QtWidgets.QDoubleSpinBox()
-        self.translate_z.setMinimum(-1000)
-        self.translate_z.setValue(0)
-        self.translate_z.setMaximum(1000)
-
-        #make button group for STL origin rotation
-        rotation_label = QtWidgets.QLabel("Rotate origin about:")
-        rotation_label.setFont(headFont)
-        xlabel = QtWidgets.QLabel("X (deg)")
-        self.rotate_x = QtWidgets.QDoubleSpinBox()
-        self.rotate_x.setSingleStep(15)
-        self.rotate_x.setMinimum(-345)
-        self.rotate_x.setValue(0)
-        self.rotate_x.setMaximum(345)
-        ylabel = QtWidgets.QLabel("Y (deg)")
-        self.rotate_y = QtWidgets.QDoubleSpinBox()
-        self.rotate_y.setSingleStep(15)
-        self.rotate_y.setMinimum(-345)
-        self.rotate_y.setValue(0)
-        self.rotate_y.setMaximum(345)
-        zlabel = QtWidgets.QLabel("Z (deg)")
-        self.rotate_z = QtWidgets.QDoubleSpinBox()
-        self.rotate_z.setSingleStep(15)
-        self.rotate_z.setMinimum(-345)
-        self.rotate_z.setValue(0)
-        self.rotate_z.setMaximum(345)
-
-        #transform origin button layout
-        trans_origin_layout = QtWidgets.QGridLayout()
-        trans_origin_layout.addWidget(translate_label,0,0,1,2)
-        trans_origin_layout.addWidget(rotation_label,0,2,1,2)
-        trans_origin_layout.addWidget(translate_x_label,1,0,1,1)
-        trans_origin_layout.addWidget(self.translate_x,1,1,1,1)
-        trans_origin_layout.addWidget(xlabel,1,2,1,1)
-        trans_origin_layout.addWidget(self.rotate_x,1,3,1,1)
-        trans_origin_layout.addWidget(self.trans_reset_button,1,4,1,1)
-        
-        trans_origin_layout.addWidget(translate_y_label,2,0,1,1)
-        trans_origin_layout.addWidget(self.translate_y,2,1,1,1)
-        trans_origin_layout.addWidget(ylabel,2,2,1,1)
-        trans_origin_layout.addWidget(self.rotate_y,2,3,1,1)
-        trans_origin_layout.addWidget(self.choose_vertex_button,2,4,1,1)
-        
-        trans_origin_layout.addWidget(translate_z_label,3,0,1,1)
-        trans_origin_layout.addWidget(self.translate_z,3,1,1,1)
-        trans_origin_layout.addWidget(zlabel,3,2,1,1)
-        trans_origin_layout.addWidget(self.rotate_z,3,3,1,1)
-        trans_origin_layout.addWidget(self.trans_origin_button,3,4,1,1)
         
         #make lower button layout
         draw_button_layout = QtWidgets.QGridLayout()
@@ -185,10 +199,7 @@ class main_window(object):
         
         self.vtkWidget.setMinimumSize(QtCore.QSize(800, 600))
 
-        lvlayout.addLayout(geo_button_layout)
-        lvlayout.addWidget(horizLine1)
-        lvlayout.addLayout(trans_origin_layout)
-        lvlayout.addWidget(horizLine2)
+        lvlayout.addWidget(display_box)
         lvlayout.addWidget(self.make_table_layout())
         lvlayout.addWidget(self.draw_button)
         lvlayout.addLayout(draw_button_layout)
@@ -312,6 +323,7 @@ class main_window(object):
                 self.fdata = [self.fdata.tolist()]
             self.fmodel = table_model(self.fdata,['X','Y','Z'])
             self.ftable.setModel(self.fmodel)
+
     def insert_row(self):
         '''
         inserts a row at a selected row from the table, or at the end if not
@@ -390,16 +402,68 @@ class interactor(QtWidgets.QWidget):
         self.ren.GetActiveCamera().ParallelProjectionOn()
         
         self.file = None #overwritten at launch
+        self.picking = False
+        self.stl_actors = [] #entries is a dictionary comprised of everything that can get loaded
         make_logo(self.ren)
         
         #connect buttons
         self.ui.tabwidget.currentChanged.connect(self.check_draw)
         self.ui.load_stl_button.clicked.connect(self.load_stl)
+        self.ui.entry_spec.currentIndexChanged.connect(self.change_entries)
         self.ui.op_slider.valueChanged[int].connect(self.change_opacity)
         self.ui.draw_button.clicked.connect(self.draw_pnts)
-        self.ui.trans_origin_button.clicked.connect(self.transform_origin)
-        self.ui.choose_vertex_button.clicked.connect(self.vertex_select)
-        self.ui.trans_reset_button.clicked.connect(self.redraw)
+        
+        self.ui.trans_widget.trans_origin_button.clicked.connect(self.apply_trans)
+        self.ui.trans_reset_button.clicked.connect(self.reset_trans)
+        self.ui.trans_widget.choose_vertex_button.clicked.connect(self.actuate_vertex_select)
+        self.ui.rotation_widget.trans_origin_button.clicked.connect(self.apply_rotation)
+
+    def change_entries(self):
+        '''
+        Makes sure that objects being held in the combobox's itemData match what's shown on screen. Makes the current item slightly highlighted. If there aren't any items in the combobox, then reset as if it first loaded
+        '''
+        #if the user has deleted all entries in the combobox:
+        if self.ui.entry_spec.count() == 0:
+            self.ren.RemoveAllViewProps()
+            make_logo(self.ren)
+            self.ui.vtkWidget.update()
+            self.ui.trans_widget.trans_origin_button.setEnabled(False)
+            self.ui.rotation_widget.trans_origin_button.setEnabled(False)
+            self.ui.trans_reset_button.setEnabled(False)
+            self.ui.trans_widget.choose_vertex_button.setEnabled(False)
+            return
+            
+        #check if there's data for all entry_spec index.
+        all_item_data = [self.ui.entry_spec.itemData(i) for i in range(self.ui.entry_spec.count())]
+        #filter nones
+        all_item_data = [x for x in all_item_data if x is not None]
+        valid_actors = [all_item_data[i].actor for i in range(len(all_item_data))]
+
+        #Because of the clear function, there will always be more stl_actors than there will be itemData entries, so using sets:
+        remove_actors = list(set(self.stl_actors) - set(valid_actors))
+        for actor in remove_actors:
+            self.ren.RemoveActor(actor)
+            self.stl_actors.remove(actor)
+        #Remove the entries in self.stl_actors that correspond to remove_actors
+        
+        #highlight the actor at currentIndex if it exists
+        index = self.ui.entry_spec.currentIndex()
+        if self.ui.entry_spec.itemData(index) is not None:
+            self.active_stl_color(index)
+
+    def active_stl_color(self, entry_index):
+        rgb_val = (8, 143, 143)
+        rgb_norm = tuple(val/255 for val in rgb_val)
+        target = self.ui.entry_spec.itemData(entry_index)
+        target.actor.GetProperty().SetColor(rgb_norm)
+        for index in range(len(self.stl_actors)):
+            if index == entry_index:
+                self.stl_actors[index].GetProperty().SetColor(rgb_norm)
+            else:
+                self.stl_actors[index].GetProperty().SetColor(vtk.vtkNamedColors().GetColor3d('Gray'))
+
+        self.ui.vtkWidget.setFocus()
+        self.ui.vtkWidget.update()
     
     def check_draw(self):
         '''
@@ -414,79 +478,90 @@ class interactor(QtWidgets.QWidget):
         elif self.ui.tabwidget.currentIndex() == 2:
             self.ui.draw_button.setEnabled(True)
     
-    def redraw(self):
+    def redraw(self, entry_index):
         '''
-        Resets/initialises the transformation by clearing all actors, changing the transformation matrix back to the identity.
+        Updates actor in renderer for a given STL instance of self.ui.entry_spec ItemData. Called on each time that the instance is transformed.
         '''
-        self.ren.RemoveAllViewProps()
+        update_actor_list = False #condition to either append to the stl_actor list, or to overwrite at entry_index
+        instance = self.ui.entry_spec.itemData(entry_index)
+        
+        #remove the relevant actor. If the instance exists, then it is removed from the renderer. Otherwise, return.
+        if instance is not None:
+            if instance.actor is not None:
+                self.ren.RemoveActor(instance.actor)
+                update_actor_list = True
+        else:
+            return
 
-        self.trans = vtk.vtkMatrix4x4()
-        self.trans.Identity()
+        # #regenerate stl_actor from np data if it doesn't exist
+        # if instance.polydata is None:
+            # polydata = vtk.vtkPolyData()
+            # points = vtk.vtkPoints()
+            # points.SetData(n2v(instance.points))
+            # cells = vtk.vtkCellArray()
+            # cells.SetCells(0, n2v_id(instance.verts))
         
-        #reset ui/load from file
-        self.ui.translate_x.setValue(0)
-        self.ui.translate_y.setValue(0)
-        self.ui.translate_z.setValue(0)
-        self.ui.rotate_x.setValue(0)
-        self.ui.rotate_y.setValue(0)
-        self.ui.rotate_z.setValue(0)
+            # polydata.SetPoints(points)
+            # polydata.SetPolys(cells)
+            # instance.polydata = polydata
+        # else:
+            # polydata = instance.polydata
         
-        #regenerate stl_actor from np data
-        polydata = vtk.vtkPolyData()
-        points = vtk.vtkPoints()
-        points.SetData(nps.numpy_to_vtk(self.np_pts))
-        cells = vtk.vtkCellArray()
-        cells.SetCells(0, nps.numpy_to_vtkIdTypeArray(self.np_verts))
-        
-        polydata.SetPoints(points)
-        polydata.SetPolys(cells)
-
         mapper = vtk.vtkPolyDataMapper()
-        mapper.SetInputData(polydata)
+        mapper.SetInputData(instance.polydata)
 
-        self.stl_actor = vtk.vtkActor()
-        self.stl_actor.SetMapper(mapper)
-        self.stl_actor.GetProperty().SetOpacity(0.5)
-        self.stl_actor.PickableOff()
-        self.stl_actor.GetProperty().SetColor(vtk.vtkNamedColors().GetColor3d('Gray'))
+        stl_actor = vtk.vtkActor()
+        stl_actor.SetMapper(mapper)
+        stl_actor.GetProperty().SetOpacity(self.ui.op_slider.value())
+        # stl_actor.PickableOff()
+        stl_actor.GetProperty().SetColor(vtk.vtkNamedColors().GetColor3d('Gray'))
+        # stl_actor.GetProperty().EdgeVisibilityOn() #debug
         
-        #regenerate vertex data, origin actor and box axis
-        self.vertex_actor, self.vertex_polydata = generate_point_actor( \
-        self.np_pts, \
-        vtk.vtkNamedColors().GetColor3d("violet"), \
-        5)
-        self.vertex_actor.SetVisibility(False)
-        self.origin_actor = vtk.vtkAxesActor()
-        #change scale of origin on basis of size of stl_actor
-        origin_scale = np.max(self.stl_actor.GetBounds())/16
-        self.origin_actor.SetTotalLength(origin_scale,origin_scale,origin_scale)
-        self.origin_actor.SetNormalizedShaftLength(1,1,1)
-        self.origin_actor.SetNormalizedTipLength(0.2,0.2,0.2)
+        #update instance to include actor:
+        instance.actor = stl_actor
+        self.ui.entry_spec.setItemData(entry_index,instance)
         
-        self.origin_actor.GetXAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
-        self.origin_actor.GetYAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
-        self.origin_actor.GetZAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
+        if self.ui.entry_spec.currentIndex() == 0:
+            if hasattr(self,'origin_actor'):
+                self.ren.RemoveActor(self.origin_actor)
+            self.origin_actor = vtk.vtkAxesActor()
+            #change scale of origin on basis of size of stl_actor, only if this is the first entry
+            origin_scale = np.max(stl_actor.GetBounds())/16
+            self.origin_actor.SetTotalLength(origin_scale,origin_scale,origin_scale)
+            self.origin_actor.SetNormalizedShaftLength(1,1,1)
+            self.origin_actor.SetNormalizedTipLength(0.2,0.2,0.2)
+            
+            self.origin_actor.GetXAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
+            self.origin_actor.GetYAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
+            self.origin_actor.GetZAxisCaptionActor2D().GetTextActor().SetTextScaleModeToNone()
+            self.ren.AddActor(self.origin_actor)
         
+        self.ren.AddActor(stl_actor)
         
-        self.ren.AddActor(self.stl_actor)
-        self.ren.AddActor(self.vertex_actor)
-        self.ren.AddActor(self.origin_actor)
+        if update_actor_list:
+            self.stl_actors[entry_index] = stl_actor
+        else:
+            self.stl_actors.append(stl_actor)
         
-        #redraw box axis
-        self.axis_actor = generate_axis_actor(self.stl_actor,self.ren)
-        self.ren.AddActor(self.axis_actor)
-        
-        self.ui.choose_vertex_button.setEnabled(True)
-        self.ui.choose_vertex_button.setChecked(False)
-
-        self.ren.ResetCamera()
         self.ui.vtkWidget.update()
-        self.ui.vtkWidget.setFocus()
     
     def load_stl(self):
         '''
-        Loads/reads stl file, returns an actor for the stl file, as well as points and polygons which can be saved and used to build a polydata object later.
+        For current entry does the following:
+        Loads/reads stl file, returns an actor for the stl file, as well as points and polygons which can be saved and used to build a polydata object with redraw.
         '''
+        index = self.ui.entry_spec.currentIndex()
+
+        #Check if this is a first run from launch
+        if index == -1:
+            #condition where user loads an stl file to an empty combobox
+            self.ren.RemoveAllViewProps()
+            self.ui.entry_spec.insert_entry()
+            
+        if self.ui.entry_spec.itemData(index) is None and not self.stl_actors:
+            #condition where user inserts an entry at launch
+            self.ren.RemoveAllViewProps()
+        
         filep,startdir=get_file('*.stl')
         
         if filep is None:
@@ -499,85 +574,187 @@ class interactor(QtWidgets.QWidget):
         reader.SetFileName(filep)
         reader.Update()
         
-        self.stl_polydata = reader.GetOutput()
-        self.np_pts = nps.vtk_to_numpy(self.stl_polydata.GetPoints().GetData())
-        self.np_verts = nps.vtk_to_numpy(self.stl_polydata.GetPolys().GetData())
-        self.ui.choose_vertex_button.setEnabled(True)
-        self.ui.trans_reset_button.setEnabled(True)
-        self.ui.trans_origin_button.setEnabled(True)
+        stl_polydata = reader.GetOutput()
+        np_pts = v2n(stl_polydata.GetPoints().GetData())
+        np_verts = v2n(stl_polydata.GetPolys().GetData())
+        entry_data_object = interaction_geometry(stl_polydata, np_pts, np_verts, np.eye(4))
         
-        self.c_trans = np.eye(4)
+        index = self.ui.entry_spec.currentIndex() #because this could be an over-write
+        #if being overwritten, then assign the instance's actor to the entry_data_object to be handled by redraw
+        instance = self.ui.entry_spec.itemData(index)
+        if instance is not None:
+            if instance.actor is not None:
+                entry_data_object.actor = instance.actor
+
+        self.ui.entry_spec.setItemData(index,entry_data_object)
+        #get prefix of filep for entry_spec text
+        base = os.path.basename(filep)
+        prefix = os.path.splitext(base)[0]
+        self.ui.entry_spec.change_text(prefix)
         self.ui.load_label.setText(filep)
-        self.redraw()
         
-
-    def apply_transform(self):
+        self.redraw(index)
+        self.active_stl_color(index)
+        self.ren.ResetCamera()
+        self.ui.vtkWidget.setFocus()
+        
+        self.ui.trans_widget.trans_origin_button.setEnabled(True)
+        self.ui.rotation_widget.trans_origin_button.setEnabled(True)
+        self.ui.trans_reset_button.setEnabled(True)
+        self.ui.trans_widget.choose_vertex_button.setEnabled(True)
+        
+    
+    def load_model_geo(self):
         '''
-        As underlying sources of the stl file and vertices cannot be transformed without affecting vertex_select (actors are updated, but not pickable vertices)
+        loads model boundaries from file, sets them as sample geometry.
         '''
-        
-        #get homogeneous numpy tranformation matrix
-        T = vtkmatrix_to_numpy(self.trans)
-        #apply to np arrays which make up vertex and stl objects
-        self.np_pts = np.dot(self.np_pts,T[0:3,0:3])+T[0:3,-1]
-        
-        self.c_trans = T @ self.c_trans #for a unique, traceable transformation matrix from the originating STL file.
+        print(self.file)
+        with h5py.File(self.file, 'r') as f:
+            self.np_pts = f['model_boundary/points'][()]
+            self.np_verts = f['model_boundary/vertices'][()]
+            # self.c_trans = f['model_boundary/transform'][()]
+            self.c_trans = np.eye(4)
         self.redraw()
 
+        self.info_actor = generate_info_actor('Loaded and set model geometry from data file.',self.ren)
 
-    def vertex_select(self):
-        if self.ui.choose_vertex_button.isChecked():
-            self.vertex_actor.SetVisibility(True)
-            self.iren.SetInteractorStyle(vtk.vtkInteractorStyleRubberBandPick())
-            picker = vtk.vtkAreaPicker()
-            self.iren.SetPicker(picker)
-            picker.AddObserver("EndPickEvent", self.picker_callback)
-            self.ui.trans_origin_button.setEnabled(False)
-            self.ui.vtkWidget.setFocus()
-            self.ui.vtkWidget.update()
+    def reset_trans(self):
+        '''
+        Applies the inverse of the current transformation matrix to revert all transformations, resets inputs for movement
+        '''
+        index = self.ui.entry_spec.currentIndex()
+        instance = self.ui.entry_spec.itemData(index)
+        T = np.linalg.inv(instance.trans)
+        self.apply_transformation(T)
+        self.display_info('Reset translation.')
+
+    def apply_trans(self):
+        '''
+        Applies the appropriate translation to the existing model object(s)
+        '''
+        self.ui.translate_drop_button.setChecked(False)
+        
+        T = np.eye(4)
+        T[0,-1] = self.ui.trans_widget.translate_x.value()
+        T[1,-1] = self.ui.trans_widget.translate_y.value()
+        T[2,-1] = self.ui.trans_widget.translate_z.value()
+        self.apply_transformation(T)
+        self.display_info('Translated model.')
+        if self.picking:
+            self.actuate_vertex_select()
+    
+    def apply_rotation(self):
+        '''
+        Applies a rotation matrix to the current object
+        '''
+        
+        T = get_trans_from_euler_angles( \
+        self.ui.rotation_widget.rotate_x.value(), \
+        self.ui.rotation_widget.rotate_y.value(), \
+        self.ui.rotation_widget.rotate_z.value())
+        self.apply_transformation(T)
+        self.display_info('Translated model.')
+
+    def apply_transformation(self,T):
+        '''
+        Applies transformation matrix T to current STL entry
+        '''
+        
+        index = self.ui.entry_spec.currentIndex()
+        instance = self.ui.entry_spec.itemData(index)
+        
+        #modify relevant aspects of the instance according to the transformation matrix
+        c_trans = instance.trans
+        np_pts = do_transform(instance.points,T)
+        c_trans = T @ instance.trans
+        c_points = instance.polydata.GetPoints()
+        for i in range(len(np_pts)):
+            c_points.SetPoint(i, np_pts[i,:])
+        instance.polydata.Modified()
+        # trans_pd = None #Regen & updated by redraw
+        #trans_pd = instance.polydata.GetPoints().SetData(n2v(np_pts)) #doesn't produce a valid polydata object; debug
+        
+        #update item data
+        updated_instance = interaction_geometry(instance.polydata, np_pts, instance.verts, c_trans)
+        #this will always be an 'overwrite' of the existing actor:
+        updated_instance.actor = instance.actor
+        
+        self.ui.entry_spec.setItemData(index,updated_instance)
+
+        self.redraw(index)
+        self.active_stl_color(index)
+        self.ren.ResetCamera()
+        self.ui.vtkWidget.setFocus()
+
+    def actuate_vertex_select(self):
+        '''
+        Starts picking and handles ui button display
+        '''
+        
+        #selected actor is the vertex highlight
+        if hasattr(self,'selected_actor'):
+            self.ren.RemoveActor(self.selected_actor)
+        
+        if self.picking:
+            #Remove picking observer and re-initialise
+            self.iren.RemoveObservers('LeftButtonPressEvent')
+            self.iren.AddObserver('LeftButtonPressEvent',self.default_left_button)
+            QtWidgets.QApplication.processEvents()
+            self.picking = False
+            self.ui.translate_drop_button.setChecked(False)
+            self.ui.trans_widget.choose_vertex_button.setChecked(False)
+
         else:
-            self.ui.trans_origin_button.setEnabled(False)
-            self.vertex_actor.SetVisibility(False)
-            self.ui.trans_origin_button.setEnabled(True)
-            self.iren.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
-            self.transform_origin()
-            self.ui.vtkWidget.update()
+            self.iren.AddObserver('LeftButtonPressEvent', self.picker_callback)
+            self.picking = True
+            #meant to keep dropdown engaged through the picking process, but ineffective. Stopping picking suspends, as does 'updating'.
+            self.ui.trans_widget.choose_vertex_button.setChecked(True)
+            self.ui.translate_drop_button.setChecked(True)
 
-    def picker_callback(self, object, event):
+    def default_left_button(self, obj, event):
+        #forward standard events according to the default style`
+        self.iren.GetInteractorStyle().OnLeftButtonDown()
+
+    def picker_callback(self, obj, event):
+        """
+        Actuates a pick of a node on current component
+        """
+        index = self.ui.entry_spec.currentIndex()
+        instance = self.ui.entry_spec.itemData(index)
         
-        n_color = [int(i*255) for i in vtk.vtkNamedColors().GetColor3d("violet")]
-        h_color = [int(i*255) for i in vtk.vtkNamedColors().GetColor3d("tomato")]
-        selected_frustrum = vtk.vtkExtractSelectedFrustum()
-        selected_frustrum.SetFrustum(object.GetFrustum())
-        selected_frustrum.SetInputData(self.vertex_polydata)
-        selected_frustrum.Update()
-        selected = selected_frustrum.GetOutput()
+
+        colors = vtk.vtkNamedColors()
         
-        id = vtk.vtkIdTypeArray()
-        id = selected.GetPointData().GetArray("vtkOriginalPointIds")
-        if id and id.GetSize() > 0:
-            #reset color array to original
-            colors=vtk.vtkUnsignedCharArray()
-            colors.SetNumberOfComponents(3)
-            vertices = self.vertex_polydata.GetPointData().GetNumberOfTuples()
-            for j in range(vertices):
-                colors.InsertNextTuple(n_color)
-            #set the specific one chosen (or first in a batch) as 'the one'
-            colors.SetTuple(id.GetValue(0),h_color)
-            self.vertex_polydata.GetPointData().SetScalars(colors)
+        picker = vtk.vtkPointPicker()
+        picker.SetTolerance(1)
+        
+        pos = self.iren.GetEventPosition()
+        
+        picker.Pick(pos[0], pos[1], 0, self.ren)
+
+        if picker.GetPointId() != -1:
             
-            self.ui.vtkWidget.update()
-            # update ui translation boxes
-            local_vertices = nps.vtk_to_numpy(self.vertex_polydata.GetPoints().GetData())
-            vt = local_vertices[id.GetValue(0),:]
-            self.ui.translate_x.setValue(-vt[0])
-            self.ui.translate_y.setValue(-vt[1])
-            self.ui.translate_z.setValue(-vt[2])
+            ids = vtk.vtkIdTypeArray()
+            ids.SetNumberOfComponents(1)
+            ids.InsertNextValue(picker.GetPointId())
+
+            if hasattr(self,'selected_actor'):
+                self.ren.RemoveActor(self.selected_actor)
+            centre = instance.polydata.GetPoint(picker.GetPointId())
+            self.selected_actor = generate_sphere(centre,1,colors.GetColor3d("orchid"))
+            
+            self.ui.trans_widget.translate_x.setValue(-centre[0])
+            self.ui.trans_widget.translate_y.setValue(-centre[1])
+            self.ui.trans_widget.translate_z.setValue(-centre[2])
+            
+            self.ren.AddActor(self.selected_actor)
             
             
     def change_opacity(self,value):
-        if hasattr(self,'stl_actor'):
-            self.stl_actor.GetProperty().SetOpacity(value/100)
+        self.ui.op_slider_label.setText('Opacity: %d%%'%value)
+        index = self.ui.entry_spec.currentIndex()
+        if hasattr(self,'stl_actors'):
+            self.stl_actors[index].GetProperty().SetOpacity(value/100)
         self.ui.vtkWidget.update()
         
     def draw_pnts(self):
@@ -654,36 +831,6 @@ class interactor(QtWidgets.QWidget):
         self.ui.tabwidget.setCurrentIndex(c_tab)
 
 
-    def transform_origin(self):
-        '''
-        -reads ui and generates transformation matrix
-        -applies to ui by calling draw_stl
-        -save to OpenRS data file
-        '''
-        
-        x = self.ui.translate_x.value()
-        y = self.ui.translate_y.value()
-        z = self.ui.translate_z.value()
-        ax = np.deg2rad(self.ui.rotate_x.value())
-        Rx = np.array([[1,0,0],[0, np.cos(ax), -np.sin(ax)],[0, np.sin(ax), np.cos(ax)]])
-        ay = np.deg2rad(self.ui.rotate_y.value())
-        Ry = np.array([[np.cos(ay), 0, np.sin(ay)],[0,1,0],[-np.sin(ay), 0, np.cos(ay)]])
-        az = np.deg2rad(self.ui.rotate_z.value())
-        Rz = np.array([[np.cos(az), -np.sin(az), 0],[np.sin(az), np.cos(az), 0],[0,0,1]])
-        R = Rx @ Ry @ Rz
-        
-        #numpy transformation matrix
-        trans = np.identity(4)
-        trans[0:3,0:3] = R
-        trans[0:3,3] = [x,y,z]
-        
-        #update vtk transformation matrix with numpy
-        for i in range(4):
-            for j in range(4):
-                self.trans.SetElement(i,j,trans[i,j])
-                
-        self.apply_transform()
-
     def closeEvent(self, event):
         self.ui.vtkWidget.close()
         self.ui.sgv.vtkWidget.close()
@@ -697,7 +844,7 @@ class interactor(QtWidgets.QWidget):
             #check if sample/points is empty
             with h5py.File(self.file, 'r') as f:
                 if f['sample/points'].shape is None:
-                    self.info_actor = generate_info_actor(self.ren,'Point data could not be loaded.')
+                    self.info_actor = generate_info_actor('Point data could not be loaded.',self.ren)
                     return
         
         #otherwise read it
@@ -724,7 +871,7 @@ class interactor(QtWidgets.QWidget):
             self.ui.sgv.rotate_z.setValue(f['sgv'].attrs['rotate_z'])
         self.redraw() #draws stl/sample
         self.draw_all_points() #draws meas & fiducial
-        self.info_actor = generate_info_actor(self.ren,'Loaded model from data file.')
+        self.info_actor = generate_info_actor('Loaded model from data file.', self.ren)
             
     def write_h5(self):
         '''
@@ -774,7 +921,7 @@ class interactor(QtWidgets.QWidget):
             for k in self.ui.sgv.params.keys():
                 f['sgv'].attrs[k] = self.ui.sgv.params[k]
             f.attrs['date_modified'] = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            self.info_actor = generate_info_actor(self.ren,'Saved to data file.')
+            self.info_actor = generate_info_actor('Saved to data file.',self.ren)
 
 
     def keypress(self, obj, event):
@@ -809,7 +956,7 @@ class interactor(QtWidgets.QWidget):
             writer.SetFileName("OpenRS_capture.png")
             writer.Write()
             self.ren.SetBackground(colors.GetColor3d("aliceblue"))
-            self.info_actor = generate_info_actor(self.ren,'Image saved.')
+            self.info_actor = generate_info_actor('Image saved.',self.ren)
         
         elif key=="r":
             flip_visible(self.axis_actor)
@@ -817,11 +964,28 @@ class interactor(QtWidgets.QWidget):
         self.ren.ResetCamera()
         self.ui.vtkWidget.update()
 
+    def display_info(self,msg):
+        '''
+        Checks if there's an info_actor and removes it before displaying another one
+        '''
+        if hasattr(self,'info_actor'):
+            self.ren.RemoveActor(self.info_actor)
+        self.info_actor = generate_info_actor(msg,self.ren)
+        self.ren.AddActor(self.info_actor)
+
     def on_mouse_move(self, obj, event):
         if hasattr(self,'info_actor'):
             self.ren.RemoveActor(self.info_actor)
         else:
             pass
+
+class interaction_geometry:
+    def __init__(self, polydata, points, vertices, transformation):
+        self.polydata = polydata
+        self.points = points
+        self.verts = vertices
+        self.trans = transformation
+        self.actor = None
 
 def vtkmatrix_to_numpy(matrix):
     """
@@ -852,4 +1016,3 @@ def numpy_to_vtkmatrix(matrix):
 
 if __name__ == "__main__":
     launch()
-

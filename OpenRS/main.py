@@ -15,7 +15,7 @@ import sys,os,ctypes
 from PyQt5 import QtCore, QtGui, QtWidgets
 import vtk
 from pkg_resources import Requirement, resource_filename
-from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtu
+from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtp
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
 from OpenRS.flexure_widget import modeling_widget
@@ -23,16 +23,18 @@ from OpenRS.open_rs_hdf5_io import *
 
 class main_window(QtWidgets.QMainWindow):
     '''
-    Need to create a inherited version of a QMainWindow to override the closeEvent method to finalise any tabs before garbage collection when running more than one vtkWidget.
+    Need to create a inherited version of a QMainWindow to override the closeEvent method to finalize any tabs before garbage collection when running more than one vtkWidget.
     '''
-    def __init__(self, parent=None):
-        super(main_window, self).__init__(parent)
+    def __init__(self, app):
+        super().__init__()
         
         self.setWindowIcon(QtGui.QIcon(resource_filename("OpenRS","meta/OpenRS_icon.png")))
         self.setWindowTitle("OpenRS - main v%s" %__version__)
         if os.name == 'nt':
             myappid = 'OpenRS.main.%s'%__version__ # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid) #windows taskbar icon
+        
+        self.setMinimumSize(QtCore.QSize(1000, 1000))
         
         self.file = None #active OpenRS datafile
         
@@ -71,8 +73,8 @@ class main_window(QtWidgets.QMainWindow):
         flexure_button = QtWidgets.QAction('Flexure model', self)
         flexure_button.setStatusTip('Opens FEA flexure calculation dialog')
         flexure_button.triggered.connect(self.launch_modeling)
-        amphyon_translate_button = QtWidgets.QAction('Translate Amphyon VTU file ...', self)
-        amphyon_translate_button.setStatusTip('Translates Amphyon-formatted VTU file into OpenRS format, and opens it in the model viewer.')
+        amphyon_translate_button = QtWidgets.QAction('Translate Amphyon file ...', self)
+        amphyon_translate_button.setStatusTip('Translates Amphyon-formatted output text file into OpenRS/ParaView format.')
         amphyon_translate_button.triggered.connect(self.launch_translate_amphyon)
         
         #add actions to menubar
@@ -94,7 +96,13 @@ class main_window(QtWidgets.QMainWindow):
         self.tabWidget.setCurrentIndex(0)
         
         self.initialize_all()
-        
+    
+    def center(self):
+        frame = self.frameGeometry()
+        center = QtWidgets.QDesktopWidget().availableGeometry().center()
+        frame.moveCenter(center)
+        self.move(frame.topLeft())
+    
     def closeEvent(self, event):
         '''
         Need to finalize all VTK widgets otherwise openGL errors abound
@@ -158,31 +166,35 @@ class main_window(QtWidgets.QMainWindow):
         '''
         Saves to current file, gets one if it doesn't exist
         '''
-        self.file, _ = get_save_file('*.OpenRS')
+        file, _ = get_save_file('*.OpenRS')
         
-        if self.file is not None:
-            self.setWindowTitle("%s  -  OpenRS v%s" %(self.file,__version__))
-            self.psui.file = self.file
-            self.mvui.file = self.file
-            self.mvui.write_h5()
-            self.psui.write_h5()
+        if file is None:
+            return
+        
+        #test to see if it is a different file
+        if file != self.file:
+            self.file = initialize_HDF5(file)
+        else:
+            self.file = file
+        
+        self.setWindowTitle("%s  -  OpenRS v%s" %(self.file,__version__))
+        self.psui.file = self.file
+        self.mvui.file = self.file
+        self.mvui.write_h5()
+        self.psui.write_h5()
 
     def launch_modeling(self):
         self.mw = modeling_widget(self)
     
     def launch_translate_amphyon(self):
-        translate_amphyon_vtu(None,None)
+        translate_amphyon_vtp(None,None)
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    #debug vtk errors
-    # fow = vtk.vtkFileOutputWindow();
-    # fow.SetFileName("vtk_errors.txt");
-    # ow = vtk.vtkOutputWindow()
-    # ow.SetInstance(fow)
     
-    app_main_window = main_window()
+    app_main_window = main_window(app)
+    app_main_window.center()
     app_main_window.show()
     
     

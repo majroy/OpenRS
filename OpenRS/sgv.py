@@ -9,18 +9,15 @@ import vtk
 from PyQt5 import QtCore, QtGui, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from OpenRS.open_rs_common import xyview, generate_axis_actor
+from OpenRS.transform_widget import make_rotate_button, get_trans_from_euler_angles
 
 class sgv_viewer(QtWidgets.QWidget):
     def __init__(self, parent = None):
         super(sgv_viewer, self).__init__(parent)
         
         vl = QtWidgets.QVBoxLayout()
-        hl = QtWidgets.QHBoxLayout()
-        button_layout = QtWidgets.QHBoxLayout()
         
         self.vtkWidget = QVTKRenderWindowInteractor(parent)
-        # self.vtkWidget.setMinimumSize(QtCore.QSize(300, 350))
-        # self.vtkWidget.setMaximumSize(QtCore.QSize(300, 350))
         
         self.ren = vtk.vtkRenderer()
         self.vtkWidget.GetRenderWindow().AddRenderer(self.ren)
@@ -29,88 +26,57 @@ class sgv_viewer(QtWidgets.QWidget):
         self.iren.SetInteractorStyle(style)
         self.setLayout(vl)
         
-        headFont=QtGui.QFont("Helvetica [Cronyx]",weight=QtGui.QFont.Bold)
-        
-        #make button grid for specifying shape of gauge volume
-        define_label = QtWidgets.QLabel("Define:")
-        define_label.setFont(headFont)
-        width_label =QtWidgets.QLabel("Width")
+        #make button box for specifying shape of gauge volume
+        define_box = QtWidgets.QGroupBox('Define')
         self.width = QtWidgets.QDoubleSpinBox()
         self.width.setMinimum(0.05)
         self.width.setValue(1)
         self.width.setMaximum(5)
+        self.width.setPrefix('Width ')
+        self.width.setSuffix(' mm')
         
-        depth_label =QtWidgets.QLabel("Depth")
         self.depth = QtWidgets.QDoubleSpinBox()
         self.depth.setMinimum(0.05)
         self.depth.setValue(2)
         self.depth.setMaximum(10)
+        self.depth.setPrefix('Depth ')
+        self.depth.setSuffix(' mm')
 
         theta_label =QtWidgets.QLabel("2\u03F4 (deg)")
         self.theta = QtWidgets.QDoubleSpinBox()
         self.theta.setMinimum(0.1)
         self.theta.setValue(90)
         self.theta.setMaximum(179.9)
+        self.theta.setPrefix("2\u03F4 ")
+        self.theta.setSuffix(' °')
         
         self.update_sgv = QtWidgets.QPushButton('Preview')
         self.reset_sgv = QtWidgets.QPushButton('Reset')
         self.finalize_sgv = QtWidgets.QPushButton('Finalize')
         
+        #get rotation from transform widget
+        self.rotate_group_dropdown = make_rotate_button(self)
         
         sgv_buttongroup = QtWidgets.QGridLayout()
-        sgv_buttongroup.addWidget(define_label,0,0,1,2)
-        sgv_buttongroup.addWidget(width_label,1,0,1,1)
-        sgv_buttongroup.addWidget(self.width,1,1,1,1)
-        sgv_buttongroup.addWidget(depth_label,2,0,1,1)
-        sgv_buttongroup.addWidget(self.depth,2,1,1,1)
-        sgv_buttongroup.addWidget(theta_label,3,0,1,1)
-        sgv_buttongroup.addWidget(self.theta,3,1,1,1)
+        define_box.setLayout(sgv_buttongroup)
+        sgv_buttongroup.addWidget(self.width,0,0,1,1)
+        sgv_buttongroup.addWidget(self.depth,1,0,1,1)
+        sgv_buttongroup.addWidget(self.theta,2,0,1,1)
+        sgv_buttongroup.addWidget(self.rotate_group_dropdown,0,1,1,1)
+        sgv_buttongroup.addWidget(self.reset_sgv, 0,2,1,1)
+        sgv_buttongroup.addWidget(self.update_sgv,1,2,1,1)
+        sgv_buttongroup.addWidget(self.finalize_sgv,2,2,1,1)
+        sgv_buttongroup.setColumnStretch(0,0)
+        sgv_buttongroup.setColumnStretch(2,0)
         
-        
-        #make button group for rotation
-        rotation_label = QtWidgets.QLabel("Rotate about:")
-        rotation_label.setFont(headFont)
-        xlabel = QtWidgets.QLabel("X (deg)")
-        self.rotate_x = QtWidgets.QDoubleSpinBox()
-        self.rotate_x.setSingleStep(15)
-        self.rotate_x.setMinimum(-345)
-        self.rotate_x.setValue(0)
-        self.rotate_x.setMaximum(345)
-        ylabel = QtWidgets.QLabel("Y (deg)")
-        self.rotate_y = QtWidgets.QDoubleSpinBox()
-        self.rotate_y.setSingleStep(15)
-        self.rotate_y.setMinimum(-345)
-        self.rotate_y.setValue(0)
-        self.rotate_y.setMaximum(345)
-        zlabel = QtWidgets.QLabel("Z (deg)")
-        self.rotate_z = QtWidgets.QDoubleSpinBox()
-        self.rotate_z.setSingleStep(15)
-        self.rotate_z.setMinimum(-345)
-        self.rotate_z.setValue(0)
-        self.rotate_z.setMaximum(345)
-        
-        #add buttons to button layout
-        button_layout.addWidget(self.reset_sgv)
-        button_layout.addWidget(self.update_sgv)
-        button_layout.addWidget(self.finalize_sgv)
-        
-        rot_buttongroup = QtWidgets.QGridLayout()
-        rot_buttongroup.addWidget(rotation_label,0,0,1,2)
-        rot_buttongroup.addWidget(xlabel,1,0,1,1)
-        rot_buttongroup.addWidget(self.rotate_x,1,1,1,1)
-        rot_buttongroup.addWidget(ylabel,2,0,1,1)
-        rot_buttongroup.addWidget(self.rotate_y,2,1,1,1)
-        rot_buttongroup.addWidget(zlabel,3,0,1,1)
-        rot_buttongroup.addWidget(self.rotate_z,3,1,1,1)
-        
-        hl.addLayout(sgv_buttongroup)
-        hl.addLayout(rot_buttongroup)
+
         vl.addWidget(self.vtkWidget)
-        vl.addLayout(hl)
-        vl.addLayout(button_layout)
+        vl.addWidget(define_box)
         
+        self.rotation_widget.trans_origin_button.setEnabled(True)
         
         self.update_sgv.clicked.connect(self.draw)
+        self.rotation_widget.trans_origin_button.clicked.connect(self.draw)
         self.reset_sgv.clicked.connect(self.reset)
         self.finalize_sgv.clicked.connect(self.finalize)
         
@@ -148,16 +114,16 @@ class sgv_viewer(QtWidgets.QWidget):
         self.width.setDisabled(True)
         self.depth.setDisabled(True)
         self.theta.setDisabled(True)
-        self.rotate_x.setDisabled(True)
-        self.rotate_y.setDisabled(True)
-        self.rotate_z.setDisabled(True)
+        self.rotation_widget.rotate_x.setDisabled(True)
+        self.rotation_widget.rotate_y.setDisabled(True)
+        self.rotation_widget.rotate_z.setDisabled(True)
         self.params = {
         'width': self.width.value(),
         'depth': self.depth.value(),
         '2theta': self.theta.value(),
-        'rotate_x': self.rotate_x.value(),
-        'rotate_y': self.rotate_y.value(),
-        'rotate_z': self.rotate_z.value()
+        'rotate_x': self.rotation_widget.rotate_x.value(),
+        'rotate_y': self.rotation_widget.rotate_y.value(),
+        'rotate_z': self.rotation_widget.rotate_z.value()
         } #for repopulating interactor on load.
     
     def reset(self):
@@ -173,12 +139,12 @@ class sgv_viewer(QtWidgets.QWidget):
         self.depth.setValue(2)
         self.theta.setDisabled(False)
         self.theta.setValue(90)
-        self.rotate_x.setDisabled(False)
-        self.rotate_x.setValue(0)
-        self.rotate_y.setDisabled(False)
-        self.rotate_y.setValue(0)
-        self.rotate_z.setDisabled(False)
-        self.rotate_z.setValue(0)
+        self.rotation_widget.rotate_x.setDisabled(False)
+        self.rotation_widget.rotate_x.setValue(0)
+        self.rotation_widget.rotate_y.setDisabled(False)
+        self.rotation_widget.rotate_y.setValue(0)
+        self.rotation_widget.rotate_z.setDisabled(False)
+        self.rotation_widget.rotate_z.setValue(0)
         self.draw()
         
         
@@ -189,18 +155,10 @@ class sgv_viewer(QtWidgets.QWidget):
         # t=np.radians(np.absolute(180-self.theta.value())/2)
         t = np.radians(self.theta.value())
         
-        #build transformation matrix from ui
-        ax = np.deg2rad(self.rotate_x.value())
-        Rx = np.array([[1,0,0],[0, np.cos(ax), -np.sin(ax)],[0, np.sin(ax), np.cos(ax)]])
-        ay = np.deg2rad(self.rotate_y.value())
-        Ry = np.array([[np.cos(ay), 0, np.sin(ay)],[0,1,0],[-np.sin(ay), 0, np.cos(ay)]])
-        az = np.deg2rad(self.rotate_z.value())
-        Rz = np.array([[np.cos(az), -np.sin(az), 0],[np.sin(az), np.cos(az), 0],[0,0,1]])
-        R = Rx @ Ry @ Rz
-        
-        #move rotation matrix to 4x4 generalized transformation matrix
-        self.trans = np.identity(4)
-        self.trans[0:3,0:3] = R
+        self.trans = get_trans_from_euler_angles( \
+        self.rotation_widget.rotate_x.value(), \
+        self.rotation_widget.rotate_y.value(), \
+        self.rotation_widget.rotate_z.value())
         
         
         #get rotated vtk source for sgv

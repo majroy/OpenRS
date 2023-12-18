@@ -13,6 +13,7 @@ OpenRS/open_rs_hdf5_io.py
 OpenRS/point_selector.py
 OpenRS/return_disp.py
 OpenRS/sgv.py
+OpenRS/transform_widget.py
 OpenRS.egg-info/PKG-INFO
 OpenRS.egg-info/SOURCES.txt
 OpenRS.egg-info/dependency_links.txt
@@ -44,3 +45,5 @@ OpenRS/meta/OpenRS_icon.png
 OpenRS/meta/OpenRSconfig.yml
 OpenRS/meta/__init__.py
 OpenRS/meta/flexure_pnts.png
+OpenRS/meta/rotate_icon.png
+OpenRS/meta/translate_icon.png

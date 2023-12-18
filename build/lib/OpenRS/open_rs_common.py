@@ -7,15 +7,15 @@ Common functions for OpenRS
 import os
 import vtk
 import numpy as np
+from scipy.interpolate import LinearNDInterpolator as NDinterp
 from vtk.util.numpy_support import vtk_to_numpy as v2n
+from vtk.util.numpy_support import numpy_to_vtk as n2v
 from vtk.numpy_interface import dataset_adapter as dsa
-from vtk.util.numpy_support import vtk_to_numpy as v2n
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from pkg_resources import Requirement, resource_filename
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
-
 
 def generate_sphere(center, radius, color):
     source = vtk.vtkSphereSource()
@@ -59,8 +59,6 @@ def generate_point_actor(pts,color,size):
         vtkVerts.InsertCellPoint(pId)
         colors.InsertNextTuple(color)
 
-        
-    
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(vtkPnts)
     polydata.SetVerts(vtkVerts)
@@ -121,11 +119,26 @@ def generate_axis_actor(actor,ren):
     ax3D.SetCamera(ren.GetActiveCamera())
     return ax3D
 
-def line_query(output,q1,q2,numPoints,component):
+def line_query_NDinterp(output,q1,q2,numPoints,component):
     """
-    Interpolate the data from output over q1 to q2 (list of x,y,z)
+    Interpolate the data from output over q1 to q2 using NDinterpolation
     """
-    query_point = [q1,q2]
+    
+    #generate series of x, y and z values extending from q1 to q2
+    line_pts = np.linspace(np.asarray(q1), np.asarray(q2), numPoints)
+    #get points comprising the model
+    mdl_pts = v2n(output.GetPoints().GetData())
+    #get array of specified stresses according to mdl_pts
+    field = v2n(output.GetPointData().GetArray(component))
+    #make interpolator
+    local_interp = NDinterp(mdl_pts,field)
+    return np.hstack((line_pts,local_interp(line_pts).reshape((-1, 1))))
+    
+
+def line_query_vtk(output,q1,q2,numPoints,component):
+    """
+    Interpolate the data from output over q1 to q2 (list of x,y,z) using VTK's probe filter
+    """
     line = vtk.vtkLineSource()
     line.SetResolution(numPoints)
     line.SetPoint1(q1)
@@ -148,7 +161,6 @@ def line_query(output,q1,q2,numPoints,component):
     line_pts = np.hstack((line_pts, \
             np.array([v2n(probe.GetOutput().GetPointData().GetArray(component))]).T))
     
-
     return line_pts
 
 def get_save_file(ext):
@@ -160,7 +172,7 @@ def get_save_file(ext):
     ftypeName['*.txt']='OpenRS whitespace delimited output file'
     ftypeName['*.stl']='OpenRS stereolithography (STL) file'
     ftypeName['*.OpenRS'] = 'OpenRS HDF5-format data file'
-    ftypeName['*.Amphyon_to_OpenRS.vtu']= 'OpenRS converted VTK unstructured grid (XML format)'
+    ftypeName['*.vtp']= 'OpenRS converted VTK polydata (XML format)'
     id=str(os.getcwd())
 
     filer, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save as:", id,str(ftypeName[ext]+' ('+ext+')'))
@@ -174,19 +186,23 @@ def get_file(*args):
     '''
     Returns absolute path to filename and the directory it is located in from a PyQt5 filedialog. First value is file extension, second is a string which overwrites the window message.
     '''
-    ext = args[0]
-    if len(args)>1:
-        launchdir = args[1]
-    else: launchdir = os.getcwd()
+    ext = args
+    launchdir = os.getcwd()
     ftypeName={}
-    ftypeName['*.vtu']=["VTK unstructured grid (XML format)", "*.vtu", "VTU file"]
+    ftypeName['*.vtu']=["VTK model file (XML format)", "*.vtu", "VTU file"]
+    ftypeName['*.vtp']=["VTK model file (XML format)", "*.vtp", "VTP file"]
     ftypeName['*.stl']=["OpenRS STL", "*.stl","STL file"]
     ftypeName['*.OpenRS'] = ["OpenRS HDF5-format data file", "*.OpenRS", "OpenRS file"]
     ftypeName['*.txt'] = ["OpenRS whitespace delimited points", "*.txt", "OpenRS text input"]
     ftypeName['*.*'] = ["OpenRS external executable", "*.*", "..."]
-        
-    filer = QtWidgets.QFileDialog.getOpenFileName(None, ftypeName[ext][0], 
-         os.getcwd(),(ftypeName[ext][2]+' ('+ftypeName[ext][1]+');;All Files (*.*)'))
+    
+    filter_str = ""
+    for entry in args:
+        filter_str += ftypeName[entry][2] + ' ('+ftypeName[entry][1]+');;'
+    filter_str += ('All Files (*.*)')
+    
+    filer = QtWidgets.QFileDialog.getOpenFileName(None, ftypeName[ext[0]][0], 
+         os.getcwd(),(filter_str))
 
     if filer[0] == '':
         filer = None
@@ -238,6 +254,17 @@ def make_logo(ren):
     ren.AddViewProp(logo)
     logo.SetRenderer(ren)
     return logo
+
+def do_transform(points, T):
+    '''
+    Applies 4x4 transformation matrix to points and returns the result
+    @Param - points, Nx3 matrix of points; T - 4x4 homologous matrix
+    '''
+    X = points.copy()
+    X = X.transpose()
+    X = np.append(X, np.ones((1, X.shape[1])), axis=0) #pad with 1's
+    X = T @ X #apply by matrix multiplication
+    return X[0:3].transpose() #return an Nx3
 
 class table_model(QtCore.QAbstractTableModel):
 
@@ -514,47 +541,78 @@ class modeling_widget(QtWidgets.QDialog):
         with open(fname,'w+') as f:
             yaml.dump(data,f, default_flow_style=False)
 
-def translate_amphyon_vtu(infile=None, outfile=None):
+def translate_amphyon_vtp(infile=None, outfile=None):
     '''
-    Function that modifies/converts Amphyon VTU file with single component data arrays from the three component 'Stress [MPa]' array that is written by Amphyon. Writes to an OpenRS formatted vtu file. Returns an unstructured grid object
+    Reads point-based data from the infile as specified by the default Amphyon output
+    Ignores first column, assumes that columns 1-3 are undeformed coordinates, next 3 are deformations and the next 4 are stresses.
+    Returns a polydata point cloud object with stresses as point data
+    Returns a Nx3 numpy array of positions and Nx4 numpy array of 4 stresses if outfile is None, otherwise writes vtk polydata file to outfile.
     '''
     if infile is None:
-        infile,startdir=get_file('*.vtu')
+        infile,startdir=get_file('*.txt')
         if infile is None: #dialog cancelled
             return
         if not(os.path.isfile(infile)):
             return
+            
+    #use genfromtxt to read in all data
+    fid = open(infile,'r')
+    skip_header_index = 0
+    all_pos = []
+    all_stresses = []
+    while 1:
+        lines = fid.readlines(100000)
+        if not lines:
+            break
+        for line in lines:
+            if skip_header_index > 0:
+                line = line.replace(',','.')
+                raw_line = line.split()
+                raw_line = [float(x) for x in raw_line]
+                #c1-c4: position, c5-7: displacment, c8-11: stresses (x, y, z & VM)
+                pos = np.asarray(raw_line[1:4])
+                disp = np.asarray(raw_line[4:7])
+                pos = pos + disp
+                stress = np.asarray(raw_line[8:12])
+                all_pos.append(pos)
+                all_stresses.append(stress)
+            skip_header_index += 1
+    
+    fid.close()
+    all_pos = np.asarray(all_pos)
+    all_stresses = np.asarray(all_stresses)
 
-    reader = vtk.vtkXMLUnstructuredGridReader()
-    reader.SetFileName(infile)
-    reader.Update()  
-    output = reader.GetOutput()
 
-
-    c= v2n(output.GetPointData().GetArray('Stress [MPa]'))
-    #nx3 stresses
-    Sxx = c[:,0].ravel()
-    Syy = c[:,1].ravel()
-    Szz = c[:,2].ravel()
-
-    o = vtk.vtkUnstructuredGrid()
-    o.CopyStructure(output)
-    new = dsa.WrapDataObject(o)
-    new.PointData.append(Sxx, 'S11')
-    new.PointData.append(Syy, 'S22')
-    new.PointData.append(Szz, 'S33')
+    pnts = vtk.vtkPoints()
+    pnts.SetData(n2v(all_pos))
+    
+    verts = vtk.vtkCellArray()
+    for i in np.arange(len(all_pos)):
+        verts.InsertNextCell(1)
+        verts.InsertCellPoint(i)
+    
+    pd = vtk.vtkPolyData()
+    pd.SetPoints(pnts)
+    pd.SetVerts(verts)
+    
+    array_names = ['Sxx', 'Syy', 'Szz', 'Svm']
+    for array_ind in range(all_stresses.shape[1]): #number of columns in all_stresses
+        curr_array = n2v(all_stresses[:,array_ind], deep = True)
+        curr_array.SetName(array_names[array_ind])
+        pd.GetPointData().AddArray(curr_array)
+    pd.Modified()
 
     if outfile is None:
-        outfile, _ = get_save_file('*.Amphyon_to_OpenRS.vtu')
+        outfile, _ = get_save_file('*.vtp')
         if outfile is None: #dialog cancelled
             return
 
-    writer = vtk.vtkXMLUnstructuredGridWriter()
-    writer.SetFileName(outfile)
-    writer.SetInputData(new.VTKObject)
-    writer.Write()
-
-    return new #return new vtu object
+        writer = vtk.vtkXMLPolyDataWriter()
+        writer.SetInputData(pd)
+        writer.SetFileName(outfile)
+        writer.Write()
+            
+    return pd
 
 if __name__ == "__main__":
     import sys
