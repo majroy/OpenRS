@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from pkg_resources import Requirement, resource_filename
+import importlib.resources
 
 def make_translate_button_layout(parent_window):
     '''
@@ -41,7 +41,11 @@ def make_transformation_button_layout(parent_window):
 
 
 def make_translate_button(parent_window):
-    rotate_icon = QtGui.QIcon(QtGui.QIcon(resource_filename("OpenRS","meta/translate_icon.png")))
+    
+    ico = importlib.resources.files('OpenRS') / 'meta/translate_icon.png'
+    with importlib.resources.as_file(ico) as path:
+        rotate_icon = QtGui.QIcon(QtGui.QIcon(path.__str__()))
+    
     translate_drop_button = QtWidgets.QToolButton()
     translate_drop_button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
     translate_drop_button.setCheckable(True)
@@ -55,7 +59,11 @@ def make_translate_button(parent_window):
     return translate_drop_button
 
 def make_rotate_button(parent_window):
-    rotate_icon = QtGui.QIcon(QtGui.QIcon(resource_filename("OpenRS","meta/rotate_icon.png")))
+    
+    ico = importlib.resources.files('OpenRS') / 'meta/rotate_icon.png'
+    with importlib.resources.as_file(ico) as path:
+        rotate_icon = QtGui.QIcon(QtGui.QIcon(path.__str__()))
+
     rotate_drop_button = QtWidgets.QToolButton()
     rotate_drop_button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
     rotate_drop_button.setCheckable(True)

@@ -19,65 +19,42 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib import rc
-from pkg_resources import Requirement, resource_filename
-from OpenRS.open_rs_common import get_file, get_save_file, line_query, generate_axis_actor, generate_sphere, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo
+from OpenRS.open_rs_common import get_file, get_save_file, line_query_vtk, generate_axis_actor, generate_sphere, generate_info_actor, xyview, yzview, xzview, flip_visible, make_logo
 from OpenRS.model_viewer import read_model_data
 from OpenRS.open_rs_hdf5_io import *
 
-def launch(*args, **kwargs):
+class launch(QtWidgets.QMainWindow):
     '''
     Start Qt/VTK interaction if started independently
     '''
-    app = QtWidgets.QApplication.instance()
-    if app is None:
-        app = QtWidgets.QApplication(sys.argv)
+    def __init__(self, parent=None):
+        super(launch,self).__init__(parent)
+        self.main_window = interactor(self)
+        self.setCentralWidget(self.main_window)
+        self.setWindowTitle("comparer widget v%s" %__version__)
+        screen = QtWidgets.QApplication.primaryScreen()
+        rect = screen.availableGeometry()
+        self.setMinimumSize(QtCore.QSize(int(2*rect.width()/3), int(2*rect.height()/3)))
 
-    app.processEvents()
-    
-    window = interactor(None) #otherwise specify parent widget
-    window.show()
-    
-    window.iren.Initialize()
-    
-    if len(args) == 1:
-        window.file = args[0]
-        interactor.load_h5(window)
-    
-    ret = app.exec_()
-    
-    if sys.stdin.isatty() and not hasattr(sys, 'ps1'):
-        sys.exit(ret)
-    else:
-        return window
-
-class main_window(object):
+class main_window(QtWidgets.QWidget):
     """
     Generic object containing all UI
     """
     
-    def setup(self, MainWindow):
+    def setup(self, parent):
         '''
         Creates Qt interactor
         '''
         
-        #if called as a script, then treat as a mainwindow, otherwise treat as a generic widget
-        if hasattr(MainWindow,'setCentralWidget'):
-            MainWindow.setCentralWidget(self.centralWidget)
-        else:
-            self.centralWidget=MainWindow
-        MainWindow.setWindowTitle("OpenRS - comparer v%s" %__version__)
         
         #create new layout to hold both VTK and Qt interactors
-        mainlayout=QtWidgets.QHBoxLayout(self.centralWidget)
-
-        #create VTK widget
-        self.vtkWidget = QVTKRenderWindowInteractor(self.centralWidget)
+        mainlayout=QtWidgets.QHBoxLayout(parent)
         
         #create Qt layout to contain interactions
         load_model_box = QtWidgets.QGridLayout()
         
         #create VTK widget
-        self.vtkWidget = QVTKRenderWindowInteractor(self.centralWidget)
+        self.vtkWidget = QVTKRenderWindowInteractor(parent)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(100)
@@ -394,7 +371,7 @@ class interactor(QtWidgets.QWidget):
     # return actor, output, mesh_mapper, lut, range
 
 if __name__ == "__main__":
-    if len(sys.argv)>1:
-        launch(sys.argv[1])
-    else:
-        launch()
+    app=QtWidgets.QApplication(sys.argv)
+    window = launch()
+    window.show()
+    sys.exit(app.exec_())

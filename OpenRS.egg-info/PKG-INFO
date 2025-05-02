@@ -1,6 +1,6 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: OpenRS
-Version: 0.3.3
+Version: 0.3.3.post1
 Summary: Open Residual Stress analysis suite
 Home-page: https://github.com/majroy/OpenRS
 Author: M J Roy
@@ -16,6 +16,24 @@ Classifier: Natural Language :: English
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: vtk
+Requires-Dist: matplotlib
+Requires-Dist: PyQt5>=5.13
+Requires-Dist: h5py
+Requires-Dist: pyyaml>=5.0
+Requires-Dist: scipy
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0) 
 

@@ -25,27 +25,18 @@ __email__ = "matthew.roy@manchester.ac.uk"
 __status__ = "Experimental"
 __copyright__ = "(c) M. J. Roy, 2021-"
 
-def launch(*args, **kwargs):
+class launch(QtWidgets.QMainWindow):
     '''
-    Start Qt/VTK interaction.
+    Start Qt/VTK interaction if started independently
     '''
-    
-    app = QtWidgets.QApplication.instance()
-    if app is None:
-        app = QtWidgets.QApplication(sys.argv)
-    app.processEvents()
-    
-    window = interactor(None) #otherwise specify parent widget
-    window.show()
-    window.iren.Initialize()
-
-    app.exec_()
-    
-    if sys.stdin.isatty() and not hasattr(sys, 'ps1'):
-        sys.exit()
-        window.closeEvent()
-    else:
-        return window
+    def __init__(self, parent=None):
+        super(launch,self).__init__(parent)
+        self.main_window = interactor(self)
+        self.setCentralWidget(self.main_window)
+        self.setWindowTitle("point selector widget v%s" %__version__)
+        screen = QtWidgets.QApplication.primaryScreen()
+        rect = screen.availableGeometry()
+        self.setMinimumSize(QtCore.QSize(int(2*rect.width()/3), int(2*rect.height()/3)))
 
 class entry_combo_box(QtWidgets.QComboBox):
     '''
@@ -119,25 +110,18 @@ class entry_combo_box(QtWidgets.QComboBox):
         self.insertItem(num_items,"Entry %d"%(num_items))
         self.setCurrentIndex(self.count()-1) #because python indices start from 0
 
-class main_window(object):
+class main_window(QtWidgets.QWidget):
     """
     Generic object containing all UI
     """
     
-    def setup(self, MainWindow):
+    def setup(self, parent):
         '''
         Creates Qt interactor
         '''
         
-        #if called as a script, then treat as a mainwindow, otherwise treat as a generic widget
-        if hasattr(MainWindow,'setCentralWidget'):
-            MainWindow.setCentralWidget(self.centralWidget)
-        else:
-            self.centralWidget=MainWindow
-        MainWindow.setWindowTitle("OpenRS - point selector v%s" %__version__)
-        
         #create new layout to hold both VTK and Qt interactors
-        mainlayout=QtWidgets.QHBoxLayout(self.centralWidget)
+        mainlayout=QtWidgets.QHBoxLayout(parent)
         
         #set headings font
         headFont=QtGui.QFont("Helvetica [Cronyx]",weight=QtGui.QFont.Bold)
@@ -191,7 +175,7 @@ class main_window(object):
         lvlayout=QtWidgets.QVBoxLayout()
 
         #create VTK widget
-        self.vtkWidget = QVTKRenderWindowInteractor(self.centralWidget)
+        self.vtkWidget = QVTKRenderWindowInteractor(parent)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(100)
@@ -1015,4 +999,7 @@ def numpy_to_vtkmatrix(matrix):
 
 
 if __name__ == "__main__":
-    launch()
+    app=QtWidgets.QApplication(sys.argv)
+    window = launch()
+    window.show()
+    sys.exit(app.exec_())

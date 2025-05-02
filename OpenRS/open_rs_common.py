@@ -13,7 +13,7 @@ from vtk.util.numpy_support import numpy_to_vtk as n2v
 from vtk.numpy_interface import dataset_adapter as dsa
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from pkg_resources import Requirement, resource_filename
+import importlib.resources
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
 
@@ -241,7 +241,11 @@ def flip_visible(actor):
         actor.VisibilityOn()
 
 def make_logo(ren):
-    spl_fname=resource_filename("OpenRS","meta/Logo.png")
+    
+    ico = importlib.resources.files('OpenRS') / 'meta/Logo.png'
+    with importlib.resources.as_file(ico) as path:
+        spl_fname = path.__str__()
+    
     img_reader = vtk.vtkPNGReader()
     img_reader.SetFileName(spl_fname)
     img_reader.Update()
@@ -346,7 +350,9 @@ class external(QThread):
 
     def run(self):
         from OpenRS.generate.packager_ccx import run_packager_ccx
-        mf = resource_filename("OpenRS","generate/U_elastic_mesh_only.inp")
+        resource = importlib.resources.files('OpenRS') / 'generate/U_elastic_mesh_only.inp'
+        with importlib.resources.as_file(resource) as path:
+            mf = path.__str__()
         rf = 'U_elastic_run_ccx.inp'
         run_packager_ccx(mesh_file_name = mf, \
             run_file_name = rf, \
@@ -523,9 +529,11 @@ class modeling_widget(QtWidgets.QDialog):
         
 
     def read_config(self):
-        fname=resource_filename("OpenRS","meta/OpenRSconfig.yml")
-        with open(fname, 'r') as f:
-            read = yaml.load(f, Loader=yaml.FullLoader)
+        
+        resource = importlib.resources.files('OpenRS') / 'meta/OpenRSconfig.yml'
+        with importlib.resources.as_file(resource) as path:
+            with open(path.__str__(), 'r') as f:
+                read = yaml.load(f, Loader=yaml.FullLoader)
         
         self.ccx_exec_path.setText(read['FEA']['ccx_exec'])
         self.fea_path.setText(read['FEA']['work_dir'])
@@ -537,9 +545,10 @@ class modeling_widget(QtWidgets.QDialog):
         work_dir = str(self.fea_path.text())
         )
         )
-        fname=resource_filename("OpenRS","meta/OpenRSconfig.yml")
-        with open(fname,'w+') as f:
-            yaml.dump(data,f, default_flow_style=False)
+        resource = importlib.resources.files('OpenRS') / 'meta/OpenRSconfig.yml'
+        with importlib.resources.as_file(resource) as path:
+            with open(path.__str__(), 'r') as f:
+                yaml.dump(data,f, default_flow_style=False)
 
 def translate_amphyon_vtp(infile=None, outfile=None):
     '''

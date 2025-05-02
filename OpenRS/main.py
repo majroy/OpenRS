@@ -14,7 +14,7 @@ __copyright__ = "(c) M. J. Roy, 2021-"
 import sys,os,ctypes
 from PyQt5 import QtCore, QtGui, QtWidgets
 import vtk
-from pkg_resources import Requirement, resource_filename
+import importlib.resources
 from OpenRS.open_rs_common import get_file, get_save_file, translate_amphyon_vtp
 import OpenRS.model_viewer as mv
 import OpenRS.point_selector as ps
@@ -28,13 +28,17 @@ class main_window(QtWidgets.QMainWindow):
     def __init__(self, app):
         super().__init__()
         
-        self.setWindowIcon(QtGui.QIcon(resource_filename("OpenRS","meta/OpenRS_icon.png")))
+        ico = importlib.resources.files('OpenRS') / 'meta/OpenRS_icon.png'
+        with importlib.resources.as_file(ico) as path:
+            self.setWindowIcon(QtGui.QIcon(path.__str__()))
         self.setWindowTitle("OpenRS - main v%s" %__version__)
         if os.name == 'nt':
             myappid = 'OpenRS.main.%s'%__version__ # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid) #windows taskbar icon
         
-        self.setMinimumSize(QtCore.QSize(1000, 1000))
+        screen = QtWidgets.QApplication.primaryScreen()
+        rect = screen.availableGeometry()
+        self.setMinimumSize(QtCore.QSize(int(2*rect.width()/3), int(7*rect.height()/8)))
         
         self.file = None #active OpenRS datafile
         
@@ -94,7 +98,7 @@ class main_window(QtWidgets.QMainWindow):
         self.setStatusBar(self.statusbar)
         
         self.tabWidget.setCurrentIndex(0)
-        
+        self.setCentralWidget(self.tabWidget)
         self.initialize_all()
     
     def center(self):

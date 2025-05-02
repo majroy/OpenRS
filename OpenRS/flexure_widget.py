@@ -2,7 +2,7 @@ import numpy as np
 import os
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from pkg_resources import Requirement, resource_filename
+import importlib.resources
 import yaml
 from OpenRS.return_disp import get_disp_from_fid
 from OpenRS.open_rs_common import table_model, get_file
@@ -22,7 +22,9 @@ class external(QThread):
         from OpenRS.generate.packager_ccx import run_packager_ccx
         current_dir = os.getcwd()
         os.chdir(self.outputdir)
-        mf = resource_filename("OpenRS","generate/U_elastic_mesh_only.inp")
+        resource = importlib.resources.files('OpenRS') / 'generate/U_elastic_mesh_only.inp'
+        with importlib.resources.as_file(resource) as path:
+            mf = path.__str__()
         rf = 'U_elastic_run_ccx.inp'
         run_packager_ccx(mesh_file_name = mf, \
             run_file_name = rf, \
@@ -41,8 +43,10 @@ class modeling_widget(QtWidgets.QDialog):
         self.setWindowTitle("OpenRS - FEA flexure calculation" )
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setMinimumSize(QtCore.QSize(450, 400))
-
-        spl_fname=resource_filename("OpenRS","meta/flexure_pnts.png")
+        
+        resource = importlib.resources.files('OpenRS') / 'meta/flexure_pnts.png'
+        with importlib.resources.as_file(resource) as path:
+            spl_fname = path.__str__()
         fid_layout_image = QtGui.QPixmap(spl_fname,'PNG')
         self.fid_layout_image = fid_layout_image.scaledToHeight(250)
         self.image_label = QtWidgets.QLabel()
@@ -200,9 +204,10 @@ class modeling_widget(QtWidgets.QDialog):
         
 
     def read_config(self):
-        fname=resource_filename("OpenRS","meta/OpenRSconfig.yml")
-        with open(fname, 'r') as f:
-            read = yaml.load(f, Loader=yaml.FullLoader)
+        resource = importlib.resources.files('OpenRS') / 'meta/OpenRSconfig.yml'
+        with importlib.resources.as_file(resource) as path:
+            with open(path.__str__(), 'r') as f:
+                read = yaml.load(f, Loader=yaml.FullLoader)
         
         self.ccx_exec_path.setText(read['FEA']['ccx_exec'])
         self.fea_path.setText(read['FEA']['work_dir'])
@@ -214,9 +219,10 @@ class modeling_widget(QtWidgets.QDialog):
         work_dir = str(self.fea_path.text())
         )
         )
-        fname=resource_filename("OpenRS","meta/OpenRSconfig.yml")
-        with open(fname,'w+') as f:
-            yaml.dump(data,f, default_flow_style=False)
+        resource = importlib.resources.files('OpenRS') / 'meta/OpenRSconfig.yml'
+        with importlib.resources.as_file(resource) as path:
+            with open(path.__str__(), 'r') as f:
+                yaml.dump(data,f, default_flow_style=False)
 
 if __name__ == "__main__":
     import sys
